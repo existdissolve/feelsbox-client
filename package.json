@@ -2,6 +2,7 @@
   "name": "feelsbox-client",
   "version": "0.1.0",
   "private": true,
+  "description": "Client for FeelsBox",
   "dependencies": {
     "axios": "^0.17.1",
     "firebase": "^4.8.1",

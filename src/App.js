@@ -22,7 +22,7 @@ class App extends Component {
     }
 
     onClick (emoji) {
-        axios.get(`http://feelsbox-server.herokuapp.com/emote/${emoji}`).then(response => {
+        axios.get(`https://feelsbox-server.herokuapp.com/emote/${emoji}`).then(response => {
             console.log(response);
         })
         .catch(function (error) {
