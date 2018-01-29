@@ -45,9 +45,13 @@ h2 {
 .emoji {
     font-size: 0px;
     margin: 0px;
-    border: solid 2px black;
+    border: solid 4px black;
     padding: 2px;
     display: inline-block;
+}
+
+.emoji:active {
+    border-color: yellowgreen;
 }
 
 .pixel-row {
