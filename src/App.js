@@ -133,6 +133,22 @@ class App extends Component {
                         );
                     })}
                 </div>
+                <div className="section container">
+                    <h2>Upload Emoji</h2>
+                    <form action="https://feelsbox-server.herokuapp.com/upload" method="POST" encType="multipart/form-data" target="_blank">
+                        <div className="row">
+                            <div className="form-group">
+                                <label>Name:</label>
+                                <input type="text" name="emoji" className="form-control" />
+                            </div>
+                            <div className="form-group">
+                                <label>File:</label>
+                                <input type="file" name="png" className="form-control" />
+                            </div>
+                        </div>
+                        <input type="submit" href="#" className="btn btn-primary" onClick={this.onUploadSubmit} value="Upload" />
+                    </form>
+                </div>
             </div>
         );
     }
