@@ -17,7 +17,7 @@ const styles = {
 };
 
 function FBAppBar(props) {
-    const {classes, title} = props;
+    const {classes, title, iconRenderer = false} = props;
     return (
         <div className={classes.root}>
             <AppBar position="static">
@@ -26,6 +26,7 @@ function FBAppBar(props) {
                     <Typography variant="title" color="inherit" className={classes.flex}>
                         {title}
                     </Typography>
+                    {iconRenderer}
                 </Toolbar>
             </AppBar>
         </div>
@@ -33,7 +34,7 @@ function FBAppBar(props) {
 }
 
 FBAppBar.propTypes = {
-    classes: PropTypes.object.isRequired,
+    classes: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(FBAppBar);

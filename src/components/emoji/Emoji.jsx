@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import {withStyles} from 'material-ui/styles';
+import {withRouter} from 'react-router-dom';
 import GridList, {GridListTile} from 'material-ui/GridList';
 
 const styles = {
@@ -23,13 +24,38 @@ const styles = {
 };
 
 class Emoji extends React.Component {
-    onClick(emoji) {
-        axios.get(`https://feelsbox-server.herokuapp.com/emote/${emoji}`).then(response => {
-            console.log(response);
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
+    constructor(props) {
+        super(props);
+
+        this.timer;
+    }
+
+    onTouchStart() {
+        const {name, category} = this.props;
+
+        this.timer = setTimeout(() => {
+            clearTimeout(this.timer);
+            this.timer = null;
+            this.props.history.push(`/canvas/${category}/${name}`);
+        }, 500);
+    }
+
+    onTouchEnd() {
+        const {name, category} = this.props;
+
+        if (!this.timer) {
+            return false;
+        }
+
+        clearTimeout(this.timer);
+        this.onTap(name);
+    }
+
+    onTap(emoji) {
+        axios.get(`https://feelsbox-server.herokuapp.com/emote/${emoji}`)
+            .catch(error => {
+                console.log(error);
+            });
     }
 
     render() {
@@ -39,7 +65,7 @@ class Emoji extends React.Component {
         return (
             <GridListTile style={{width: '33%'}}>
                 <div>
-                    <a className={classes.emoji} onClick={this.onClick.bind(this, name)}>
+                    <a className={classes.emoji} onTouchStart={this.onTouchStart.bind(this)} onTouchEnd={this.onTouchEnd.bind(this)}>
                         <GridList className={classes.gridList} cols={8} spacing={0} cellHeight={8}>
                             {grid.map((val, index) => {
                                 const num = index + 1;
@@ -65,4 +91,4 @@ Emoji.propTypes = {
     name: PropTypes.string.isRequired
 };
 
-export default withStyles(styles)(Emoji);
+export default withRouter(withStyles(styles)(Emoji));

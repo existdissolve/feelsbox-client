@@ -35,7 +35,7 @@ class EmojiGrid extends React.Component {
                     {Object.keys(data).map(key => {
                         const tile = data[key];
 
-                        return <Emoji pixels={tile.pixels} name={key} key={key} />
+                        return <Emoji pixels={tile.pixels} name={key} category={category} key={key} />
                     })}
                 </GridList>
             </div>

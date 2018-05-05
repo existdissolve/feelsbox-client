@@ -5,8 +5,8 @@ import {GridListTile} from 'material-ui/GridList';
 
 const styles = {
     pixel: {
-        width: 42,
-        height: 42
+        width: 40,
+        height: 40
     },
     even: {
         backgroundColor: '#dadada'
@@ -14,14 +14,34 @@ const styles = {
     odd: {}
 };
 
-class Pixel extends React.Component {
-    onClick(emoji) {
+let timer;
 
+class Pixel extends React.Component {
+    onTouchStart() {
+        const {onPressAndHold, index} = this.props;
+
+        timer = setTimeout(() => {
+            clearTimeout(timer);
+            timer = null;
+            onPressAndHold(index);
+        }, 500);
+    }
+
+    onTouchEnd() {
+        const {onTap, index} = this.props;
+
+        if (!timer) {
+            return false;
+        }
+
+        clearTimeout(timer);
+        onTap(index);
     }
 
     render() {
-        const {classes, row, index} = this.props;
+        const {classes, row, index, color} = this.props;
         let cls = classes.pixel;
+        let style = {};
 
         if (index % 2 === 0 && row % 2 === 0) {
             cls += ` ${classes.even}`;
@@ -29,10 +49,15 @@ class Pixel extends React.Component {
             cls += ` ${classes.even}`;
         }
 
-        return (
-            <GridListTile className={cls}>
+        if (color) {
+            style = {backgroundColor: '#' + color};
+        }
 
-            </GridListTile>
+        return (
+            <GridListTile
+                className={cls}
+                onTouchStart={this.onTouchStart.bind(this)}
+                onTouchEnd={this.onTouchEnd.bind(this)} style={style} />
         );
     }
 }
@@ -40,7 +65,9 @@ class Pixel extends React.Component {
 Pixel.propTypes = {
     classes: PropTypes.object.isRequired,
     index: PropTypes.number.isRequired,
-    row: PropTypes.number.isRequired
+    row: PropTypes.number.isRequired,
+    onTap: PropTypes.func.isRequired,
+    onPressAndHold: PropTypes.func.isRequired
 };
 
 export default withStyles(styles)(Pixel);
