@@ -11,7 +11,7 @@ const app = express();
 
 app.use(compression());
 app.use(express.static('dist'));
-app.use(favicon(path.join(__dirname,'assets','dist','favicon.ico')));
+//app.use(favicon(path.join(__dirname,'assets','dist','favicon.ico')));
 
 app.get('*', function(req, res) {
     res.sendFile(path.join(__dirname, '../dist/index.html'));
