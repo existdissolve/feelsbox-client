@@ -17,7 +17,8 @@
   },
   "scripts": {
     "start": "webpack-dev-server --mode development --open",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production",
+    "heroku-postbuild": "npm run build"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
