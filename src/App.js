@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 import ReactDOM from "react-dom";
-import {HashRouter, Route} from 'react-router-dom';
 import * as firebase from 'firebase';
+import {HashRouter} from 'react-router-dom';
 
+import Login from '-/components/Login';
+import Landing from '-/components/Landing';
 import config from '-/config';
-import Main from '-/components/emoji/Main';
-import CanvasGrid from '-/components/canvas/Grid';
-import Upload from '-/components/Upload';
-import AppBar from '-/components/AppBar';
-import CssBaseline from 'material-ui/CssBaseline';
+
 
 var app = firebase.initializeApp(config);
 window.oncontextmenu = function() { return false; }
@@ -44,26 +42,10 @@ class App extends Component {
         const {loggedIn} = this.state;
 
         if (!loggedIn) {
-            return (
-                <div className="App">
-                    <AppBar title="Login" />
-                    <div className="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
-                    <p className="App-intro">
-                        Please login!
-                    </p>
-                </div>
-            );
+            return <Login />
         }
 
-        return (
-            <div className="App">
-                <CssBaseline />
-                <Route exact path="/" component={Main} />
-                <Route exact path="/canvas" component={CanvasGrid} />
-                <Route exact path="/canvas/:category/:name" component={CanvasGrid} />
-                <Route exact path="/upload" component={Upload}/>
-            </div>
-        );
+        return <Landing />
     }
 }
 
@@ -72,4 +54,5 @@ export default App;
 ReactDOM.render(
     <HashRouter>
         <App />
-    </HashRouter>, document.getElementById("app"));
+    </HashRouter>, document.getElementById("app")
+);

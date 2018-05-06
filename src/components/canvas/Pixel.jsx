@@ -9,9 +9,11 @@ const styles = {
         height: 40
     },
     even: {
-        backgroundColor: '#dadada'
+        backgroundColor: '#000'
     },
-    odd: {}
+    odd: {
+        backgroundColor: '#333'
+    }
 };
 
 let timer;
@@ -47,6 +49,8 @@ class Pixel extends React.Component {
             cls += ` ${classes.even}`;
         } else if (index % 2 !== 0 && row % 2 !== 0) {
             cls += ` ${classes.even}`;
+        } else {
+            cls += ` ${classes.odd}`;
         }
 
         if (color) {
