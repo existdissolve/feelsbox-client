@@ -26,8 +26,10 @@ const manifestPlugin = new WebpackPwaManifest({
     short_name: 'FeelsBox',
     description: 'A box of feels, just for you!',
     background_color: '#ffffff',
+    ios: true,
     icons: [{
         src: path.resolve('./feelsbox.png'),
+        ios: true,
         sizes: [128, 96, 64, 32, 24, 16] // multiple sizes
     }]
 });
