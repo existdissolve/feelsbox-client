@@ -4,6 +4,7 @@ import {withStyles} from 'material-ui/styles';
 import {withRouter} from 'react-router-dom';
 import GridList, {GridListTile} from 'material-ui/GridList';
 import axios from 'axios';
+import {isEmpty} from 'lodash';
 
 import AppBar from '-/components/AppBar';
 import Pixel from '-/components/canvas/Pixel';
@@ -43,7 +44,8 @@ class CanvasGrid extends React.Component {
             selectedColor: '#ffffff',
             pixels: {},
             name: '',
-            category: ''
+            category: '',
+            history: []
         };
     }
 
@@ -83,7 +85,8 @@ class CanvasGrid extends React.Component {
                             ...this.state,
                             name,
                             ...emoji,
-                            pixels
+                            pixels,
+                            history: [] // blank slate
                         });
                     }
                 });
@@ -92,7 +95,8 @@ class CanvasGrid extends React.Component {
                 ...this.state,
                 pixels: {},
                 name: '',
-                category: ''
+                category: '',
+                history: []
             });
         }
     }
@@ -136,26 +140,59 @@ class CanvasGrid extends React.Component {
         });
     }
 
+    undoChanges() {
+        const history = this.state.history.slice()
+        const lastPixelState = history.pop();
+
+        if (!isEmpty(lastPixelState)) {
+            this.setState({
+                ...this.state,
+                pixels: lastPixelState,
+                history
+            });
+        }
+    }
+
     onPixelTap(index) {
+        const newHistory = this.state.history.slice();
+        const oldPixelState = {
+            ...this.state.pixels
+        };
+        const newPixelState = {
+            ...this.state.pixels,
+            [index]: this.state.selectedColor.hex.replace('#', '')
+        };
+
+        if (!isEmpty(oldPixelState)) {
+            newHistory.push(oldPixelState);
+        }
+
         this.setState({
             ...this.state,
-            pixels: {
-                ...this.state.pixels,
-                [index]: this.state.selectedColor.hex.replace('#', '')
-            }
+            pixels: newPixelState,
+            history: newHistory
         });
     }
 
     onPressAndHold(index) {
-        const pixels = {
+        const newHistory = this.state.history.slice();
+        const oldPixelState = {
+            ...this.state.pixels
+        };
+        const newPixelState = {
             ...this.state.pixels
         };
 
-        delete pixels[index];
+        delete newPixelState[index];
+
+        if (!isEmpty(oldPixelState)) {
+            newHistory.push(oldPixelState);
+        }
 
         this.setState({
             ...this.state,
-            pixels
+            pixels: newPixelState,
+            history: newHistory
         });
     }
 
@@ -168,7 +205,8 @@ class CanvasGrid extends React.Component {
                 category={category}
                 onSave={this.saveEmoji.bind(this)}
                 onTest={this.pushEmoji.bind(this)}
-                onClear={this.clearPixels.bind(this)} />
+                onClear={this.clearPixels.bind(this)}
+                onUndo={this.undoChanges.bind(this)} />
         );
     }
 

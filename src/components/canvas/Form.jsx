@@ -1,15 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
+import {withStyles} from 'material-ui/styles';
 import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
 import SaveIcon from 'material-ui-icons/Save';
 import SettingsRemoteIcon from 'material-ui-icons/SettingsRemote';
 import ClearAllIcon from 'material-ui-icons/ClearAll';
+import MoreVertIcon from 'material-ui-icons/MoreVert';
+import UndoIcon from 'material-ui-icons/Undo';
 import TextField from 'material-ui/TextField';
 import Input, {InputLabel} from 'material-ui/Input';
-import {MenuItem} from 'material-ui/Menu';
+import Menu, {MenuItem} from 'material-ui/Menu';
 import {FormControl, FormHelperText} from 'material-ui/Form';
+import {ListItemIcon, ListItemText} from 'material-ui/List';
 import Select from 'material-ui/Select';
 import Dialog, {
     DialogActions,
@@ -29,7 +32,8 @@ class CanvasForm extends React.Component {
         this.state = {
             name,
             category,
-            open: false
+            open: false,
+            anchorEl: null
         };
     }
 
@@ -63,24 +67,62 @@ class CanvasForm extends React.Component {
         });
     }
 
-    handleOpen() {
+    handleOpen = () => {
         this.setState({
-            open: true
+            open: true,
+            anchorEl: null
         });
     }
 
+    handleMenuClick = event => {
+        this.setState({
+            anchorEl: event.currentTarget
+        });
+    }
+
+    handleMenuClose = () => {
+        this.setState({
+            anchorEl: null
+        });
+    }
+
+    handlerClearClick = () => {
+        this.props.onClear();
+        this.handleMenuClose();
+    }
+
     render() {
+        const {anchorEl} = this.state;
+
         return (
             <div>
-                <IconButton onClick={this.props.onClear}>
-                    <ClearAllIcon />
+                <IconButton onClick={this.props.onUndo}>
+                    <UndoIcon />
                 </IconButton>
                 <IconButton onClick={this.props.onTest}>
                     <SettingsRemoteIcon />
                 </IconButton>
-                <IconButton onClick={this.handleOpen.bind(this)}>
-                    <SaveIcon />
+                <IconButton onClick={this.handleMenuClick}>
+                    <MoreVertIcon />
                 </IconButton>
+                <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={this.handleMenuClose}
+                >
+                    <MenuItem onClick={this.handlerClearClick}>
+                        <ListItemIcon>
+                            <ClearAllIcon />
+                        </ListItemIcon>
+                        <ListItemText inset primary="Clear All" />
+                    </MenuItem>
+                    <MenuItem onClick={this.handleOpen}>
+                        <ListItemIcon>
+                        <SaveIcon />
+                        </ListItemIcon>
+                        <ListItemText inset primary="Save Emoji" />
+                    </MenuItem>
+                </Menu>
                 <Dialog open={this.state.open} onClose={this.handleClose.bind(this)} aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title">Save Emoji</DialogTitle>
                     <DialogContent>
