@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {withStyles} from 'material-ui/styles';
 import {GridListTile} from 'material-ui/GridList';
+import {includes} from 'lodash';
 
 const styles = {
     pixel: {
@@ -19,6 +20,15 @@ const styles = {
 let timer;
 
 class Pixel extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            isDrawing: false,
+            drawnIndices: []
+        };
+    }
+
     onTouchStart() {
         const {onPressAndHold, index} = this.props;
 
@@ -31,13 +41,47 @@ class Pixel extends React.Component {
 
     onTouchEnd() {
         const {onTap, index} = this.props;
+        const {drawnIndices, isDrawing} = this.state;
 
-        if (!timer) {
+        if (!timer && !isDrawing) {
             return false;
         }
 
+        this.setState({
+            isDrawing: false,
+            drawnIndices: []
+        });
+
         clearTimeout(timer);
-        onTap(index);
+        onTap(index, drawnIndices);
+    }
+
+    onTouchMove(e) {
+        const {touches} = e;
+        const touch = touches[0];
+
+        if (touch) {
+            const target = document.elementFromPoint(touch.clientX, touch.clientY);
+
+            if (target && target.parentNode) {
+                const index = parseInt(target.parentNode.id.replace('pixel-', ''), 10);
+                const {drawnIndices} = this.state;
+                const copiedIndices = drawnIndices.slice();
+
+                if (!includes(copiedIndices, index)) {
+                    copiedIndices.push(index);
+                }
+
+                this.setState({
+                    isDrawing: true,
+                    drawnIndices: copiedIndices
+                });
+                // clear the timer
+                clearTimeout(timer);
+                // notify owner of change
+                this.props.onDragMove(index);
+            }
+        }
     }
 
     render() {
@@ -59,9 +103,12 @@ class Pixel extends React.Component {
 
         return (
             <GridListTile
+                id={`pixel-${index}`}
                 className={cls}
+                style={style}
                 onTouchStart={this.onTouchStart.bind(this)}
-                onTouchEnd={this.onTouchEnd.bind(this)} style={style} />
+                onTouchEnd={this.onTouchEnd.bind(this)}
+                onTouchMove={this.onTouchMove.bind(this)} />
         );
     }
 }
@@ -71,7 +118,8 @@ Pixel.propTypes = {
     index: PropTypes.number.isRequired,
     row: PropTypes.number.isRequired,
     onTap: PropTypes.func.isRequired,
-    onPressAndHold: PropTypes.func.isRequired
+    onPressAndHold: PropTypes.func.isRequired,
+    onDragMove: PropTypes.func.isRequired
 };
 
 export default withStyles(styles)(Pixel);

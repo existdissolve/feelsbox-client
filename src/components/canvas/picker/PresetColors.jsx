@@ -18,7 +18,7 @@ export const PresetColors = ({colors, onClick = () => {}, onSwatchHover}) => {
             swatchWrap: {
                 width: '24px',
                 height: '24px',
-                margin: '0 10px 10px 0'
+                margin: '0 8px 8px 0'
             }
         },
         'no-presets': {
