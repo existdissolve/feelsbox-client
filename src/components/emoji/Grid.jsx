@@ -5,13 +5,7 @@ import GridList, {GridListTile} from 'material-ui/GridList';
 import Subheader from 'material-ui/List/ListSubheader';
 
 import Emoji from '-/components/emoji/Emoji';
-
-const categoryLabels = {
-    food: 'Food',
-    drink: 'Drink',
-    event: 'Holidays and Events',
-    misc: 'Miscellaneous'
-};
+import {categoryLabels} from '-/utils/categories';
 
 const styles = theme => ({
     root: {

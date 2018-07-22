@@ -19,6 +19,7 @@ import Dialog, {
     DialogContent,
     DialogTitle
 } from 'material-ui/Dialog';
+import {categoryLabels} from '-/utils/categories';
 
 class CanvasForm extends React.Component {
     constructor(props) {
@@ -140,10 +141,11 @@ class CanvasForm extends React.Component {
                             <Select
                                 value={this.state.category}
                                 onChange={this.onChange.bind(this, 'category')}>
-                                <MenuItem value="misc">Miscellaneous</MenuItem>
-                                <MenuItem value="food">Food</MenuItem>
-                                <MenuItem value="drink">Drinks</MenuItem>
-                                <MenuItem value="holiday">Holiday</MenuItem>
+                                {Object.keys(categoryLabels).map(key => {
+                                    return (
+                                        <MenuItem key={key} value={key}>{categoryLabels[key]}</MenuItem>
+                                    );
+                                })}
                             </Select>
                         </FormControl>
                     </DialogContent>

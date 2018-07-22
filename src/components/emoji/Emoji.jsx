@@ -15,7 +15,10 @@ const styles = {
         height: 80,
         margin: '10px auto',
         padding: 8,
-        boxShadow: '0px 1px 5px 0px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.2), 0px 3px 1px -2px rgba(0, 0, 0, 0.2)'
+        boxShadow: '0px 1px 5px 0px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.2), 0px 3px 1px -2px rgba(0, 0, 0, 0.2)',
+        '&:active': {
+            background: '#3f51b5'
+        }
     },
     gridList: {
         width: 64,
@@ -28,6 +31,7 @@ class Emoji extends React.Component {
         super(props);
 
         this.timer;
+        this.isDragging = false;
     }
 
     onTouchStart() {
@@ -47,6 +51,11 @@ class Emoji extends React.Component {
             return false;
         }
 
+        if (this.isDragging) {
+            this.isDragging = false;
+            return false;
+        }
+
         clearTimeout(this.timer);
         this.onTap(name);
     }
@@ -58,6 +67,12 @@ class Emoji extends React.Component {
             });
     }
 
+    onTouchMove(e) {
+        clearTimeout(this.timer);
+
+        this.isDragging = true;
+    }
+
     render() {
         const {classes, pixels, name} = this.props;
         const grid = new Array(64).fill(true);
@@ -65,7 +80,7 @@ class Emoji extends React.Component {
         return (
             <GridListTile style={{width: '33%'}}>
                 <div>
-                    <a className={classes.emoji} onTouchStart={this.onTouchStart.bind(this)} onTouchEnd={this.onTouchEnd.bind(this)}>
+                    <a id={name} className={classes.emoji} onTouchStart={this.onTouchStart.bind(this)} onTouchEnd={this.onTouchEnd.bind(this)} onTouchMove={this.onTouchMove.bind(this)}>
                         <GridList className={classes.gridList} cols={8} spacing={0} cellHeight={8}>
                             {grid.map((val, index) => {
                                 const num = index + 1;
