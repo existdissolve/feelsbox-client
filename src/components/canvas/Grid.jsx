@@ -17,7 +17,8 @@ const styles = theme => ({
         flexWrap: 'wrap',
         justifyContent: 'space-around',
         backgroundColor: theme.palette.background.paper,
-        padding: 10
+        padding: 10,
+        'overscroll-behavior': 'contain'
     },
     gridList: {
         justifyContent: 'center'
