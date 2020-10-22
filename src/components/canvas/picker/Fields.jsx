@@ -33,22 +33,22 @@ export const Fields = ({onChange, hex}) => {
             color.isValidHex(data.hex) && onChange({
                 hex: data.hex,
                 source: 'hex'
-            }, e)
+            }, e);
         }
-    }
+    };
 
     return (
         <div style={styles.fields} className="flexbox-fix">
             <div style={styles.double}>
                 <EditableInput
-                    style={{ input: styles.input, label: styles.label }}
+                    style={{input: styles.input, label: styles.label}}
                     label=""
                     value={hex.replace('#', '')}
                     onChange={handleChange}
                 />
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default Fields;

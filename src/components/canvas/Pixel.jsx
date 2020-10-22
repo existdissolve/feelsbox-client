@@ -1,13 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {withStyles} from 'material-ui/styles';
-import {GridListTile} from 'material-ui/GridList';
+import {withStyles} from '@material-ui/core/styles';
+import GridListTile from '@material-ui/core/GridListTile';
 import {includes} from 'lodash';
 
 const styles = {
     pixel: {
-        width: 40,
-        height: 40
+        flex: '1 1 0px',
+        flexBasis: 'calc(50vw / 4)',
+        height: 'calc(50vw / 4)'
     },
     even: {
         backgroundColor: '#000'

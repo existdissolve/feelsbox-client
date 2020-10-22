@@ -19,3 +19,9 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+/src/config.js
+config.js
+feelsbox-client.code-workspace
+keytmp.pem
+cert

@@ -1,26 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import IconButton from 'material-ui/IconButton';
-import MenuIcon from 'material-ui-icons/Menu';
-import InsertEmoticonIcon from 'material-ui-icons/InsertEmoticon';
-import PaletteIcon from 'material-ui-icons/Palette';
-import FileUploadIcon from 'material-ui-icons/FileUpload';
-import AcUnitIcon from 'material-ui-icons/AcUnit';
-import Drawer from 'material-ui/Drawer';
-import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
-import Divider from 'material-ui/Divider';
-import {withStyles} from 'material-ui/styles';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
+import PaletteIcon from '@material-ui/icons/Palette';
+import AcUnitIcon from '@material-ui/icons/AcUnit';
+import ListAltIcon from '@material-ui/icons/ListAlt';
+import VideoLabelIcon from '@material-ui/icons/VideoLabel';
+import Drawer from '@material-ui/core/Drawer';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import {withStyles} from '@material-ui/core/styles';
 import {Link} from 'react-router-dom';
-import axios from 'axios';
 
 const styles = {
     menuButton: {
         marginLeft: -12,
-        marginRight: 20,
+        marginRight: 20
     },
     link: {
         textDecoration: 'none',
-        marginLeft: '15px'
+        color: 'white'
     }
 };
 
@@ -42,14 +44,15 @@ class Navigation extends React.Component {
     };
 
     onWeatherClick = () => {
-        axios.get('https://feelsbox-server.herokuapp.com/weather')
+        /*axios.get(`${apiURL}/weather`)
             .catch(ex => {
                 console.log(ex);
-            });
-    }
+            });*/
+    };
 
     render() {
         const {classes} = this.props;
+        const {left} = this.state;
 
         return (
             <div>
@@ -61,7 +64,7 @@ class Navigation extends React.Component {
                 >
                     <MenuIcon />
                 </IconButton>
-                <Drawer open={this.state.left} onClose={this.toggleDrawer.bind(this, false)}>
+                <Drawer open={left} onClose={this.toggleDrawer.bind(this, false)}>
                     <div
                         tabIndex={0}
                         role="button"
@@ -73,24 +76,32 @@ class Navigation extends React.Component {
                                 <ListItemIcon>
                                     <InsertEmoticonIcon />
                                 </ListItemIcon>
-                                <Link to="/" className={classes.link}>
-                                    <ListItemText primary="Emojis" />
+                                <Link to="/feels" className={classes.link}>
+                                    <ListItemText primary="My Feels" />
                                 </Link>
                             </ListItem>
                             <ListItem button>
                                 <ListItemIcon>
                                     <PaletteIcon />
                                 </ListItemIcon>
-                                <Link to="/canvas" className={classes.link}>
-                                    <ListItemText primary="Create Emoji" />
+                                <Link to="/feels/search" className={classes.link}>
+                                    <ListItemText primary="Find Feels" />
                                 </Link>
                             </ListItem>
                             <ListItem button>
                                 <ListItemIcon>
-                                    <FileUploadIcon />
+                                    <ListAltIcon />
                                 </ListItemIcon>
-                                <Link to="/upload" className={classes.link}>
-                                    <ListItemText primary="Upload Emoji" />
+                                <Link to="/categories" className={classes.link}>
+                                    <ListItemText primary="Categories" />
+                                </Link>
+                            </ListItem>
+                            <ListItem button>
+                                <ListItemIcon>
+                                    <VideoLabelIcon />
+                                </ListItemIcon>
+                                <Link to="/devices" className={classes.link}>
+                                    <ListItemText primary="Devices" />
                                 </Link>
                             </ListItem>
                             <ListItem button>
@@ -109,7 +120,7 @@ class Navigation extends React.Component {
 }
 
 Navigation.propTypes = {
-    classes: PropTypes.object.isRequired,
+    classes: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(Navigation);

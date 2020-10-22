@@ -1,15 +1,15 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import reactCSS from 'reactcss'
+import React from 'react';
+import PropTypes from 'prop-types';
+import reactCSS from 'reactcss';
 
 import {CustomPicker} from 'react-color';
-import {Saturation, Hue, Alpha, Checkboard} from 'react-color/lib/components/common';
-import Fields from './Fields'
-import PresetColors from './PresetColors'
+import {Saturation, Hue, Checkboard} from 'react-color/lib/components/common';
+import Fields from './Fields';
+import PresetColors from './PresetColors';
 
 export const Feelsbox = props => {
     const {
-        width,
+        width = '100%',
         hex,
         rgb,
         hsl,
@@ -26,7 +26,7 @@ export const Feelsbox = props => {
                 width,
                 padding: '10px 10px 0',
                 boxSizing: 'initial',
-                background: '#fff'
+                background: '#222'
             },
             saturation: {
                 width: '100%',
@@ -104,18 +104,18 @@ export const Feelsbox = props => {
                 onSwatchHover={onSwatchHover}
             />
         </div>
-    )
-}
+    );
+};
 
 Feelsbox.propTypes = {
     width: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-}
+};
 
 Feelsbox.defaultProps = {
     presetColors: [
         '#D0021B', '#F5A623', '#F8E71C', '#8B572A', '#7ED321', '#417505',
         '#BD10E0', '#9013FE', '#4A90E2', '#50E3C2'
     ]
-}
+};
 
 export default CustomPicker(Feelsbox);
