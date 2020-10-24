@@ -145,10 +145,12 @@ class Thumb extends Component {
         }
 
         clearTimeout(this.timer);
+
         this.onTap(name);
     };
 
     onTap = feel => {
+
         /*axios.get(`${apiURL}/emote/${emoji}`)
             .catch(error => {
                 console.log(error);

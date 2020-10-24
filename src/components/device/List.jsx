@@ -53,20 +53,27 @@ class DeviceList extends React.Component {
 
     onCodeSubmit = async() => {
         const {code} = this.state;
-        const {submitAccessCode} = this.props;
+        const {showSnackbar, submitAccessCode} = this.props;
 
-        await submitAccessCode({
-            awaitRefetchQueries: true,
-            refetchQueries: [{
-                fetchPolicy: 'network-only',
-                query: getDevices
-            }],
-            variables: {
-                code: parseInt(code)
-            }
-        });
+        try {
+            await submitAccessCode({
+                awaitRefetchQueries: true,
+                refetchQueries: [{
+                    fetchPolicy: 'network-only',
+                    query: getDevices
+                }],
+                variables: {
+                    code: parseInt(code)
+                }
+            });
 
-        this.onDialogClose();
+            showSnackbar('Device Code was registered successfully!');
+
+            this.onDialogClose();
+        } catch (e) {
+            showSnackbar(e.message.replace('GraphQL error: ', ''));
+        }
+
     };
 
     onDeviceClick = _id => {

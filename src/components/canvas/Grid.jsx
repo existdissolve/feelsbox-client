@@ -26,6 +26,7 @@ import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import SaveIcon from '@material-ui/icons/Save';
 import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
+import SettingsRemoteOutlinedIcon from '@material-ui/icons/SettingsRemoteOutlined';
 import UndoIcon from '@material-ui/icons/Undo';
 import {get, isEmpty, pick, set} from 'lodash';
 
@@ -33,7 +34,8 @@ import AppBar from '-/components/AppBar';
 import Pixel from '-/components/canvas/Pixel';
 import Feelsbox from '-/components/canvas/picker/Feelsbox';
 import Form from '-/components/canvas/Form';
-import {addFeel, editFeel, getFeel} from '-/graphql/feel';
+import FrameForm from '-/components/canvas/FrameForm';
+import {addFeel, editFeel, getFeel, testFeel} from '-/graphql/feel';
 
 const styles = theme => ({
     root: {
@@ -66,9 +68,13 @@ const styles = theme => ({
 
 const scrubData = source => {
     const data = pick(source, ['_id', 'category', 'fps', 'frames', 'name', 'private', 'repeat', 'reverse']);
-    const {frames} = data;
+    const {category, fps, frames} = data;
 
-    data.fps = parseInt(data.fps);
+    if (typeof category === 'object') {
+        data.category = category._id;
+    }
+
+    data.fps = parseInt(fps) || 0;
     data.frames = frames.map(frame => {
         const cleanFrame = pick(frame, ['isThumb', 'pixels']);
         const {pixels = []} = cleanFrame;
@@ -96,6 +102,7 @@ class CanvasGrid extends React.Component {
             currentFrame: 0,
             data: {},
             frames: [],
+            frameTestOpen: false,
             history: [],
             livePixels: [],
             open: false,
@@ -103,7 +110,10 @@ class CanvasGrid extends React.Component {
                 '#D0021B', '#F5A623', '#F8E71C', '#8B572A', '#7ED321', '#417505',
                 '#BD10E0', '#9013FE', '#4A90E2', '#50E3C2'
             ],
-            selectedColor: '#ffffff'
+            selectedColor: '#ffffff',
+            testFps: 0,
+            testRepeat: false,
+            testReverse: false
         };
     }
 
@@ -117,7 +127,7 @@ class CanvasGrid extends React.Component {
 
             this.setState({
                 currentFrame: 0,
-                data: feel,
+                data: scrubData(feel),
                 frames: feel.frames.slice(),
                 history: [],
                 livePixels: pixels.slice(),
@@ -142,6 +152,15 @@ class CanvasGrid extends React.Component {
                 ...data,
                 [name]: type === 'checkbox' ? checked : value
             }
+        });
+    };
+
+    onFramesTestChange = e => {
+        const target = get(e, 'target', {});
+        const {checked, name, type, value} = target;
+
+        this.setState({
+            [name]: type === 'checkbox' ? checked : value
         });
     };
 
@@ -172,14 +191,32 @@ class CanvasGrid extends React.Component {
     };
 
     onTestClick = () => {
-        const {pixels: source} = this.state;
-        const pixels = preparePixels(source);
+        const {testFeel} = this.props;
+        const {currentFrame, data: rawData} = this.state;
+        const feel = pick(scrubData(rawData), ['frames']);
 
-        /*axios.post(`${apiURL}/emoji`, {
-            pixels
-        }).catch(error => {
-            console.log(error);
-        });*/
+        feel.frames = [feel.frames[currentFrame]];
+
+        testFeel({
+            variables: {feel}
+        });
+    };
+
+    onFramesTestClick = () => {
+        const {testFeel} = this.props;
+        const {data: rawData, testFps: fps, testRepeat: repeat, testReverse: reverse} = this.state;
+        const feel = pick(scrubData(rawData), ['frames']);
+
+        testFeel({
+            variables: {
+                feel: {
+                    ...feel,
+                    fps: parseInt(fps),
+                    repeat,
+                    reverse
+                }
+            }
+        });
     };
 
     onEditClick = () => {
@@ -188,6 +225,10 @@ class CanvasGrid extends React.Component {
 
     onDialogClose = () => {
         this.setState({open: false});
+    };
+
+    onFramesFormClose = () => {
+        this.setState({frameTestOpen: false});
     };
 
     onClearClick = () => {
@@ -249,9 +290,7 @@ class CanvasGrid extends React.Component {
         newHistory.splice(currentFrame, 1);
         newFrames.splice(currentFrame, 1);
 
-        const livePixels = {
-            ...get(newFrames, `${nextFrame}.pixels`, [])
-        };
+        const livePixels = get(newFrames, `${nextFrame}.pixels`, []);
 
         this.setState({
             ...this.state,
@@ -445,12 +484,27 @@ class CanvasGrid extends React.Component {
         this.setState({anchorEl: null});
     };
 
+    onTestFramesClick = () => {
+        this.setState({frameTestOpen: true});
+    };
+
+    onTestFramesMenuClose = () => {
+        this.setState({frameTestOpen: false});
+    };
+
     renderIcons() {
+        const {frames = []} = this.state;
+
         return (
             <React.Fragment>
                 <IconButton onClick={this.onTestClick}>
                     <SettingsRemoteIcon />
                 </IconButton>
+                {frames.length > 1 &&
+                    <IconButton onClick={this.onTestFramesClick}>
+                        <SettingsRemoteOutlinedIcon />
+                    </IconButton>
+                }
                 <IconButton onClick={this.onEditClick}>
                     <SaveIcon />
                 </IconButton>
@@ -461,7 +515,7 @@ class CanvasGrid extends React.Component {
     render() {
         const {classes} = this.props;
         const nodes = Array(64).fill(true);
-        const {anchorEl, currentFrame, data, frames = [], history, livePixels, name, open, presetColors, selectedColor} = this.state;
+        const {anchorEl, currentFrame, data, frames = [], frameTestOpen, history, livePixels, open, presetColors, selectedColor, testFps, testRepeat, testReverse} = this.state;
         const _id = get(this.props, 'match.params._id');
         const frameHistory = history[currentFrame] || [];
         const frameCount = frames.length || 1;
@@ -513,10 +567,20 @@ class CanvasGrid extends React.Component {
                         </MenuItem>
                     }
                 </Menu>
-                <Dialog open={open} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
-                    <DialogTitle id="form-dialog-title">Save Emoji</DialogTitle>
+                <Dialog open={frameTestOpen} onClose={this.onFramesFormClose} aria-labelledby="form-frame-title">
+                    <DialogTitle id="form-frame-title">Test All Frames</DialogTitle>
                     <DialogContent>
-                        <Form onChange={this.onDataChange} formData={data} />
+                        <FrameForm onChange={this.onFramesTestChange} fps={testFps} repeat={testRepeat} reverse={testReverse} />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.onFramesFormClose} color="primary">Close</Button>
+                        <Button onClick={this.onFramesTestClick.bind(this)} color="primary">Test</Button>
+                    </DialogActions>
+                </Dialog>
+                <Dialog open={open} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
+                    <DialogTitle id="form-dialog-title">Save Feel</DialogTitle>
+                    <DialogContent>
+                        <Form onChange={this.onDataChange} formData={data} frames={frames} />
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={this.onDialogClose} color="primary">Cancel</Button>
@@ -571,6 +635,7 @@ export default withRouter(
         }),
         graphql(addFeel, {name: 'addFeel'}),
         graphql(editFeel, {name: 'editFeel'}),
+        graphql(testFeel, {name: 'testFeel'}),
         withStyles(styles)
     )(CanvasGrid)
 );
