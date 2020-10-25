@@ -27,14 +27,16 @@ import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import SaveIcon from '@material-ui/icons/Save';
 import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
 import SettingsRemoteOutlinedIcon from '@material-ui/icons/SettingsRemoteOutlined';
+import TuneIcon from '@material-ui/icons/Tune';
 import UndoIcon from '@material-ui/icons/Undo';
-import {get, isEmpty, pick, set} from 'lodash';
+import {cloneDeep, get, isEmpty, pick, set} from 'lodash';
 
 import AppBar from '-/components/AppBar';
 import Pixel from '-/components/canvas/Pixel';
 import Feelsbox from '-/components/canvas/picker/Feelsbox';
 import Form from '-/components/canvas/Form';
 import FrameForm from '-/components/canvas/FrameForm';
+import TuneForm from '-/components/canvas/TuneForm';
 import {addFeel, editFeel, getFeel, testFeel} from '-/graphql/feel';
 
 const styles = theme => ({
@@ -76,7 +78,7 @@ const scrubData = source => {
 
     data.duration = parseInt(duration) || 0;
     data.frames = frames.map(frame => {
-        const cleanFrame = pick(frame, ['brightness', 'isThumb', 'pixels']);
+        const cleanFrame = pick(frame, ['brightness', 'duration', 'isThumb', 'pixels']);
         const {pixels = []} = cleanFrame;
 
         cleanFrame.pixels = pixels.map(pixel => {
@@ -113,7 +115,8 @@ class CanvasGrid extends React.Component {
             selectedColor: '#ffffff',
             testDuration: 1000,
             testRepeat: false,
-            testReverse: false
+            testReverse: false,
+            tuneOpen: false
         };
     }
 
@@ -162,6 +165,20 @@ class CanvasGrid extends React.Component {
         this.setState({
             [name]: type === 'checkbox' ? checked : value
         });
+    };
+
+    onTuneChange = e => {
+        const target = get(e, 'target', {});
+        const {name, value} = target;
+        const {currentFrame, data: oldData, frames: oldFrames} = this.state;
+        const data = cloneDeep(oldData);
+        const frames = cloneDeep(oldFrames);
+        const finalValue = parseInt(value);
+
+        set(data, `frames.${currentFrame}.${name}`, finalValue);
+        set(frames, `${currentFrame}.${name}`, finalValue);
+
+        this.setState({data, frames});
     };
 
     onSaveClick = async() => {
@@ -480,6 +497,14 @@ class CanvasGrid extends React.Component {
         this.setState({anchorEl});
     };
 
+    onTuneClick = () => {
+        this.setState({tuneOpen: true});
+    };
+
+    onTuneClose = () => {
+        this.setState({tuneOpen: false});
+    };
+
     onMenuClose = () => {
         this.setState({anchorEl: null});
     };
@@ -515,7 +540,7 @@ class CanvasGrid extends React.Component {
     render() {
         const {classes} = this.props;
         const nodes = Array(64).fill(true);
-        const {anchorEl, currentFrame, data, frames = [], frameTestOpen, history, livePixels, open, presetColors, selectedColor, testDuration, testRepeat, testReverse} = this.state;
+        const {anchorEl, currentFrame, data, frames = [], frameTestOpen, history, livePixels, open, presetColors, selectedColor, testDuration, testRepeat, testReverse, tuneOpen} = this.state;
         const _id = get(this.props, 'match.params._id');
         const frameHistory = history[currentFrame] || [];
         const frameCount = frames.length || 1;
@@ -523,6 +548,8 @@ class CanvasGrid extends React.Component {
         const isNextActive = frameCount > (currentFrame + 1);
         const isPrevActive = currentFrame !== 0;
         const isDeleteActive = frameCount > 1;
+        const activeFrame = get(data, `frames.${currentFrame}`) || {};
+        const {brightness: currentFrameBrightness, duration: currentFrameDuration} = activeFrame;
 
         return (
             <div>
@@ -542,6 +569,9 @@ class CanvasGrid extends React.Component {
                     </IconButton>
                     <IconButton onClick={this.onFrameMenuClick}>
                         <LibraryAddIcon />
+                    </IconButton>
+                    <IconButton onClick={this.onTuneClick}>
+                        <TuneIcon />
                     </IconButton>
                     <Typography variant="button" className={classes.frameCount}>{currentFrame + 1} / {frameCount}</Typography>
                 </Toolbar>
@@ -567,6 +597,15 @@ class CanvasGrid extends React.Component {
                         </MenuItem>
                     }
                 </Menu>
+                <Dialog open={tuneOpen} onClose={this.onTuneClose} aria-labelledby="form-tune-title">
+                    <DialogTitle id="form-tune-title">Frame Options</DialogTitle>
+                    <DialogContent>
+                        <TuneForm onChange={this.onTuneChange} hasMultipleFrames={frames.length > 1} brightness={currentFrameBrightness} duration={currentFrameDuration} />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.onTuneClose} color="primary">Close</Button>
+                    </DialogActions>
+                </Dialog>
                 <Dialog open={frameTestOpen} onClose={this.onFramesFormClose} aria-labelledby="form-frame-title">
                     <DialogTitle id="form-frame-title">Test All Frames</DialogTitle>
                     <DialogContent>

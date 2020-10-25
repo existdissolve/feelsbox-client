@@ -31,7 +31,7 @@ class CanvasForm extends Component {
 
         return (
             <div>
-                <TextField name="name" autoFocus margin="dense" label="Emoji Name" fullWidth value={name} onChange={onChange} />
+                <TextField name="name" autoFocus margin="dense" label="Feel Name" fullWidth value={name} onChange={onChange} />
                 <FormControl fullWidth>
                     <InputLabel>Category</InputLabel>
                     <Select name="category" value={category} onChange={onChange}>
@@ -46,7 +46,7 @@ class CanvasForm extends Component {
                 </FormControl>
                 {hasMultipleFrames &&
                     <Fragment>
-                        <TextField name="duration" margin="dense" label="Frame Length" fullWidth value={duration || 1000} onChange={onChange} type="number" inputProps={{min: 1, max: 1000000}}  />
+                        <TextField name="duration" margin="dense" label="Default Frame Length (ms)" fullWidth value={duration || 1000} onChange={onChange} type="number" inputProps={{min: 1, max: 1000000}}  />
                         <FormControl fullWidth>
                             <FormControlLabel control={repeatSwitch} label="Loop?" />
                         </FormControl>

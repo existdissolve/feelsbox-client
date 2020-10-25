@@ -19,7 +19,7 @@ class FramesForm extends Component {
 
         return (
             <div>
-                <TextField name="testFps" margin="dense" label="Frame Length" fullWidth value={duration || 1000} onChange={onChange} type="number" inputProps={{min: 1, max: 100000}}  />
+                <TextField name="testDuration" margin="dense" label="Frame Length (ms)" fullWidth value={duration || 1000} onChange={onChange} type="number" inputProps={{min: 1, max: 100000}}  />
                 <FormControl fullWidth>
                     <FormControlLabel control={repeatSwitch} label="Loop?" />
                 </FormControl>
