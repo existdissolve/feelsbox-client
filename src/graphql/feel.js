@@ -24,11 +24,11 @@ export const getFeel = gql`
                 _id
                 name
             }
-            fps
+            duration
             frames {
+                brightness
                 isThumb
                 pixels {
-                    brightness
                     color
                     position
                 }
@@ -51,9 +51,9 @@ export const getFeels = gql`
                 name
             }
             frames {
+                brightness
                 isThumb
                 pixels {
-                    brightness
                     color
                     position
                 }

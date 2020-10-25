@@ -67,20 +67,20 @@ const styles = theme => ({
 });
 
 const scrubData = source => {
-    const data = pick(source, ['_id', 'category', 'fps', 'frames', 'name', 'private', 'repeat', 'reverse']);
-    const {category, fps, frames} = data;
+    const data = pick(source, ['_id', 'category', 'duration', 'frames', 'name', 'private', 'repeat', 'reverse']);
+    const {category, duration, frames} = data;
 
     if (typeof category === 'object') {
         data.category = category._id;
     }
 
-    data.fps = parseInt(fps) || 0;
+    data.duration = parseInt(duration) || 0;
     data.frames = frames.map(frame => {
-        const cleanFrame = pick(frame, ['isThumb', 'pixels']);
+        const cleanFrame = pick(frame, ['brightness', 'isThumb', 'pixels']);
         const {pixels = []} = cleanFrame;
 
         cleanFrame.pixels = pixels.map(pixel => {
-            return pick(pixel, ['brightness', 'color', 'position']);
+            return pick(pixel, ['color', 'position']);
         });
 
         return cleanFrame;
@@ -111,7 +111,7 @@ class CanvasGrid extends React.Component {
                 '#BD10E0', '#9013FE', '#4A90E2', '#50E3C2'
             ],
             selectedColor: '#ffffff',
-            testFps: 0,
+            testDuration: 1000,
             testRepeat: false,
             testReverse: false
         };
@@ -204,14 +204,14 @@ class CanvasGrid extends React.Component {
 
     onFramesTestClick = () => {
         const {testFeel} = this.props;
-        const {data: rawData, testFps: fps, testRepeat: repeat, testReverse: reverse} = this.state;
+        const {data: rawData, testDuration: duration, testRepeat: repeat, testReverse: reverse} = this.state;
         const feel = pick(scrubData(rawData), ['frames']);
 
         testFeel({
             variables: {
                 feel: {
                     ...feel,
-                    fps: parseInt(fps),
+                    duration: parseInt(duration),
                     repeat,
                     reverse
                 }
@@ -515,7 +515,7 @@ class CanvasGrid extends React.Component {
     render() {
         const {classes} = this.props;
         const nodes = Array(64).fill(true);
-        const {anchorEl, currentFrame, data, frames = [], frameTestOpen, history, livePixels, open, presetColors, selectedColor, testFps, testRepeat, testReverse} = this.state;
+        const {anchorEl, currentFrame, data, frames = [], frameTestOpen, history, livePixels, open, presetColors, selectedColor, testDuration, testRepeat, testReverse} = this.state;
         const _id = get(this.props, 'match.params._id');
         const frameHistory = history[currentFrame] || [];
         const frameCount = frames.length || 1;
@@ -570,7 +570,7 @@ class CanvasGrid extends React.Component {
                 <Dialog open={frameTestOpen} onClose={this.onFramesFormClose} aria-labelledby="form-frame-title">
                     <DialogTitle id="form-frame-title">Test All Frames</DialogTitle>
                     <DialogContent>
-                        <FrameForm onChange={this.onFramesTestChange} fps={testFps} repeat={testRepeat} reverse={testReverse} />
+                        <FrameForm onChange={this.onFramesTestChange} duration={testDuration} repeat={testRepeat} reverse={testReverse} />
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={this.onFramesFormClose} color="primary">Close</Button>

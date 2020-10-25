@@ -16,7 +16,7 @@ import {getMyCategories} from '-/graphql/category';
 class CanvasForm extends Component {
     render() {
         const {formData = {}, frames = [], onChange} = this.props;
-        const {category = '', fps = 0, name = '', private: isPrivate = false, repeat = false, reverse = false} = formData;
+        const {category = '', duration = 1000, name = '', private: isPrivate = false, repeat = false, reverse = false} = formData;
         const categories = get(this.props, 'data.myCategories') || [];
         const hasMultipleFrames = frames.length > 1;
         const privateSwitch = (
@@ -46,7 +46,7 @@ class CanvasForm extends Component {
                 </FormControl>
                 {hasMultipleFrames &&
                     <Fragment>
-                        <TextField name="fps" margin="dense" label="Frames Per Second" fullWidth value={fps || 0} onChange={onChange} type="number" inputProps={{min: 0, max: 100}}  />
+                        <TextField name="duration" margin="dense" label="Frame Length" fullWidth value={duration || 1000} onChange={onChange} type="number" inputProps={{min: 1, max: 1000000}}  />
                         <FormControl fullWidth>
                             <FormControlLabel control={repeatSwitch} label="Loop?" />
                         </FormControl>

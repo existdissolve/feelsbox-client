@@ -8,7 +8,7 @@ import Switch from '@material-ui/core/Switch';
 
 class FramesForm extends Component {
     render() {
-        const {fps, onChange, repeat, reverse} = this.props;
+        const {duration, onChange, repeat, reverse} = this.props;
 
         const reverseSwitch = (
             <Switch name="testReverse" checked={!!reverse} onChange={onChange} />
@@ -19,7 +19,7 @@ class FramesForm extends Component {
 
         return (
             <div>
-                <TextField name="testFps" margin="dense" label="Frames Per Second" fullWidth value={fps || 0} onChange={onChange} type="number" inputProps={{min: 0, max: 100}}  />
+                <TextField name="testFps" margin="dense" label="Frame Length" fullWidth value={duration || 1000} onChange={onChange} type="number" inputProps={{min: 1, max: 100000}}  />
                 <FormControl fullWidth>
                     <FormControlLabel control={repeatSwitch} label="Loop?" />
                 </FormControl>
