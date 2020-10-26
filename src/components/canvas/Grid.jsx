@@ -29,7 +29,7 @@ import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
 import SettingsRemoteOutlinedIcon from '@material-ui/icons/SettingsRemoteOutlined';
 import TuneIcon from '@material-ui/icons/Tune';
 import UndoIcon from '@material-ui/icons/Undo';
-import {cloneDeep, get, isEmpty, pick, set} from 'lodash';
+import {cloneDeep, get, isEmpty, pick, set, uniq} from 'lodash';
 
 import AppBar from '-/components/AppBar';
 import Pixel from '-/components/canvas/Pixel';
@@ -69,7 +69,8 @@ const styles = theme => ({
 });
 
 const scrubData = source => {
-    const data = pick(source, ['_id', 'category', 'duration', 'frames', 'name', 'private', 'repeat', 'reverse']);
+    const clonedSource = cloneDeep(source);
+    const data = pick(clonedSource, ['_id', 'category', 'duration', 'frames', 'name', 'private', 'repeat', 'reverse']);
     const {category, duration, frames} = data;
 
     if (typeof category === 'object') {
@@ -209,8 +210,8 @@ class CanvasGrid extends React.Component {
 
     onTestClick = () => {
         const {testFeel} = this.props;
-        const {currentFrame, data: rawData} = this.state;
-        const feel = pick(scrubData(rawData), ['frames']);
+        const {currentFrame, frames} = this.state;
+        const feel = pick(scrubData({frames}), ['frames']);
 
         feel.frames = [feel.frames[currentFrame]];
 
@@ -221,8 +222,8 @@ class CanvasGrid extends React.Component {
 
     onFramesTestClick = () => {
         const {testFeel} = this.props;
-        const {data: rawData, testDuration: duration, testRepeat: repeat, testReverse: reverse} = this.state;
-        const feel = pick(scrubData(rawData), ['frames']);
+        const {frames, testDuration: duration, testRepeat: repeat, testReverse: reverse} = this.state;
+        const feel = pick(scrubData({frames}), ['frames']);
 
         testFeel({
             variables: {
@@ -378,8 +379,8 @@ class CanvasGrid extends React.Component {
         }
 
         const newHistory = history.slice();
-        const oldFrames = frames.slice();
-        const newFrames = frames.slice();
+        const oldFrames = cloneDeep(frames);
+        const newFrames = cloneDeep(frames);
         const color = selectedColor.hex.toUpperCase().replace('#', '');
         const colors = presetColors.slice();
         const pixelsToColor = drawnIndices.length ? drawnIndices : [index];
@@ -540,7 +541,7 @@ class CanvasGrid extends React.Component {
     render() {
         const {classes} = this.props;
         const nodes = Array(64).fill(true);
-        const {anchorEl, currentFrame, data, frames = [], frameTestOpen, history, livePixels, open, presetColors, selectedColor, testDuration, testRepeat, testReverse, tuneOpen} = this.state;
+        const {anchorEl, currentFrame, data, frames = [], frameTestOpen, history, livePixels, open, selectedColor, testDuration, testRepeat, testReverse, tuneOpen} = this.state;
         const _id = get(this.props, 'match.params._id');
         const frameHistory = history[currentFrame] || [];
         const frameCount = frames.length || 1;
@@ -550,6 +551,11 @@ class CanvasGrid extends React.Component {
         const isDeleteActive = frameCount > 1;
         const activeFrame = get(data, `frames.${currentFrame}`) || {};
         const {brightness: currentFrameBrightness, duration: currentFrameDuration} = activeFrame;
+        const presetColors = uniq(livePixels.map(pixel => {
+            const {color} = pixel;
+
+            return `#${color}`;
+        }));
 
         return (
             <div>
