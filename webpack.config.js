@@ -3,6 +3,7 @@ const fs = require('fs');
 const webpack = require('webpack');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
+const Dotenv = require('dotenv-webpack');
 
 const htmlPlugin = new HtmlWebPackPlugin({
     template: './src/index.html',
@@ -50,7 +51,7 @@ module.exports = {
         port: 8081,
         proxy: {
             '/api/**': {
-                target: 'https://localhost:3000',
+                target: 'https://localhost:5000',
                 secure: false
             }
         }
@@ -66,7 +67,7 @@ module.exports = {
             chunks: 'all'
         }
     },
-    plugins: [htmlPlugin, manifestPlugin, hotModule],
+    plugins: [htmlPlugin, manifestPlugin, hotModule, new Dotenv()],
     resolve: {
         alias: {
             '-': path.join(__dirname, 'src'),

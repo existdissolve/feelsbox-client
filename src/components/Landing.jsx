@@ -15,10 +15,8 @@ import Login from '-/components/Login';
 import {login} from '-/graphql/authentication';
 import client from '-/graphql/client';
 import withSnackbar from '-/components/hoc/withSnackbar';
-import config from '-/../config';
 
 var auth2;
-const env = process.env.NODE_ENV;
 
 class Landing extends Component {
     constructor(props) {
@@ -48,8 +46,8 @@ class Landing extends Component {
     };
 
     componentDidMount() {
-        const client_id = get(config, `${env}.google.client_id`);
-        const appId = get(config, `${env}.facebook.appId`);
+        const client_id = process.env.GOOGLE_CLIENTID;
+        const appId = process.env.FACEBOOK_APPID;
 
         this.addScript('google-jssdk', '//apis.google.com/js/platform.js?onload=googleAsyncInit');
         this.addScript('facebook-jssdk', '//connect.facebook.net/en_US/sdk.js');

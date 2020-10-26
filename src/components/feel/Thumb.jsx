@@ -134,7 +134,6 @@ class Thumb extends Component {
     };
 
     onTouchEnd = () => {
-        console.log(this.props.feel)
         const _id = get(this.props, 'feel._id');
 
         if (!this.timer) {
@@ -159,7 +158,7 @@ class Thumb extends Component {
         });
     };
 
-    onTouchMove = e => {
+    onTouchMove = () => {
         clearTimeout(this.timer);
 
         this.isDragging = true;
