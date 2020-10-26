@@ -2,6 +2,7 @@ import {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
 import {get} from 'lodash';
 import {compose} from 'recompose';
+import {graphql} from 'react-apollo';
 
 import {withStyles} from '@material-ui/core/styles';
 import {withRouter} from 'react-router-dom';
@@ -20,7 +21,7 @@ import AddBoxIcon from '@material-ui/icons/AddBox';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
-import {removeFeel, subscribe, unsubscribe} from '-/graphql/feel';
+import {removeFeel, sendFeel, subscribe, unsubscribe} from '-/graphql/feel';
 import client from '-/graphql/client';
 
 const styles = {
@@ -133,7 +134,8 @@ class Thumb extends Component {
     };
 
     onTouchEnd = () => {
-        const name = get(this.props, 'feel.name');
+        console.log(this.props.feel)
+        const _id = get(this.props, 'feel._id');
 
         if (!this.timer) {
             return false;
@@ -146,16 +148,15 @@ class Thumb extends Component {
 
         clearTimeout(this.timer);
 
-        this.onTap(name);
+        this.onTap(_id);
     };
 
-    onTap = feel => {
+    onTap = _id => {
+        const {sendFeel} = this.props;
 
-        /*axios.get(`${apiURL}/emote/${emoji}`)
-            .catch(error => {
-                console.log(error);
-            });
-        */
+        sendFeel({
+            variables: {_id}
+        });
     };
 
     onTouchMove = e => {
@@ -256,6 +257,7 @@ Thumb.propTypes = {
 
 export default withRouter(
     compose(
+        graphql(sendFeel, {name: 'sendFeel'}),
         withStyles(styles)
     )(Thumb)
 );

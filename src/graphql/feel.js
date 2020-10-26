@@ -85,6 +85,12 @@ export const subscribe = gql`
     }
 `;
 
+export const sendFeel = gql`
+    mutation sendFeel($_id: ID!) {
+        sendFeel(_id: $_id)
+    }
+`;
+
 export const testFeel = gql`
     mutation testFeel($feel: TestFeelInput!) {
         testFeel(feel: $feel)

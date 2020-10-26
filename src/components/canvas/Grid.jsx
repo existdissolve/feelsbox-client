@@ -109,10 +109,6 @@ class CanvasGrid extends React.Component {
             history: [],
             livePixels: [],
             open: false,
-            presetColors: [
-                '#D0021B', '#F5A623', '#F8E71C', '#8B572A', '#7ED321', '#417505',
-                '#BD10E0', '#9013FE', '#4A90E2', '#50E3C2'
-            ],
             selectedColor: '#ffffff',
             testDuration: 1000,
             testRepeat: false,
@@ -263,14 +259,16 @@ class CanvasGrid extends React.Component {
     };
 
     onDuplicateClick = () => {
-        const {currentFrame, frames, history, livePixels} = this.state;
-        const newHistory = history.slice();
-        const newFrames = frames.slice();
-        const newPixelState = livePixels.slice();
-        const nextFrame = currentFrame + 1;
+        const {currentFrame, frames, history} = this.state;
+        const newHistory = cloneDeep(history);
+        const newFrames = cloneDeep(frames);
+        const newFrame = newFrames[currentFrame];
+        const {pixels} = newFrame;
+        const newPixelState = cloneDeep(pixels);
+        const nextFrame = frames.length;
 
         newHistory[nextFrame] = [newPixelState];
-        newFrames[nextFrame] = {pixels: newPixelState};
+        newFrames[nextFrame] = newFrame;
 
         this.setState({
             ...this.state,
@@ -370,8 +368,7 @@ class CanvasGrid extends React.Component {
             selectedColor,
             frames = [],
             history = [],
-            livePixels = [],
-            presetColors = []
+            livePixels = []
         } = this.state;
 
         if (!selectedColor.hex) {
@@ -382,7 +379,6 @@ class CanvasGrid extends React.Component {
         const oldFrames = cloneDeep(frames);
         const newFrames = cloneDeep(frames);
         const color = selectedColor.hex.toUpperCase().replace('#', '');
-        const colors = presetColors.slice();
         const pixelsToColor = drawnIndices.length ? drawnIndices : [index];
         // old pixel state is authoritative version of last true state
         const oldPixelState = get(oldFrames, `${currentFrame}.pixels`, []);
@@ -414,18 +410,13 @@ class CanvasGrid extends React.Component {
             newHistory[currentFrame].push([]);
         }
 
-        if (!colors.includes(color)) {
-            colors.push(color);
-        }
-
         set(newFrames, `${currentFrame}.pixels`, newPixelState);
 
         this.setState({
             ...this.state,
             frames: newFrames,
             history: newHistory,
-            livePixels: newPixelState,
-            presetColors: colors
+            livePixels: newPixelState
         });
     }
 
