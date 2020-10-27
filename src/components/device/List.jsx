@@ -1,4 +1,4 @@
-import React from 'react';
+import {Component, Fragment} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import {graphql} from 'react-apollo';
 import {compose} from 'recompose';
@@ -22,11 +22,13 @@ import TextField from '@material-ui/core/TextField';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
 import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
 import {get} from 'lodash';
 
 import AppBar from '-/components/AppBar';
 import {getDevices, submitAccessCode} from '-/graphql/device';
+import {setDefaultDevice} from '-/graphql/user';
 
 const styles = theme => ({
     root: {
@@ -34,7 +36,7 @@ const styles = theme => ({
     }
 });
 
-class DeviceList extends React.Component {
+class DeviceList extends Component {
     constructor(props) {
         super(props);
 
@@ -74,6 +76,21 @@ class DeviceList extends React.Component {
             showSnackbar(e.message.replace('GraphQL error: ', ''));
         }
 
+    };
+
+    onDefaultClick = async _id => {
+        const {setDefaultDevice, showSnackbar} = this.props;
+
+        await setDefaultDevice({
+            awaitRefetchQueries: true,
+            refetchQueries: [{
+                fetchPolicy: 'network-only',
+                query: getDevices
+            }],
+            variables: {_id}
+        });
+
+        showSnackbar('Default device set successfully!');
     };
 
     onDeviceClick = _id => {
@@ -162,15 +179,15 @@ class DeviceList extends React.Component {
                             const isMine = key === 'mine';
 
                             return (
-                                <React.Fragment key={key}>
+                                <Fragment key={key}>
                                     <ListSubheader>{label}</ListSubheader>
                                     {devices.map((device, idx) => {
-                                        const {_id, name} = device;
+                                        const {_id, isDefault, name} = device;
 
                                         return (
-                                            <React.Fragment key={_id}>
-                                                <ListItem button={isMine || undefined} onClick={isMine ? this.onDeviceClick.bind(this, _id) : undefined}>
-                                                    <ListItemIcon>
+                                            <Fragment key={_id}>
+                                                <ListItem>
+                                                    <ListItemIcon button={isMine || undefined} onClick={isMine ? this.onDeviceClick.bind(this, _id) : undefined}>
                                                         {isMine ?
                                                             <AccountCircleIcon />
                                                             :
@@ -178,12 +195,15 @@ class DeviceList extends React.Component {
                                                         }
                                                     </ListItemIcon>
                                                     <ListItemText primary={name} />
+                                                    <ListItemIcon>
+                                                        <SettingsRemoteIcon onClick={this.onDefaultClick.bind(this, _id)} style={{color: isDefault ? 'green' : undefined}} />
+                                                    </ListItemIcon>
                                                 </ListItem>
                                                 {idx !== devices.length - 1 && <Divider />}
-                                            </React.Fragment>
+                                            </Fragment>
                                         );
                                     })}
-                                </React.Fragment>
+                                </Fragment>
                             );
                         })}
                     </List>
@@ -202,6 +222,7 @@ export default withRouter(
             }
         }),
         graphql(submitAccessCode, {name: 'submitAccessCode'}),
+        graphql(setDefaultDevice, {name: 'setDefaultDevice'}),
         withStyles(styles),
 
     )(DeviceList)

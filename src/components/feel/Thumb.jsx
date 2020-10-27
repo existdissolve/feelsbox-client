@@ -7,11 +7,18 @@ import {graphql} from 'react-apollo';
 import {withStyles} from '@material-ui/core/styles';
 import {withRouter} from 'react-router-dom';
 import Button from '@material-ui/core/Button';
+import Checkbox from '@material-ui/core/Checkbox';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import FlipToBackIcon from '@material-ui/icons/FlipToBack';
+import FormLabel from '@material-ui/core/FormLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -21,7 +28,9 @@ import AddBoxIcon from '@material-ui/icons/AddBox';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
-import {removeFeel, sendFeel, subscribe, unsubscribe} from '-/graphql/feel';
+import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
+import {getDevices} from '-/graphql/device';
+import {copyFeel, getFeels, removeFeel, sendFeel, subscribe, unsubscribe} from '-/graphql/feel';
 import client from '-/graphql/client';
 
 const styles = {
@@ -53,7 +62,9 @@ class Thumb extends Component {
 
         this.state = {
             anchorEl: undefined,
-            dialogEl: undefined
+            dialogEl: undefined,
+            deviceEl: undefined,
+            selectedDevices: []
         };
     }
 
@@ -69,12 +80,52 @@ class Thumb extends Component {
         this.setState({dialogEl: e.target});
     };
 
+    onPushClick = e => {
+        this.onMenuClose();
+        this.setState({deviceEl: e.target});
+    };
+
+    onPushDevicesClick = () => {
+        const {sendFeel} = this.props;
+        const {selectedDevices} = this.state;
+        const _id = get(this.props, 'feel._id');
+
+        sendFeel({
+            variables: {
+                _id,
+                data: {devices: selectedDevices}
+            }
+        });
+    };
+
+    onDeviceCheck = e => {
+        const {selectedDevices} = this.state;
+        const devices = selectedDevices.slice();
+        const {target} = e;
+        const {checked, name} = target;
+
+        if (checked) {
+            devices.push(name);
+        } else {
+            const index = devices.findIndex(item => item === name);
+
+            if (index !== -1) {
+                devices.splice(index, 1);
+            }
+        }
+
+        this.setState({selectedDevices: devices});
+    };
+
     onMenuClose = () => {
         this.setState({anchorEl: undefined});
     };
 
     onDialogClose = () => {
-        this.setState({dialogEl: undefined});
+        this.setState({
+            deviceEl: undefined,
+            dialogEl: undefined
+        });
     };
 
     onDialogSubmit = async() => {
@@ -89,6 +140,25 @@ class Thumb extends Component {
         });
 
         this.onDialogClose();
+    };
+
+    onCopyClick = () => {
+        const {showSnackbar} = this.props;
+        const _id = get(this.props, 'feel._id');
+
+        client.mutate({
+            mutation: copyFeel,
+            awaitRefetchQueries: true,
+            refetchQueries: [{
+                fetchPolicy: 'network-only',
+                query: getFeels
+            }],
+            variables: {_id}
+        }).then(() => {
+            showSnackbar('Added to My Feels!');
+        });
+
+        this.onMenuClose();
     };
 
     onSubscribeClick = () => {
@@ -165,8 +235,9 @@ class Thumb extends Component {
     };
 
     render() {
-        const {anchorEl, dialogEl} = this.state;
+        const {anchorEl, deviceEl, dialogEl, selectedDevices} = this.state;
         const {classes, feel} = this.props;
+        const devices = get(this.props, 'data.devices', []);
         const {frames = [], isOwner, isSubscribed, name} = feel;
         const frame = frames.find(frame => frame.isThumb) || frames[0];
         const {pixels} = frame;
@@ -187,7 +258,15 @@ class Thumb extends Component {
                 Remove Feel
             </MenuItem>
         );
-        const actions = [edit, remove];
+        const push = (
+            <MenuItem onClick={this.onPushClick} key="push">
+                <ListItemIcon>
+                    <SettingsRemoteIcon />
+                </ListItemIcon>
+                Send to Devices
+            </MenuItem>
+        );
+        const actions = [edit, remove, push];
 
         return (
             <Fragment>
@@ -213,20 +292,36 @@ class Thumb extends Component {
                 <Menu anchorEl={anchorEl} keepMounted={true} open={Boolean(anchorEl)} onClose={this.onMenuClose}>
                     {isOwner && actions}
                     {!isOwner && !isSubscribed &&
-                        <MenuItem onClick={this.onSubscribeClick}>
-                            <ListItemIcon>
-                                <AddBoxIcon />
-                            </ListItemIcon>
-                            Save to Favs
-                        </MenuItem>
+                        [
+                            <MenuItem onClick={this.onSubscribeClick} key="save_feel">
+                                <ListItemIcon>
+                                    <AddBoxIcon />
+                                </ListItemIcon>
+                                Save to Favs
+                            </MenuItem>,
+                            <MenuItem onClick={this.onCopyClick} key="copy_feel_save">
+                                <ListItemIcon>
+                                    <FlipToBackIcon />
+                                </ListItemIcon>
+                                Copy to My Feels
+                            </MenuItem>
+                        ]
                     }
                     {!isOwner && isSubscribed &&
-                        <MenuItem onClick={this.onUnsubscribeClick}>
-                            <ListItemIcon>
-                                <IndeterminateCheckBoxIcon />
-                            </ListItemIcon>
-                            Remove from Favs
-                        </MenuItem>
+                        [
+                            <MenuItem onClick={this.onUnsubscribeClick} key="remove_feel">
+                                <ListItemIcon>
+                                    <IndeterminateCheckBoxIcon />
+                                </ListItemIcon>
+                                Remove from Favs
+                            </MenuItem>,
+                            <MenuItem onClick={this.onCopyClick} key="copy_feel_remove">
+                                <ListItemIcon>
+                                    <FlipToBackIcon />
+                                </ListItemIcon>
+                                Copy to My Feels
+                            </MenuItem>
+                        ]
                     }
                 </Menu>
                 <Dialog open={Boolean(dialogEl)} onClose={this.onDialogClose}>
@@ -245,6 +340,32 @@ class Thumb extends Component {
                         </Button>
                     </DialogActions>
                 </Dialog>
+
+                <Dialog open={Boolean(deviceEl)} onClose={this.onDialogClose}>
+                    <DialogTitle>Send to Devices</DialogTitle>
+                    <DialogContent>
+                        <FormControl component="fieldset" className={classes.formControl}>
+                            <FormGroup>
+                                {devices.map(device => {
+                                    const {_id: deviceId, name} = device;
+                                    const isChecked = selectedDevices.includes(deviceId);
+
+                                    return (
+                                        <FormControlLabel key={deviceId} control={<Checkbox checked={isChecked} onChange={this.onDeviceCheck} name={deviceId} />} label={name} />
+                                    );
+                                })}
+                            </FormGroup>
+                        </FormControl>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.onDialogClose} color="primary">
+                            Cancel
+                        </Button>
+                        <Button onClick={this.onPushDevicesClick} color="primary" autoFocus>
+                            Send
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </Fragment>
         );
     }
@@ -256,6 +377,12 @@ Thumb.propTypes = {
 
 export default withRouter(
     compose(
+        graphql(getDevices, {
+            options: {
+                notifyOnNetworkStatusChange: true,
+                fetchPolicy: 'network-only'
+            }
+        }),
         graphql(sendFeel, {name: 'sendFeel'}),
         withStyles(styles)
     )(Thumb)

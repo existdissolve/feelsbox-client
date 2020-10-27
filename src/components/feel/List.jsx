@@ -38,8 +38,16 @@ class FeelsList extends Component {
         const {classes, showSnackbar, Snackbar} = this.props;
         const feels = get(this.props, 'data.feels', []);
         const groupedFeels = feels.filter(feel => feel.active).reduce((groups, feel) => {
-            const {category} = feel;
-            const {_id: categoryId = 'uncategorized', name: categoryName = 'Uncategorized'} = category || {};
+            const {category, isSubscribed} = feel;
+            let categoryId, categoryName;
+
+            if (isSubscribed) {
+                categoryId = '__';
+                categoryName = 'Followed Feels';
+            } else {
+                ({_id: categoryId = 'uncategorized', name: categoryName = 'Uncategorized'} = category || {});
+            }
+
             const group = groups.find(item => item._id === categoryId);
 
             if (!group) {

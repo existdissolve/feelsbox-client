@@ -8,6 +8,12 @@ export const addFeel = gql`
     }
 `;
 
+export const copyFeel = gql`
+    mutation copyFeel($_id: ID!) {
+        copyFeel(_id: $_id)
+    }
+`;
+
 export const editFeel = gql`
     mutation editFeel($_id: ID!, $data: FeelInput!) {
         editFeel(_id: $_id, data: $data) {
@@ -86,8 +92,8 @@ export const subscribe = gql`
 `;
 
 export const sendFeel = gql`
-    mutation sendFeel($_id: ID!) {
-        sendFeel(_id: $_id)
+    mutation sendFeel($_id: ID!, $data: SendFeelInput) {
+        sendFeel(_id: $_id, data: $data)
     }
 `;
 
