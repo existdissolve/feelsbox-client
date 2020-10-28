@@ -86,16 +86,18 @@ class Thumb extends Component {
     };
 
     onPushDevicesClick = () => {
-        const {sendFeel} = this.props;
         const {selectedDevices} = this.state;
         const _id = get(this.props, 'feel._id');
 
-        sendFeel({
+        client.mutate({
+            mutation: sendFeel,
             variables: {
                 _id,
                 data: {devices: selectedDevices}
             }
         });
+
+        this.onDialogClose();
     };
 
     onDeviceCheck = e => {
@@ -221,9 +223,8 @@ class Thumb extends Component {
     };
 
     onTap = _id => {
-        const {sendFeel} = this.props;
-
-        sendFeel({
+        client.mutate({
+            mutation: sendFeel,
             variables: {_id}
         });
     };
@@ -383,7 +384,6 @@ export default withRouter(
                 fetchPolicy: 'network-only'
             }
         }),
-        graphql(sendFeel, {name: 'sendFeel'}),
         withStyles(styles)
     )(Thumb)
 );
