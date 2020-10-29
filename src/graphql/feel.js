@@ -8,6 +8,12 @@ export const addFeel = gql`
     }
 `;
 
+export const cloneFromHistory = gql`
+    mutation cloneFromHistory($_id: ID!) {
+        cloneFromHistory(_id: $_id)
+    }
+`;
+
 export const copyFeel = gql`
     mutation copyFeel($_id: ID!) {
         copyFeel(_id: $_id)

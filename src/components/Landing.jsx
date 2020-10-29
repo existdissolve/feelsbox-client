@@ -11,6 +11,7 @@ import CanvasGrid from '-/components/canvas/Grid';
 import Categories from '-/components/category/List';
 import Devices from '-/components/device/List';
 import DeviceForm from '-/components/device/Form';
+import DeviceHistory from '-/components/device/History';
 import Login from '-/components/Login';
 import {login} from '-/graphql/authentication';
 import client from '-/graphql/client';
@@ -190,6 +191,9 @@ class Landing extends Component {
                     </Route>
                     <Route exact path="/categories">
                         <Categories {...this.props} showSnackbar={showSnackbar} />
+                    </Route>
+                    <Route exact path="/devices/:_id/history">
+                        <DeviceHistory {...this.props} showSnackbar={showSnackbar} />
                     </Route>
                     <Route exact path="/devices/:_id">
                         <DeviceForm {...this.props} showSnackbar={showSnackbar} />

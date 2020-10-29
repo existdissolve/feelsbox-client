@@ -10,10 +10,12 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Divider from '@material-ui/core/Divider';
+import HistoryIcon from '@material-ui/icons/History';
 import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import Menu from '@material-ui/core/Menu';
@@ -24,6 +26,7 @@ import LockOpenIcon from '@material-ui/icons/LockOpen';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
 import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
+import {Link} from 'react-router-dom';
 import {get} from 'lodash';
 
 import AppBar from '-/components/AppBar';
@@ -195,9 +198,16 @@ class DeviceList extends Component {
                                                         }
                                                     </ListItemIcon>
                                                     <ListItemText primary={name} />
-                                                    <ListItemIcon>
+                                                    {isMine &&
+                                                        <Link to={`/devices/${_id}/history`}>
+                                                            <ListItemSecondaryAction style={{marginRight: 30}}>
+                                                                <HistoryIcon />
+                                                            </ListItemSecondaryAction>
+                                                        </Link>
+                                                    }
+                                                    <ListItemSecondaryAction edge="end">
                                                         <SettingsRemoteIcon onClick={this.onDefaultClick.bind(this, _id)} style={{color: isDefault ? 'green' : undefined}} />
-                                                    </ListItemIcon>
+                                                    </ListItemSecondaryAction>
                                                 </ListItem>
                                                 {idx !== devices.length - 1 && <Divider />}
                                             </Fragment>
