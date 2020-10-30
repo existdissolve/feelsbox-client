@@ -1,23 +1,20 @@
-const express = require('express');
-const path = require('path');
-const open = require('open');
-const compression = require('compression');
-const favicon = require('serve-favicon');
-const {createProxyMiddleware} = require('http-proxy-middleware');
+var express = require('express');
+var path = require('path');
+var open = require('open');
+var compression = require('compression');
+var favicon = require('serve-favicon');
+var proxy = require('express-http-proxy');
 
 /*eslint-disable no-console */
 
-const port = process.env.PORT || 3000;
-const app = express();
+var port = process.env.PORT || 3000;
+var app = express();
 
 app.use(compression());
 app.use(express.static('build'));
 //app.use(favicon(path.join(__dirname,'assets','dist','favicon.ico')));
 
-app.use('/api/graphql', createProxyMiddleware({
-    target: 'https://feelsbox-server-v2.herokuapp.com',
-    changeOrigin: true
-}));
+app.use('/api/graphql', proxy('https://feelsbox-server-v2.herokuapp.com'));
 
 app.get('*', function(req, res) {
     res.sendFile(path.join(__dirname, '../build/index.html'));
