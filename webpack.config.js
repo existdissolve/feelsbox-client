@@ -1,5 +1,4 @@
 const path = require('path');
-const fs = require('fs');
 const webpack = require('webpack');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
@@ -42,16 +41,11 @@ module.exports = {
         historyApiFallback: true,
         host: 'feelsbox.local',
         hot: true,
-        https: {
-            ca: fs.readFileSync(('./cert/ca.pem')),
-            cert: fs.readFileSync('./cert/localhost.pem'),
-            key: fs.readFileSync('./cert/localhost-key.pem')
-        },
         index: 'App',
         port: 8081,
         proxy: {
             '/api/**': {
-                target: 'https://localhost:5000',
+                target: 'http://localhost:5000',
                 secure: false
             }
         }

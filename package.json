@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "description": "Client for FeelsBox",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "start": "webpack-dev-server --mode development --https",
-    "build": "webpack --mode production",
+    "start": "webpack-dev-server --mode development",
+    "build": "rm -rf build && webpack --mode production",
     "heroku-postbuild": "npm run build"
   },
   "devDependencies": {
