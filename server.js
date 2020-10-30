@@ -12,7 +12,7 @@ const app = express();
 
 app.use(compression());
 app.use(express.static('build'));
-app.use(favicon(path.join(__dirname,'assets','dist','favicon.ico')));
+//app.use(favicon(path.join(__dirname,'assets','dist','favicon.ico')));
 
 app.use('/api/graphql', createProxyMiddleware({
     target: 'https://feelsbox-server-v2.herokuapp.com',
