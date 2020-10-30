@@ -14,7 +14,7 @@ app.use(compression());
 app.use(express.static('build'));
 //app.use(favicon(path.join(__dirname,'assets','dist','favicon.ico')));
 
-app.use('/api/graphql', proxy('feelsbox-server-v2.herokuapp.com', {
+app.use('/api/graphql', proxy('feelsbox-server-v2.herokuapp.com/api/graphql', {
     https: true
 }));
 
