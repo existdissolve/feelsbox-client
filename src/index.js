@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import {hot} from 'react-hot-loader/root';
-import {BrowserRouter} from 'react-router-dom';
+import {HashRouter} from 'react-router-dom';
 import {ApolloProvider} from 'react-apollo';
 import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
 
@@ -31,9 +31,9 @@ class App extends Component {
 ReactDOM.render(
     <ApolloProvider client={client}>
         <ThemeProvider theme={theme}>
-            <BrowserRouter>
+            <HashRouter>
                 <App />
-            </BrowserRouter>
+            </HashRouter>
         </ThemeProvider>
     </ApolloProvider>, document.getElementById('app')
 );

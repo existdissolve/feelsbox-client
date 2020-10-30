@@ -170,10 +170,10 @@ class Landing extends Component {
 
         if (!loggedIn && pathname !== '/signin') {
             // if not logged in and not on the signin page, go to signin page
-            //return <Redirect to="/signin" push={true} />;
+            return <Redirect to="/signin" push={true} />;
         } else if (loggedIn && pathname === '/signin') {
             // if we're on the signin page (somehow) and auth has already happened, go back to start
-            //return <Redirect to="/" push={true} />;
+            return <Redirect to="/" push={true} />;
         }
 
         return (
