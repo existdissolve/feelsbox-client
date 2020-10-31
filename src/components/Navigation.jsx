@@ -15,6 +15,9 @@ import ListItemText from '@material-ui/core/ListItemText';
 import {withStyles} from '@material-ui/core/styles';
 import {Link} from 'react-router-dom';
 
+import client from '-/graphql/client';
+import {viewWeather} from '-/graphql/device';
+
 const styles = {
     menuButton: {
         marginLeft: -12,
@@ -44,10 +47,9 @@ class Navigation extends React.Component {
     };
 
     onWeatherClick = () => {
-        /*axios.get(`${apiURL}/weather`)
-            .catch(ex => {
-                console.log(ex);
-            });*/
+        client.mutate({
+            mutation: viewWeather
+        });
     };
 
     render() {

@@ -43,3 +43,21 @@ export const submitAccessCode = gql`
         submitAccessCode(code: $code)
     }
 `;
+
+export const restart = gql`
+    mutation restart($_id: ID!) {
+        restart(_id: $_id)
+    }
+`;
+
+export const turnOff = gql`
+    mutation turnOff($_id: ID!) {
+        turnOff(_id: $_id)
+    }
+`;
+
+export const viewWeather = gql`
+    mutation viewWeather {
+        viewWeather
+    }
+`;

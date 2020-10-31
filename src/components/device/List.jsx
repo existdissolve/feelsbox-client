@@ -10,6 +10,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Divider from '@material-ui/core/Divider';
+import FlashOffIcon from '@material-ui/icons/FlashOff';
 import HistoryIcon from '@material-ui/icons/History';
 import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
@@ -24,6 +25,7 @@ import TextField from '@material-ui/core/TextField';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import RedoIcon from '@material-ui/icons/Redo';
 import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
 import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
 import {Link} from 'react-router-dom';
@@ -32,6 +34,7 @@ import {get} from 'lodash';
 import AppBar from '-/components/AppBar';
 import {getDevices, submitAccessCode} from '-/graphql/device';
 import {setDefaultDevice} from '-/graphql/user';
+import {restart, turnOff} from '-/graphql/device';
 
 const styles = theme => ({
     root: {
@@ -123,6 +126,22 @@ class DeviceList extends Component {
         this.setState({anchorEl: null});
     };
 
+    onRestartClick = _id => {
+        const {restart} = this.props;
+
+        restart({
+            variables: {_id}
+        });
+    };
+
+    onTurnOffClick = _id => {
+        const {turnOff} = this.props;
+
+        turnOff({
+            variables: {_id}
+        });
+    };
+
     render() {
         const {anchorEl, dialogOpen} = this.state;
         const {classes} = this.props;
@@ -199,11 +218,19 @@ class DeviceList extends Component {
                                                     </ListItemIcon>
                                                     <ListItemText primary={name} />
                                                     {isMine &&
-                                                        <Link to={`/devices/${_id}/history`}>
-                                                            <ListItemSecondaryAction style={{marginRight: 30}}>
-                                                                <HistoryIcon />
-                                                            </ListItemSecondaryAction>
-                                                        </Link>
+                                                        <Fragment>
+                                                            <ListItemIcon onClick={this.onRestartClick.bind(this, _id)}>
+                                                                <RedoIcon />
+                                                            </ListItemIcon>
+                                                            <ListItemIcon onClick={this.onTurnOffClick.bind(this, _id)}>
+                                                                <FlashOffIcon />
+                                                            </ListItemIcon>
+                                                            <Link to={`/devices/${_id}/history`}>
+                                                                <ListItemSecondaryAction style={{marginRight: 30}}>
+                                                                    <HistoryIcon />
+                                                                </ListItemSecondaryAction>
+                                                            </Link>
+                                                        </Fragment>
                                                     }
                                                     <ListItemSecondaryAction edge="end">
                                                         <SettingsRemoteIcon onClick={this.onDefaultClick.bind(this, _id)} style={{color: isDefault ? 'green' : undefined}} />
@@ -231,8 +258,10 @@ export default withRouter(
                 fetchPolicy: 'network-only'
             }
         }),
+        graphql(restart, {name: 'restart'}),
         graphql(submitAccessCode, {name: 'submitAccessCode'}),
         graphql(setDefaultDevice, {name: 'setDefaultDevice'}),
+        graphql(turnOff, {name: 'turnOff'}),
         withStyles(styles),
 
     )(DeviceList)
