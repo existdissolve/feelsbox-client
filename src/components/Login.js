@@ -47,7 +47,15 @@ class Login extends React.Component {
     onGoogleLoginClick = () => {
         const auth2 = gapi.auth2.getAuthInstance();
 
-        auth2.signIn();
+        auth2.signIn({
+            prompt: 'select_account'
+        });
+    };
+
+    onGoogleLogoutClick = () => {
+        const auth2 = gapi.auth2.getAuthInstance();
+
+        auth2.signOut();
     };
 
     render() {
@@ -69,6 +77,7 @@ class Login extends React.Component {
                     <Button variant="contained" onClick={this.onFacebookLoginClick} startIcon={<Icon className="fab fa-facebook" />}>Login with Facebook</Button>
                     <Button variant="contained" onClick={this.onFacebookLogoutClick} startIcon={<Icon className="fab fa-facebook" />}>Logout of Facebook</Button>
                     <Button variant="contained" onClick={this.onGoogleLoginClick} startIcon={<Icon className="fab fa-google" />}>Login with Google</Button>
+                    <Button variant="contained" onClick={this.onGoogleLogoutClick} startIcon={<Icon className="fab fa-google" />}>Logout of Google</Button>
                 </div>
             </div>
         );
