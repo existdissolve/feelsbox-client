@@ -121,13 +121,21 @@ class Landing extends Component {
     onGoogleAuthEvent = async value => {
         let isLoggedIn = false;
 
-        if (value) {
-            const auth2 = gapi.auth2.getAuthInstance();
-            const googleUser = auth2.currentUser.get();
-            const profile = googleUser.getBasicProfile();
-            const email = profile.getEmail();
+        alert(value)
 
-            isLoggedIn = await this.login(email);
+        if (value) {
+            try {
+                const auth2 = gapi.auth2.getAuthInstance();
+                const googleUser = auth2.currentUser.get();
+                const profile = googleUser.getBasicProfile();
+                const email = profile.getEmail();
+
+                alert(email);
+
+                isLoggedIn = await this.login(email);
+            } catch (ex) {
+                alert(ex);
+            }
         }
 
         const {loginChecks} = this.state;
