@@ -49,8 +49,6 @@ class Login extends React.Component {
 
         auth2.signIn({
             prompt: 'select_account'
-        }).then(() => {}, error => {
-            alert(error);
         });
     };
 
