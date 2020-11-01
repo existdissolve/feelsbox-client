@@ -49,6 +49,8 @@ class Login extends React.Component {
 
         auth2.signIn({
             prompt: 'select_account'
+        }).then(() => {}, error => {
+            alert(error);
         });
     };
 
@@ -63,7 +65,7 @@ class Login extends React.Component {
         const {loginSuccess} = this.state;
 
         if (loginSuccess) {
-            //return <Redirect to="/" push={true} />;
+            return <Redirect to="/" push={true} />;
         }
 
         return (
