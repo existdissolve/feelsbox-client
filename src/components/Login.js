@@ -63,7 +63,7 @@ class Login extends React.Component {
         const {loginSuccess} = this.state;
 
         if (loginSuccess) {
-            return <Redirect to="/" push={true} />;
+            //return <Redirect to="/" push={true} />;
         }
 
         return (
