@@ -50,8 +50,8 @@ class Landing extends Component {
         const client_id = '355779476097-o2euqmi58qc4br3q7kgon7l9remq5hva.apps.googleusercontent.com';
         const appId = 258803718399430;
 
-        //this.addScript('google-jssdk', '//apis.google.com/js/platform.js?onload=googleAsyncInit');
-        //this.addScript('facebook-jssdk', '//connect.facebook.net/en_US/sdk.js');
+        this.addScript('google-jssdk', '//apis.google.com/js/platform.js?onload=googleAsyncInit');
+        this.addScript('facebook-jssdk', '//connect.facebook.net/en_US/sdk.js');
 
         window.googleAsyncInit = () => {
             gapi.load('auth2', () => {
