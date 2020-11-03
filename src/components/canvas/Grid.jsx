@@ -268,7 +268,7 @@ class CanvasGrid extends React.Component {
         const nextFrame = frames.length;
 
         newHistory[nextFrame] = [newPixelState];
-        newFrames[nextFrame] = newFrame;
+        newFrames[nextFrame] = cloneDeep(newFrame);
 
         this.setState({
             ...this.state,
