@@ -60,7 +60,12 @@ class FeelsList extends Component {
                 group.feels.push(feel);
             }
 
-            return groups;
+            return groups.sort((prev, next) => {
+                const {name: pn} = prev;
+                const {name: nn} = next;
+
+                return pn < nn ? -1 : pn > nn ? 1 : 0;
+            });
         }, []);
 
         return (
