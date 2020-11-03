@@ -305,7 +305,8 @@ class Thumb extends Component {
                                     <FlipToBackIcon />
                                 </ListItemIcon>
                                 Copy to My Feels
-                            </MenuItem>
+                            </MenuItem>,
+                            push
                         ]
                     }
                     {!isOwner && isSubscribed &&
@@ -321,7 +322,8 @@ class Thumb extends Component {
                                     <FlipToBackIcon />
                                 </ListItemIcon>
                                 Copy to My Feels
-                            </MenuItem>
+                            </MenuItem>,
+                            push
                         ]
                     }
                 </Menu>
