@@ -9,7 +9,8 @@ export const Fields = ({onChange, hex}) => {
         'default': {
             fields: {
                 display: 'flex',
-                paddingTop: '4px'
+                paddingTop: '4px',
+                flex: '0 0 auto'
             },
             single: {
                 flex: '1',

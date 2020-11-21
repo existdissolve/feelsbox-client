@@ -24,22 +24,28 @@ export const Feelsbox = props => {
         'default': {
             picker: {
                 width,
-                padding: '10px 10px 0',
+                display: 'flex',
+                padding: 10,
                 boxSizing: 'initial',
-                background: '#222'
+                background: '#222',
+                flex: '1 0 auto',
+                flexDirection: 'row',
+                flexFlow: 'nowrap'
             },
             saturation: {
                 width: '100%',
-                paddingBottom: '50%',
                 position: 'relative',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                flex: '0 0 auto',
+                height: '50%'
             },
             Saturation: {
                 radius: '3px',
                 shadow: 'inset 0 0 0 1px rgba(0,0,0,.15), inset 0 0 4px rgba(0,0,0,.25)'
             },
             controls: {
-                display: 'flex'
+                display: 'flex',
+                flex: '0 0 auto'
             },
             sliders: {
                 padding: '4px 0',
@@ -64,40 +70,52 @@ export const Feelsbox = props => {
                 overflow: 'hidden',
                 border: 'solid 1px #dadada'
             },
-            Hue: {}
+            Hue: {},
+            main: {
+                flex: '1 0 auto',
+                display: 'flex',
+                flexDirection: 'column'
+            },
+            colors: {
+                marginLeft: 0,
+                width: 40
+            }
         }
     });
 
     return (
         <div style={styles.picker} className={`sketch-picker ${className}`}>
-            <div style={styles.saturation}>
-                <Saturation
-                    style={styles.Saturation}
-                    hsl={hsl}
-                    hsv={hsv}
+            <div style={styles.main}>
+                <div style={styles.saturation}>
+                    <Saturation
+                        style={styles.Saturation}
+                        hsl={hsl}
+                        hsv={hsv}
+                        onChange={onChange}
+                    />
+                </div>
+                <div style={styles.controls} className="flexbox-fix">
+                    <div style={styles.sliders}>
+                        <div style={styles.hue}>
+                            <Hue
+                                style={styles.Hue}
+                                hsl={hsl}
+                                onChange={onChange}
+                            />
+                        </div>
+                    </div>
+                    <div style={styles.color}>
+                        <Checkboard />
+                        <div style={styles.activeColor} />
+                    </div>
+                </div>
+
+                <Fields
+                    hex={hex}
                     onChange={onChange}
                 />
             </div>
-            <div style={styles.controls} className="flexbox-fix">
-                <div style={styles.sliders}>
-                    <div style={styles.hue}>
-                        <Hue
-                            style={styles.Hue}
-                            hsl={hsl}
-                            onChange={onChange}
-                        />
-                    </div>
-                </div>
-                <div style={styles.color}>
-                    <Checkboard />
-                    <div style={styles.activeColor} />
-                </div>
-            </div>
 
-            <Fields
-                hex={hex}
-                onChange={onChange}
-            />
             <PresetColors
                 colors={presetColors}
                 onClick={onChange}

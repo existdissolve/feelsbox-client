@@ -21,9 +21,10 @@ const styles = theme => ({
         margin: '0px !important'
     },
     fab: {
-        position: 'absolute',
+        position: 'fixed',
         bottom: theme.spacing(2),
-        right: theme.spacing(2)
+        right: theme.spacing(2),
+        zIndex: 10000000
     }
 });
 
@@ -103,8 +104,7 @@ export default withRouter(
     compose(
         graphql(getFeels, {
             options: {
-                notifyOnNetworkStatusChange: true,
-                fetchPolicy: 'network-only'
+                notifyOnNetworkStatusChange: true
             }
         }),
         withStyles(styles)

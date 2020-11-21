@@ -168,13 +168,11 @@ export default withRouter(
     compose(
         graphql(getMyCategories, {
             options: {
-                notifyOnNetworkStatusChange: true,
-                fetchPolicy: 'network-only'
+                notifyOnNetworkStatusChange: true
             }
         }),
         graphql(addCategory, {name: 'addCategory'}),
         graphql(editCategory, {name: 'editCategory'}),
-        withStyles(styles),
-
+        withStyles(styles)
     )(CategoryList)
 );

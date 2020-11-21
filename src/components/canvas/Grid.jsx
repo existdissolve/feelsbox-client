@@ -37,15 +37,18 @@ import Feelsbox from '-/components/canvas/picker/Feelsbox';
 import Form from '-/components/canvas/Form';
 import FrameForm from '-/components/canvas/FrameForm';
 import TuneForm from '-/components/canvas/TuneForm';
-import {addFeel, editFeel, getFeel, testFeel} from '-/graphql/feel';
+import {addFeel, editFeel, getFeel, getFeels, testFeel} from '-/graphql/feel';
 
 const styles = theme => ({
     root: {
         display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'space-around',
+        //justifyContent: 'space-around',
         backgroundColor: theme.palette.background.paper,
-        'overscroll-behavior': 'contain'
+        'overscroll-behavior': 'contain',
+        height: 'calc(100vh - 104px)',
+        flexDirection: 'column',
+        flexWrap: 'nowrap',
+        overflow: 'hidden'
     },
     toolbar: {
         backgroundColor: '#222'
@@ -63,7 +66,7 @@ const styles = theme => ({
         alignItems: 'stretch',
         alignContent: 'flex-start',
         width: '100%',
-        height: '50%',
+        flex: '0 0 auto',
         margin: '0px !important'
     }
 });
@@ -101,6 +104,7 @@ class CanvasGrid extends React.Component {
         super(props);
 
         this.state = {
+            activeFeelId: null,
             anchorEl: null,
             currentFrame: 0,
             data: {},
@@ -118,14 +122,16 @@ class CanvasGrid extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
+        const {activeFeelId} = this.state;
         const feel = get(this.props, 'data.feel');
         const incomingId = get(prevProps, 'data.feel._id');
         const currentId = get(feel, '_id');
 
-        if (currentId && currentId !== incomingId) {
+        if (!activeFeelId || (currentId && currentId !== incomingId)) {
             const pixels = get(feel, 'frames[0].pixels');
 
             this.setState({
+                activeFeelId: currentId,
                 currentFrame: 0,
                 data: scrubData(feel),
                 frames: feel.frames.slice(),
@@ -194,6 +200,10 @@ class CanvasGrid extends React.Component {
             });
         } else {
             const result = await addFeel({
+                refetchQueries: [{
+                    fetchPolicy: 'network-only',
+                    query: getFeels
+                }],
                 variables: {data}
             });
             const newFeelId = get(result, 'data.addFeel._id');
@@ -572,7 +582,7 @@ class CanvasGrid extends React.Component {
                     </IconButton>
                     <Typography variant="button" className={classes.frameCount}>{currentFrame + 1} / {frameCount}</Typography>
                 </Toolbar>
-                <Menu anchorEl={anchorEl} keepMounted={true} open={Boolean(anchorEl)} onClose={this.onMenuClose}>
+                <Menu anchorEl={anchorEl} keepMounted={false} open={Boolean(anchorEl)} onClose={this.onMenuClose}>
                     <MenuItem onClick={this.onAddClick}>
                         <ListItemIcon>
                             <AddIcon />
@@ -664,10 +674,7 @@ export default withRouter(
                 variables: {
                     _id: get(props, 'match.params._id')
                 }
-            }),
-            skip: props => {
-                return !get(props, 'match.params._id');
-            }
+            })
         }),
         graphql(addFeel, {name: 'addFeel'}),
         graphql(editFeel, {name: 'editFeel'}),

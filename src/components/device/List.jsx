@@ -67,7 +67,6 @@ class DeviceList extends Component {
             await submitAccessCode({
                 awaitRefetchQueries: true,
                 refetchQueries: [{
-                    fetchPolicy: 'network-only',
                     query: getDevices
                 }],
                 variables: {
@@ -90,7 +89,6 @@ class DeviceList extends Component {
         await setDefaultDevice({
             awaitRefetchQueries: true,
             refetchQueries: [{
-                fetchPolicy: 'network-only',
                 query: getDevices
             }],
             variables: {_id}
@@ -172,7 +170,7 @@ class DeviceList extends Component {
         return (
             <div>
                 <AppBar title="Devices" iconRenderer={menu} />
-                <Menu anchorEl={anchorEl} keepMounted={true} open={Boolean(anchorEl)} onClose={this.onMenuClose}>
+                <Menu anchorEl={anchorEl} keepMounted={false} open={Boolean(anchorEl)} onClose={this.onMenuClose}>
                     <MenuItem onClick={this.onEnterCodeClick}>
                         <ListItemIcon>
                             <LockOpenIcon />
@@ -254,8 +252,7 @@ export default withRouter(
     compose(
         graphql(getDevices, {
             options: {
-                notifyOnNetworkStatusChange: true,
-                fetchPolicy: 'network-only'
+                notifyOnNetworkStatusChange: true
             }
         }),
         graphql(restart, {name: 'restart'}),

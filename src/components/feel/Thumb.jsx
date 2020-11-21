@@ -290,7 +290,7 @@ class Thumb extends Component {
                         </a>
                     </div>
                 </GridListTile>
-                <Menu anchorEl={anchorEl} keepMounted={true} open={Boolean(anchorEl)} onClose={this.onMenuClose}>
+                <Menu anchorEl={anchorEl} keepMounted={false} open={Boolean(anchorEl)} onClose={this.onMenuClose}>
                     {isOwner && actions}
                     {!isOwner && !isSubscribed &&
                         [
@@ -382,8 +382,7 @@ export default withRouter(
     compose(
         graphql(getDevices, {
             options: {
-                notifyOnNetworkStatusChange: true,
-                fetchPolicy: 'network-only'
+                notifyOnNetworkStatusChange: true
             }
         }),
         withStyles(styles)

@@ -6,30 +6,29 @@ import {Swatch} from 'react-color/lib/components/common';
 
 const styles = () => ({
     root: {
-        display: 'flex'
+        //display: 'flex'
     },
     colors: {
-        margin: '0 -10px',
-        padding: '6px 0 0 10px',
-        borderTop: '1px solid #333',
+        height: 'calc(100% - 70px)',
+        padding: '0px 20px 0 10px',
         display: 'flex',
-        flexDirection: 'row',
-        flexFlow: 'row wrap',
-        alignItems: 'stretch',
-        alignContent: 'flex-start',
-        position: 'relative'
+        flexDirection: 'column',
+        overflowY: 'auto'
     },
     swatchWrap: {
         flex: '1 1 0px',
-        margin: '0 8px 8px 0',
-        '&::after': {
-            content: '""',
-            display: 'block',
-            paddingBottom: '100%'
+        marginBottom: 5,
+        '& span': {
+            width: 30,
+            height: 30,
+            display: 'block'
         }
     },
     breakRow: {
         flexBasis: '100vw'
+    },
+    swatch: {
+        flex: 1
     }
 });
 
@@ -42,23 +41,17 @@ class PresetColors extends React.Component {
 
     render() {
         const {classes, colors, onSwatchHover} = this.props;
-        const fillCount = colors.length === 10 ? 0 : 10 - (colors.length % 10);
-        const empties = new Array(fillCount);
-
-        empties.fill('');
 
         return (
             <div className={`flexbox-fix ${classes.colors}`}>
-                {colors.map((colorObjOrString, idx) => {
+                {colors.map((colorObjOrString) => {
                     const c = typeof colorObjOrString === 'string'
                         ? {color: colorObjOrString}
                         : colorObjOrString;
                     const key = `${c.color}${c.title || ''}`;
-                    const breakRow = idx !== 0 && idx % 10 === 0;
 
                     return (
                         <React.Fragment key={key}>
-                            {breakRow && <div key={`break-${idx}`} className={classes.breakRow} />}
                             <div className={classes.swatchWrap}>
                                 <Swatch
                                     {...c}
@@ -71,13 +64,6 @@ class PresetColors extends React.Component {
                                 />
                             </div>
                         </React.Fragment>
-                    );
-                })}
-                {empties.map((item, idx) => {
-                    return (
-                        <div className={classes.swatchWrap} key={`empty-${idx}`}>
-                            <div className={classes.swatch} />
-                        </div>
                     );
                 })}
             </div>

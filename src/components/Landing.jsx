@@ -28,7 +28,8 @@ class Landing extends Component {
                 facebook: undefined,
                 google: undefined
             },
-            loggedIn: false
+            loggedIn: false,
+            loggingIn: false
         };
     }
 
@@ -51,7 +52,7 @@ class Landing extends Component {
         const appId = 258803718399430;
 
         this.addScript('google-jssdk', '//apis.google.com/js/platform.js?onload=googleAsyncInit');
-        this.addScript('facebook-jssdk', '//connect.facebook.net/en_US/sdk.js');
+        //this.addScript('facebook-jssdk', '//connect.facebook.net/en_US/sdk.js');
 
         window.googleAsyncInit = () => {
             gapi.load('auth2', () => {
@@ -62,21 +63,26 @@ class Landing extends Component {
 
                 if (auth2.isSignedIn.get()) {
                     auth2.signIn();
+
+                    this.setState({
+                        loggingIn: true
+                    });
                 } else {
+                    auth2.isSignedIn.listen(this.onGoogleAuthEvent);
                     const {loginChecks} = this.state;
 
                     this.setState({
                         loginChecks: {
                             ...loginChecks,
-                            google: true
-                        }
+                            google: false
+                        },
+                        loggingIn: true
                     });
                 }
-
-                auth2.isSignedIn.listen(this.onGoogleAuthEvent);
             });
         };
 
+        /*
         window.fbAsyncInit = () => {
             FB.Event.subscribe('auth.statusChange', this.onFBAuthEvent);
 
@@ -88,6 +94,7 @@ class Landing extends Component {
                 version: 'v6.0'
             });
         };
+        */
     }
 
     onFBAuthEvent = async response => {
@@ -134,6 +141,7 @@ class Landing extends Component {
 
         this.setState({
             ...isLoggedIn && {loggedIn: true},
+            loggingIn: false,
             loginChecks: {
                 ...loginChecks,
                 google: true
@@ -157,15 +165,19 @@ class Landing extends Component {
     };
 
     render() {
-        const {loggedIn, loginChecks = {}} = this.state;
+        const {loggedIn, loggingIn, loginChecks = {}} = this.state;
         const {facebook, google} = loginChecks;
         const {location = {}, showSnackbar, Snackbar} = this.props;
         const {pathname} = location;
-        const isFacebookDone = !isUndefined(facebook);
+        const isFacebookDone = true;//!isUndefined(facebook);
         const isGoogleDone = !isUndefined(google);
         // if not logged in AND both auth checks aren't yet finished, just show loader
         if (!loggedIn && (!isFacebookDone || !isGoogleDone)) {
             return <div>Loading...</div>;
+        }
+
+        if (loggingIn) {
+            return <div>Logging in...</div>;
         }
 
         if (!loggedIn && pathname !== '/signin') {

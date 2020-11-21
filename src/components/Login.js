@@ -74,10 +74,7 @@ class Login extends React.Component {
                     <Typography component="p" gutterBottom={true} paragraph={true}>
                         To begin using your Feelsbox, login using either Facebook or Google.
                     </Typography>
-                    <Button variant="contained" onClick={this.onFacebookLoginClick} startIcon={<Icon className="fab fa-facebook" />}>Login with Facebook</Button>
-                    <Button variant="contained" onClick={this.onFacebookLogoutClick} startIcon={<Icon className="fab fa-facebook" />}>Logout of Facebook</Button>
                     <Button variant="contained" onClick={this.onGoogleLoginClick} startIcon={<Icon className="fab fa-google" />}>Login with Google</Button>
-                    <Button variant="contained" onClick={this.onGoogleLogoutClick} startIcon={<Icon className="fab fa-google" />}>Logout of Google</Button>
                 </div>
             </div>
         );
