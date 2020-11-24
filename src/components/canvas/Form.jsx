@@ -16,8 +16,8 @@ import {getMyCategories} from '-/graphql/category';
 class CanvasForm extends Component {
     render() {
         const {formData = {}, frames = [], onChange} = this.props;
-        const {category = '', duration = 1000, name = '', private: isPrivate = false, repeat = false, reverse = false} = formData;
-        const categories = get(this.props, 'data.myCategories') || [];
+        const {categories = [], duration = 1000, name = '', private: isPrivate = false, repeat = false, reverse = false} = formData;
+        const myCategories = get(this.props, 'data.myCategories') || [];
         const hasMultipleFrames = frames.length > 1;
         const privateSwitch = (
             <Switch name="private" checked={!!isPrivate} onChange={onChange} />
@@ -34,8 +34,8 @@ class CanvasForm extends Component {
                 <TextField name="name" autoFocus margin="dense" label="Feel Name" fullWidth value={name} onChange={onChange} />
                 <FormControl fullWidth>
                     <InputLabel>Category</InputLabel>
-                    <Select name="category" value={category} onChange={onChange}>
-                        {categories.map(category => {
+                    <Select name="categories" value={categories} onChange={onChange} multiple={true}>
+                        {myCategories.map(category => {
                             const {_id, name} = category;
 
                             return (

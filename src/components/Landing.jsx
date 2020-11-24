@@ -78,6 +78,8 @@ class Landing extends Component {
                         },
                         loggingIn: true
                     });
+
+                    setTimeout(this.forceLoginRedirect, 2000);
                 }
             });
         };
@@ -96,6 +98,10 @@ class Landing extends Component {
         };
         */
     }
+
+    forceLoginRedirect = () => {
+        this.setState({loggingIn: false});
+    };
 
     onFBAuthEvent = async response => {
         const {status} = response;

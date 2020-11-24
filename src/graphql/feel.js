@@ -32,7 +32,7 @@ export const getFeel = gql`
     query getFeel($_id: ID!) {
         feel(_id: $_id) {
             _id
-            category {
+            categories {
                 _id
                 name
             }
@@ -59,7 +59,7 @@ export const getFeels = gql`
         feels(criteria: $criteria) {
             _id
             active
-            category {
+            categories {
                 _id
                 name
             }

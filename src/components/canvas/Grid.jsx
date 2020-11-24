@@ -73,13 +73,16 @@ const styles = theme => ({
 
 const scrubData = source => {
     const clonedSource = cloneDeep(source);
-    const data = pick(clonedSource, ['_id', 'category', 'duration', 'frames', 'name', 'private', 'repeat', 'reverse']);
-    const {category, duration, frames} = data;
+    const data = pick(clonedSource, ['_id', 'categories', 'duration', 'frames', 'name', 'private', 'repeat', 'reverse']);
+    const {categories = [], duration, frames = []} = data;
 
-    if (typeof category === 'object') {
-        data.category = category._id;
-    }
-
+    data.categories = categories.map(category => {
+        if (typeof category === 'object') {
+            return category._id;
+        } else {
+            return category;
+        }
+    });
     data.duration = parseInt(duration) || 0;
     data.frames = frames.map(frame => {
         const cleanFrame = pick(frame, ['brightness', 'duration', 'isThumb', 'pixels']);
@@ -128,13 +131,14 @@ class CanvasGrid extends React.Component {
         const currentId = get(feel, '_id');
 
         if (!activeFeelId || (currentId && currentId !== incomingId)) {
-            const pixels = get(feel, 'frames[0].pixels');
+            const pixels = get(feel, 'frames[0].pixels', []);
+            const frames = get(feel, 'frames', []);
 
             this.setState({
-                activeFeelId: currentId,
+                activeFeelId: currentId || 'new',
                 currentFrame: 0,
                 data: scrubData(feel),
-                frames: feel.frames.slice(),
+                frames: frames.slice(),
                 history: [],
                 livePixels: pixels.slice(),
                 open: false
