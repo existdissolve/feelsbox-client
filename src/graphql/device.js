@@ -50,6 +50,12 @@ export const restart = gql`
     }
 `;
 
+export const setBrightness = gql`
+    mutation setBrightness($_id: ID!, $brightness: Int!) {
+        setBrightness(_id: $_id, brightness: $brightness)
+    }
+`;
+
 export const turnOff = gql`
     mutation turnOff($_id: ID!) {
         turnOff(_id: $_id)

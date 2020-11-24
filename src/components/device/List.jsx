@@ -11,34 +11,40 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Divider from '@material-ui/core/Divider';
 import FlashOffIcon from '@material-ui/icons/FlashOff';
+import Grid from '@material-ui/core/Grid';
 import HistoryIcon from '@material-ui/icons/History';
 import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import Slider from '@material-ui/core/Slider';
 import TextField from '@material-ui/core/TextField';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import BrightnessLowIcon from '@material-ui/icons/BrightnessLow';
+import BrightnessHighIcon from '@material-ui/icons/BrightnessHigh';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import RedoIcon from '@material-ui/icons/Redo';
+import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
+import SettingsBrightnessIcon from '@material-ui/icons/SettingsBrightness';
 import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
 import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
-import {Link} from 'react-router-dom';
 import {get} from 'lodash';
 
 import AppBar from '-/components/AppBar';
-import {getDevices, submitAccessCode} from '-/graphql/device';
 import {setDefaultDevice} from '-/graphql/user';
-import {restart, turnOff} from '-/graphql/device';
+import {getDevices, restart, setBrightness, submitAccessCode, turnOff} from '-/graphql/device';
 
 const styles = theme => ({
     root: {
         backgroundColor: theme.palette.background.paper
+    },
+    icon: {
+        minWidth: 24,
+        padding: 5
     }
 });
 
@@ -48,10 +54,41 @@ class DeviceList extends Component {
 
         this.state = {
             anchorEl: null,
+            brightness: 100,
+            brightnessOpen: false,
             code: undefined,
+            currentDevice: null,
             dialogOpen: false
         };
     }
+
+    formatSliderLabel = value => {
+        return `${value}%`;
+    };
+
+    onBrightnessChange = (e, value) => {
+        this.setState({brightness: value});
+    };
+
+    onBrightnessSubmit = async() => {
+        const {brightness, currentDevice} = this.state;
+        const {showSnackbar, setBrightness} = this.props;
+
+        try {
+            await setBrightness({
+                variables: {
+                    _id: currentDevice,
+                    brightness
+                }
+            });
+
+            showSnackbar('Device brightness was set successfully!');
+
+            this.onDialogClose();
+        } catch (e) {
+            showSnackbar(e.message.replace('GraphQL error: ', ''));
+        }
+    };
 
     onCodeChange = e => {
         const code = get(e, 'target.value');
@@ -80,7 +117,6 @@ class DeviceList extends Component {
         } catch (e) {
             showSnackbar(e.message.replace('GraphQL error: ', ''));
         }
-
     };
 
     onDefaultClick = async _id => {
@@ -104,7 +140,11 @@ class DeviceList extends Component {
     };
 
     onDialogClose = () => {
-        this.setState({dialogOpen: false});
+        this.setState({
+            brightnessOpen: false,
+            currentDevice: null,
+            dialogOpen: false
+        });
     };
 
     onEnterCodeClick = () => {
@@ -132,6 +172,13 @@ class DeviceList extends Component {
         });
     };
 
+    onSetBrightnessClick = _id => {
+        this.setState({
+            brightnessOpen: true,
+            currentDevice: _id
+        });
+    };
+
     onTurnOffClick = _id => {
         const {turnOff} = this.props;
 
@@ -140,8 +187,12 @@ class DeviceList extends Component {
         });
     };
 
+    onViewHistoryClick = _id => {
+        window.location = `/#/devices/${_id}/history`;
+    };
+
     render() {
-        const {anchorEl, dialogOpen} = this.state;
+        const {anchorEl, brightness, brightnessOpen, dialogOpen} = this.state;
         const {classes} = this.props;
         const devices = get(this.props, 'data.devices', []);
         const groupedDevices = devices.reduce((groups, device) => {
@@ -178,7 +229,7 @@ class DeviceList extends Component {
                         Enter Device Code
                     </MenuItem>
                 </Menu>
-                <Dialog open={dialogOpen} onClose={this.onDialogClose}>
+                <Dialog open={dialogOpen} keepMounted={false} onClose={this.onDialogClose}>
                     <DialogTitle>Enter Device Code</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
@@ -189,6 +240,32 @@ class DeviceList extends Component {
                     <DialogActions>
                         <Button onClick={this.onDialogClose}>Cancel</Button>
                         <Button onClick={this.onCodeSubmit}>Submit</Button>
+                    </DialogActions>
+                </Dialog>
+                <Dialog open={brightnessOpen} keepMounted={false} onClose={this.onDialogClose}>
+                    <DialogTitle>Set Device Brightness</DialogTitle>
+                    <DialogContent>
+                        <Grid container spacing={2}>
+                            <Grid item>
+                                <BrightnessLowIcon />
+                            </Grid>
+                            <Grid item xs>
+                                <Slider
+                                    value={brightness}
+                                    onChange={this.onBrightnessChange}
+                                    step={10}
+                                    min={10}
+                                    max={100}
+                                    valueLabelFormat={this.formatSliderLabel} />
+                            </Grid>
+                            <Grid item>
+                                <BrightnessHighIcon />
+                            </Grid>
+                        </Grid>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.onDialogClose}>Cancel</Button>
+                        <Button onClick={this.onBrightnessSubmit}>Submit</Button>
                     </DialogActions>
                 </Dialog>
                 <div className={classes.root}>
@@ -214,25 +291,26 @@ class DeviceList extends Component {
                                                             <SupervisedUserCircleIcon />
                                                         }
                                                     </ListItemIcon>
-                                                    <ListItemText primary={name} />
+                                                    <ListItemText primary={name} style={{flexGrow: 1}} />
                                                     {isMine &&
                                                         <Fragment>
-                                                            <ListItemIcon onClick={this.onRestartClick.bind(this, _id)}>
-                                                                <RedoIcon />
+                                                            <ListItemIcon onClick={this.onRestartClick.bind(this, _id)} className={classes.icon}>
+                                                                <PowerSettingsNewIcon />
                                                             </ListItemIcon>
-                                                            <ListItemIcon onClick={this.onTurnOffClick.bind(this, _id)}>
+                                                            <ListItemIcon onClick={this.onTurnOffClick.bind(this, _id)} className={classes.icon}>
                                                                 <FlashOffIcon />
                                                             </ListItemIcon>
-                                                            <Link to={`/devices/${_id}/history`}>
-                                                                <ListItemSecondaryAction style={{marginRight: 30}}>
-                                                                    <HistoryIcon />
-                                                                </ListItemSecondaryAction>
-                                                            </Link>
+                                                            <ListItemIcon onClick={this.onSetBrightnessClick.bind(this, _id)} className={classes.icon}>
+                                                                <SettingsBrightnessIcon />
+                                                            </ListItemIcon>
+                                                            <ListItemIcon onClick={this.onViewHistoryClick.bind(this, _id)} className={classes.icon}>
+                                                                <HistoryIcon />
+                                                            </ListItemIcon>
                                                         </Fragment>
                                                     }
-                                                    <ListItemSecondaryAction edge="end">
+                                                    <ListItemIcon edge="end" className={classes.icon}>
                                                         <SettingsRemoteIcon onClick={this.onDefaultClick.bind(this, _id)} style={{color: isDefault ? 'green' : undefined}} />
-                                                    </ListItemSecondaryAction>
+                                                    </ListItemIcon>
                                                 </ListItem>
                                                 {idx !== devices.length - 1 && <Divider />}
                                             </Fragment>
@@ -257,6 +335,7 @@ export default withRouter(
         }),
         graphql(restart, {name: 'restart'}),
         graphql(submitAccessCode, {name: 'submitAccessCode'}),
+        graphql(setBrightness, {name: 'setBrightness'}),
         graphql(setDefaultDevice, {name: 'setDefaultDevice'}),
         graphql(turnOff, {name: 'turnOff'}),
         withStyles(styles),
