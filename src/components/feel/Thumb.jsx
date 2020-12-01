@@ -1,8 +1,6 @@
 import {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
 import {get} from 'lodash';
-import {compose} from 'recompose';
-import {graphql} from 'react-apollo';
 
 import {withStyles} from '@material-ui/core/styles';
 import {withRouter} from 'react-router-dom';
@@ -14,11 +12,9 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import FlipToBackIcon from '@material-ui/icons/FlipToBack';
-import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -29,7 +25,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
 import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
-import {getDevices} from '-/graphql/device';
 import {copyFeel, getFeels, removeFeel, sendFeel, subscribe, unsubscribe} from '-/graphql/feel';
 import client from '-/graphql/client';
 
@@ -238,7 +233,7 @@ class Thumb extends Component {
     render() {
         const {anchorEl, deviceEl, dialogEl, selectedDevices} = this.state;
         const {classes, feel} = this.props;
-        const devices = get(this.props, 'data.devices', []);
+        const devices = get(this.props, 'devices', []);
         const {frames = [], isOwner, isSubscribed, name} = feel;
         const frame = frames.find(frame => frame.isThumb) || frames[0];
         const {pixels} = frame;
@@ -327,7 +322,7 @@ class Thumb extends Component {
                         ]
                     }
                 </Menu>
-                <Dialog open={Boolean(dialogEl)} onClose={this.onDialogClose}>
+                <Dialog open={Boolean(dialogEl)} onClose={this.onDialogClose} keepMounted={false}>
                     <DialogTitle>Remove Feel?</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
@@ -344,7 +339,7 @@ class Thumb extends Component {
                     </DialogActions>
                 </Dialog>
 
-                <Dialog open={Boolean(deviceEl)} onClose={this.onDialogClose}>
+                <Dialog open={Boolean(deviceEl)} onClose={this.onDialogClose} keepMounted={false}>
                     <DialogTitle>Send to Devices</DialogTitle>
                     <DialogContent>
                         <FormControl component="fieldset" className={classes.formControl}>
@@ -379,12 +374,5 @@ Thumb.propTypes = {
 };
 
 export default withRouter(
-    compose(
-        graphql(getDevices, {
-            options: {
-                notifyOnNetworkStatusChange: true
-            }
-        }),
-        withStyles(styles)
-    )(Thumb)
+    withStyles(styles)(Thumb)
 );
