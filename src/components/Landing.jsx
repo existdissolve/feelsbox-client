@@ -16,6 +16,7 @@ import Login from '-/components/Login';
 import {login} from '-/graphql/authentication';
 import client from '-/graphql/client';
 import withSnackbar from '-/components/hoc/withSnackbar';
+import initPush from '-/push';
 
 var auth2;
 
@@ -153,6 +154,10 @@ class Landing extends Component {
                 google: true
             }
         });
+
+        if (isLoggedIn) {
+            await initPush();
+        }
     };
 
     login = async email => {

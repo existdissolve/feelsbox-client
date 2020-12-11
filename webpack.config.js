@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
+const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 
 const htmlPlugin = new HtmlWebPackPlugin({
@@ -23,6 +24,9 @@ const manifestPlugin = new WebpackPwaManifest({
 });
 
 const hotModule = new webpack.HotModuleReplacementPlugin();
+const serviceWorker = new ServiceWorkerWebpackPlugin({
+    entry: path.join(process.cwd(), 'src/sw-fb.js')
+});
 
 module.exports = {
     module: {
@@ -61,7 +65,7 @@ module.exports = {
             chunks: 'all'
         }
     },
-    plugins: [htmlPlugin, manifestPlugin, hotModule, new Dotenv()],
+    plugins: [htmlPlugin, serviceWorker, manifestPlugin, hotModule, new Dotenv()],
     resolve: {
         alias: {
             '-': path.join(__dirname, 'src'),

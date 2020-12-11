@@ -5,3 +5,9 @@ export const setDefaultDevice = gql`
         setDefaultDevice(_id: $_id)
     }
 `;
+
+export const subscribeToPush = gql`
+    mutation subscribeToPush($push: UserPushInput) {
+        subscribeToPush(push: $push)
+    }
+`;
