@@ -4,13 +4,13 @@ self.addEventListener('install', function() {
 
 self.addEventListener('push', function(e) {
     const payload = JSON.parse(e.data.text());
-    const {badge, content: body, icon, image, title} = payload;
+    const {content: body, image, title} = payload;
 
     e.waitUntil(
         self.registration.showNotification(title, {
-            badge,
+            badge: 'https://feelsbox-assets.s3.amazonaws.com/badge.png',
             body,
-            icon,
+            icon: 'https://feelsbox-assets.s3.amazonaws.com/feelsbox.png',
             image,
             title
         })
