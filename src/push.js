@@ -5,7 +5,7 @@ import {decode} from 'base64-arraybuffer';
 import {subscribeToPush} from '-/graphql/user';
 import client from '-/graphql/client';
 
-const vapidKey = 'BLS9qge0D7-AJ94qMmote6rDuZkKzyPND7rG6wW_0nQu_IIjtah4MdzwDqWBaMS6kbOGgSa2wDiHt2kWwy0ESKs';
+const vapidKey = 'BN2FR0tXnjc4twlzmxAunsspOqjfB2n140ggTXTMOxhFHJJL-sW6ijc2K2ji3WbncJ81nfVxbzHLc1asz5WIQAE';
 
 const saveSubscription = subscription => {
     return client.mutate({
