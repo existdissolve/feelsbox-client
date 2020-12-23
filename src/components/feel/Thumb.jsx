@@ -24,7 +24,9 @@ import AddBoxIcon from '@material-ui/icons/AddBox';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
+import RecordVoiceOverIcon from '@material-ui/icons/RecordVoiceOver';
 import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
+import TextField from '@material-ui/core/TextField';
 import {copyFeel, getFeels, removeFeel, sendFeel, subscribe, unsubscribe} from '-/graphql/feel';
 import client from '-/graphql/client';
 
@@ -56,10 +58,13 @@ class Thumb extends Component {
         this.isDragging = false;
 
         this.state = {
+            notification: '',
             anchorEl: undefined,
             dialogEl: undefined,
             deviceEl: undefined,
-            selectedDevices: []
+            notifyEl: undefined,
+            selectedDevices: [],
+            selectedFriends: []
         };
     }
 
@@ -78,6 +83,49 @@ class Thumb extends Component {
     onPushClick = e => {
         this.onMenuClose();
         this.setState({deviceEl: e.target});
+    };
+
+    onNotifyClick = e => {
+        this.onMenuClose();
+        this.setState({notifyEl: e.target});
+    };
+
+    onNotifyFriendsClick = () => {
+        const {notification, selectedFriends} = this.state;
+        const _id = get(this.props, 'feel._id');
+
+        client.mutate({
+            mutation: sendFeel,
+            variables: {
+                _id,
+                data: {
+                    isNotification: true,
+                    notification,
+                    users: selectedFriends
+                }
+            }
+        });
+
+        this.onDialogClose();
+    };
+
+    onFriendCheck = e => {
+        const {selectedFriends} = this.state;
+        const friends = selectedFriends.slice();
+        const {target} = e;
+        const {checked, name} = target;
+
+        if (checked) {
+            friends.push(name);
+        } else {
+            const index = friends.findIndex(item => item === name);
+
+            if (index !== -1) {
+                friends.splice(index, 1);
+            }
+        }
+
+        this.setState({selectedFriends: friends});
     };
 
     onPushDevicesClick = () => {
@@ -121,7 +169,8 @@ class Thumb extends Component {
     onDialogClose = () => {
         this.setState({
             deviceEl: undefined,
-            dialogEl: undefined
+            dialogEl: undefined,
+            notifyEl: undefined
         });
     };
 
@@ -230,10 +279,17 @@ class Thumb extends Component {
         this.isDragging = true;
     };
 
+    onNotificationChange = e => {
+        const notification = get(e, 'target.value');
+
+        this.setState({notification});
+    };
+
     render() {
-        const {anchorEl, deviceEl, dialogEl, selectedDevices} = this.state;
+        const {anchorEl, deviceEl, dialogEl, notification, notifyEl, selectedDevices, selectedFriends} = this.state;
         const {classes, feel} = this.props;
         const devices = get(this.props, 'devices', []);
+        const friends = get(this.props, 'friends', []);
         const {frames = [], isOwner, isSubscribed, name} = feel;
         const frame = frames.find(frame => frame.isThumb) || frames[0];
         const {pixels} = frame;
@@ -262,7 +318,15 @@ class Thumb extends Component {
                 Send to Devices
             </MenuItem>
         );
-        const actions = [edit, remove, push];
+        const notify = (
+            <MenuItem onClick={this.onNotifyClick} key="notification">
+                <ListItemIcon>
+                    <RecordVoiceOverIcon />
+                </ListItemIcon>
+                Send to Friends
+            </MenuItem>
+        );
+        const actions = [edit, remove, push, notify];
 
         return (
             <Fragment>
@@ -360,6 +424,40 @@ class Thumb extends Component {
                             Cancel
                         </Button>
                         <Button onClick={this.onPushDevicesClick} color="primary" autoFocus>
+                            Send
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
+                <Dialog open={Boolean(notifyEl)} onClose={this.onDialogClose} keepMounted={false}>
+                    <DialogTitle>Send to Friends</DialogTitle>
+                    <DialogContent>
+                        <FormControl component="fieldset" className={classes.formControl}>
+                            <FormGroup>
+                                {friends.map(friend => {
+                                    const {_id: userId, email, name} = friend;
+                                    const isChecked = selectedFriends.includes(userId);
+
+                                    return (
+                                        <FormControlLabel key={userId} control={<Checkbox checked={isChecked} onChange={this.onFriendCheck} name={userId} />} label={name || email} />
+                                    );
+                                })}
+                            </FormGroup>
+                            <TextField
+                                autoFocus={true}
+                                label="Message"
+                                fullWidth={true}
+                                onChange={this.onNotificationChange}
+                                value={notification}
+                                name="notification"
+                                variant="outlined" />
+                        </FormControl>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.onDialogClose} color="primary">
+                            Cancel
+                        </Button>
+                        <Button onClick={this.onNotifyFriendsClick} color="primary" autoFocus>
                             Send
                         </Button>
                     </DialogActions>

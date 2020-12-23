@@ -35,6 +35,7 @@ import Thumb from '-/components/feel/Thumb';
 import {getMyCategories} from '-/graphql/category';
 import {getDevices} from '-/graphql/device';
 import {getFeels, sendCarousel} from '-/graphql/feel';
+import {getPushFriends} from '-/graphql/user';
 import client from '-/graphql/client';
 
 const styles = theme => ({
@@ -171,6 +172,7 @@ class FeelsList extends Component {
         const feels = get(this.props, 'data_feels.feels', []);
         const myCategories = get(this.props, 'data_categories.myCategories') || [];
         const devices = get(this.props, 'data_devices.devices') || [];
+        const friends = get(this.props, 'data_friends.pushFriends') || [];
         const groupedFeels = feels.filter(feel => feel.active).reduce((groups, feel) => {
             const {categories = [], isSubscribed} = feel;
 
@@ -325,7 +327,7 @@ class FeelsList extends Component {
 
                                             return <SimpleThumb key={_id} feel={feel} selectionHandler={this.onFeelSelect} isSelected={isSelected} />;
                                         } else {
-                                            return <Thumb devices={devices} feel={feel} key={_id} showSnackbar={showSnackbar} />;
+                                            return <Thumb devices={devices} friends={friends} feel={feel} key={_id} showSnackbar={showSnackbar} />;
                                         }
                                     })}
                                 </GridList>
@@ -360,6 +362,12 @@ export default withRouter(
         }),
         graphql(getDevices, {
             name: 'data_devices',
+            options: {
+                notifyOnNetworkStatusChange: true
+            }
+        }),
+        graphql(getPushFriends, {
+            name: 'data_friends',
             options: {
                 notifyOnNetworkStatusChange: true
             }
