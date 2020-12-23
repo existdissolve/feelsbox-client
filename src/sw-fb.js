@@ -4,9 +4,15 @@ self.addEventListener('install', function() {
 
 self.addEventListener('push', function(e) {
     const payload = JSON.parse(e.data.text());
-    const {content, title} = payload;
+    const {badge, content: body, icon, image, title} = payload;
 
     e.waitUntil(
-        self.registration.showNotification(title, {body: content})
+        self.registration.showNotification(title, {
+            badge,
+            body,
+            icon,
+            image,
+            title
+        })
     );
 });
