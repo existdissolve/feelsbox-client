@@ -8,10 +8,10 @@ self.addEventListener('push', function(e) {
 
     e.waitUntil(
         self.registration.showNotification(title, {
-            badge: 'https://feelsbox-assets.s3.amazonaws.com/badge.png',
+            badge: 'https://feelsbox-assets.s3.amazonaws.com/feelsbox.png',
             body,
-            icon: 'https://feelsbox-assets.s3.amazonaws.com/feelsbox.png',
-            image,
+            icon: image,
+            //image,
             title
         })
     );
