@@ -1,10 +1,11 @@
+/*global gapi*/
 import React from 'react';
 import PropTypes from 'prop-types';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import PaletteIcon from '@material-ui/icons/Palette';
-import AcUnitIcon from '@material-ui/icons/AcUnit';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import VideoLabelIcon from '@material-ui/icons/VideoLabel';
 import Drawer from '@material-ui/core/Drawer';
@@ -13,10 +14,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import {withStyles} from '@material-ui/core/styles';
-import {Link} from 'react-router-dom';
-
-import client from '-/graphql/client';
-import {viewWeather} from '-/graphql/device';
+import {Link, withRouter} from 'react-router-dom';
 
 const styles = {
     menuButton: {
@@ -46,10 +44,12 @@ class Navigation extends React.Component {
         });
     };
 
-    onWeatherClick = () => {
-        client.mutate({
-            mutation: viewWeather
-        });
+    onLogoutClick = async() => {
+        const auth2 = gapi.auth2.getAuthInstance();
+
+        await auth2.signOut();
+
+        location.reload();
     };
 
     render() {
@@ -108,9 +108,9 @@ class Navigation extends React.Component {
                             </ListItem>
                             <ListItem button>
                                 <ListItemIcon>
-                                    <AcUnitIcon />
+                                    <ExitToAppIcon />
                                 </ListItemIcon>
-                                <ListItemText primary="View Weather" onClick={this.onWeatherClick} />
+                                <ListItemText primary="Logout" onClick={this.onLogoutClick} />
                             </ListItem>
                         </List>
                     </div>
@@ -125,4 +125,6 @@ Navigation.propTypes = {
     classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(Navigation);
+export default withRouter(
+    withStyles(styles)(Navigation)
+);

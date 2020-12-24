@@ -28,16 +28,16 @@ export const Feelsbox = props => {
                 padding: 10,
                 boxSizing: 'initial',
                 background: '#222',
-                flex: '1 0 auto',
                 flexDirection: 'row',
-                flexFlow: 'nowrap'
+                flexFlow: 'nowrap',
+                overflow: 'hidden',
+                height: '100%'
             },
             saturation: {
                 width: '100%',
                 position: 'relative',
                 overflow: 'hidden',
-                flex: '0 0 auto',
-                height: '50%'
+                height: '100%'
             },
             Saturation: {
                 radius: '3px',

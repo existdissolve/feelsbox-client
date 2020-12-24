@@ -27,11 +27,13 @@ import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import TextField from '@material-ui/core/TextField';
 import {Typography} from '@material-ui/core';
 import VideoLabelIcon from '@material-ui/icons/VideoLabel';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import {get} from 'lodash';
 
 import AppBar from '-/components/AppBar';
 import SimpleThumb from '-/components/feel/SimpleThumb';
 import Thumb from '-/components/feel/Thumb';
+import Loading from '-/components/Loading';
 import {getMyCategories} from '-/graphql/category';
 import {getDevices} from '-/graphql/device';
 import {getFeels, sendCarousel} from '-/graphql/feel';
@@ -39,7 +41,13 @@ import {getPushFriends} from '-/graphql/user';
 import client from '-/graphql/client';
 
 const styles = theme => ({
+    container: {
+        display: 'flex',
+        height: '100vh',
+        flexDirection: 'column'
+    },
     root: {
+        flex: 1,
         backgroundColor: theme.palette.background.paper
     },
     grid: {
@@ -137,7 +145,6 @@ class FeelsList extends Component {
     };
 
     onDurationChange = e => {
-        console.log(e.target.value)
         this.setState({duration: e.target.value});
     };
 
@@ -170,6 +177,7 @@ class FeelsList extends Component {
         const {carouselMode, categories: filter = [], deviceEl, duration = 1000, selectedDevices = [], selectedFeels = []} = this.state;
         const {classes, showSnackbar, Snackbar} = this.props;
         const feels = get(this.props, 'data_feels.feels', []);
+        const loading = get(this.props, 'data_feels.loading');
         const myCategories = get(this.props, 'data_categories.myCategories') || [];
         const devices = get(this.props, 'data_devices.devices') || [];
         const friends = get(this.props, 'data_friends.pushFriends') || [];
@@ -235,7 +243,7 @@ class FeelsList extends Component {
         );
 
         return (
-            <div>
+            <div className={classes.container}>
                 <AppBar title="My Feels" />
                 <Toolbar className={classes.toolbar} variant="dense" disableGutters={false}>
                     <Select
@@ -312,7 +320,8 @@ class FeelsList extends Component {
                     </Fragment>
                 }
                 <div className={classes.root}>
-                    {groupedFeels.map(group => {
+                    {loading && <Loading message="Loading Your Feels..." />}
+                    {!loading && groupedFeels.map(group => {
                         const {_id, name, feels = []} = group;
 
                         return (

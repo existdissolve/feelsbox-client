@@ -22,10 +22,17 @@ import EditIcon from '@material-ui/icons/Edit';
 import {get} from 'lodash';
 
 import AppBar from '-/components/AppBar';
+import Loading from '-/components/Loading';
 import {addCategory, editCategory, getMyCategories} from '-/graphql/category';
 
 const styles = theme => ({
+    container: {
+        display: 'flex',
+        height: '100vh',
+        flexDirection: 'column'
+    },
     root: {
+        flex: 1,
         backgroundColor: theme.palette.background.paper
     },
     fab: {
@@ -113,10 +120,11 @@ class CategoryList extends React.Component {
         const {category, currentCategory, open} = this.state;
         const {classes} = this.props;
         const categories = get(this.props, 'data.myCategories', []);
+        const loading = get(this.props, 'data.loading');
         const action = currentCategory ? 'Edit' : 'Add';
 
         return (
-            <div>
+            <div className={classes.container}>
                 <AppBar title="Categories" />
                 <Dialog open={open} onClose={this.onDialogClose}>
                     <DialogTitle>{action} Category</DialogTitle>
@@ -135,26 +143,29 @@ class CategoryList extends React.Component {
                     </DialogActions>
                 </Dialog>
                 <div className={classes.root}>
-                    <List component="div">
-                        <ListSubheader>My Custom Categories</ListSubheader>
-                        {categories.map((device, idx) => {
-                            const {_id, name} = device;
+                    {loading && <Loading message="Loading Categories..." />}
+                    {!loading &&
+                        <List component="div">
+                            <ListSubheader>My Custom Categories</ListSubheader>
+                            {categories.map((device, idx) => {
+                                const {_id, name} = device;
 
-                            return (
-                                <React.Fragment key={_id}>
-                                    <ListItem>
-                                        <ListItemText primary={name} />
-                                        <ListItemSecondaryAction>
-                                            <IconButton edge="end" onClick={this.onEditClick.bind(this, _id)}>
-                                                <EditIcon />
-                                            </IconButton>
-                                        </ListItemSecondaryAction>
-                                    </ListItem>
-                                    {idx !== categories.length - 1 && <Divider />}
-                                </React.Fragment>
-                            );
-                        })}
-                    </List>
+                                return (
+                                    <React.Fragment key={_id}>
+                                        <ListItem>
+                                            <ListItemText primary={name} />
+                                            <ListItemSecondaryAction>
+                                                <IconButton edge="end" onClick={this.onEditClick.bind(this, _id)}>
+                                                    <EditIcon />
+                                                </IconButton>
+                                            </ListItemSecondaryAction>
+                                        </ListItem>
+                                        {idx !== categories.length - 1 && <Divider />}
+                                    </React.Fragment>
+                                );
+                            })}
+                        </List>
+                    }
                 </div>
                 <Fab className={classes.fab} color="primary" onClick={this.onAddClick}>
                     <AddIcon />

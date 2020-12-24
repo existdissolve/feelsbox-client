@@ -1,4 +1,4 @@
-/*global FB, gapi */
+/*global gapi */
 import {Component} from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import {compose} from 'recompose';
@@ -7,6 +7,7 @@ import {get, isUndefined} from 'lodash';
 
 import Feels from '-/components/feel/List';
 import Search from '-/components/feel/Search';
+import Splash from '-/components/Splash';
 import CanvasGrid from '-/components/canvas/Grid';
 import Categories from '-/components/category/List';
 import Devices from '-/components/device/List';
@@ -50,10 +51,8 @@ class Landing extends Component {
 
     componentDidMount() {
         const client_id = '355779476097-o2euqmi58qc4br3q7kgon7l9remq5hva.apps.googleusercontent.com';
-        const appId = 258803718399430;
 
         this.addScript('google-jssdk', '//apis.google.com/js/platform.js?onload=googleAsyncInit');
-        //this.addScript('facebook-jssdk', '//connect.facebook.net/en_US/sdk.js');
 
         window.googleAsyncInit = () => {
             gapi.load('auth2', () => {
@@ -84,52 +83,10 @@ class Landing extends Component {
                 }
             });
         };
-
-        /*
-        window.fbAsyncInit = () => {
-            FB.Event.subscribe('auth.statusChange', this.onFBAuthEvent);
-
-            FB.init({
-                appId,
-                cookie: true,
-                status: true,
-                xfbml: true,
-                version: 'v6.0'
-            });
-        };
-        */
     }
 
     forceLoginRedirect = () => {
         this.setState({loggingIn: false});
-    };
-
-    onFBAuthEvent = async response => {
-        const {status} = response;
-        let isLoggedIn = false;
-
-        if (status === 'connected') {
-            const data = await new Promise((resolve) => {
-                FB.api('/me', {fields: 'email'}, response => {
-                    resolve(response);
-                });
-            });
-            const {email} = data;
-
-            if (email) {
-                isLoggedIn = await this.login(email);
-            }
-        }
-
-        const {loginChecks} = this.state;
-
-        this.setState({
-            ...isLoggedIn && {loggedIn: true},
-            loginChecks: {
-                ...loginChecks,
-                facebook: true
-            }
-        });
     };
 
     onGoogleAuthEvent = async value => {
@@ -177,18 +134,17 @@ class Landing extends Component {
 
     render() {
         const {loggedIn, loggingIn, loginChecks = {}} = this.state;
-        const {facebook, google} = loginChecks;
+        const {google} = loginChecks;
         const {location = {}, showSnackbar, Snackbar} = this.props;
         const {pathname} = location;
-        const isFacebookDone = true;//!isUndefined(facebook);
         const isGoogleDone = !isUndefined(google);
         // if not logged in AND both auth checks aren't yet finished, just show loader
-        if (!loggedIn && (!isFacebookDone || !isGoogleDone)) {
-            return <div>Loading...</div>;
+        if (!loggedIn && !isGoogleDone) {
+            return <Splash message="Loading..." />;
         }
 
         if (loggingIn) {
-            return <div>Logging in...</div>;
+            return <Splash message="Logging In..." />;
         }
 
         if (!loggedIn && pathname !== '/signin') {

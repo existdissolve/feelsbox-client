@@ -40,12 +40,18 @@ import TuneForm from '-/components/canvas/TuneForm';
 import {addFeel, editFeel, getFeel, getFeels, testFeel} from '-/graphql/feel';
 
 const styles = theme => ({
+    container: {
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh'
+    },
     root: {
         display: 'flex',
         //justifyContent: 'space-around',
         backgroundColor: theme.palette.background.paper,
         'overscroll-behavior': 'contain',
-        height: 'calc(100vh - 104px)',
+        flex: 1,
+        //height: 'calc(100vh - 104px)',
         flexDirection: 'column',
         flexWrap: 'nowrap',
         overflow: 'hidden'
@@ -563,7 +569,7 @@ class CanvasGrid extends React.Component {
         }));
 
         return (
-            <div>
+            <div className={classes.container}>
                 <AppBar title={_id ? 'Edit Emoji' : 'Create Emoji'} iconRenderer={this.renderIcons()} />
                 <Toolbar className={classes.toolbar} variant="dense" disableGutters={true}>
                     <IconButton onClick={this.onUndoClick} disabled={!isUndoActive}>

@@ -9,9 +9,7 @@ const styles = () => ({
         //display: 'flex'
     },
     colors: {
-        height: 'calc(100% - 70px)',
         padding: '0px 20px 0 10px',
-        display: 'flex',
         flexDirection: 'column',
         overflowY: 'auto'
     },

@@ -35,11 +35,18 @@ import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
 import {get} from 'lodash';
 
 import AppBar from '-/components/AppBar';
+import Loading from '-/components/Loading';
 import {setDefaultDevice} from '-/graphql/user';
 import {getDevices, restart, setBrightness, submitAccessCode, turnOff} from '-/graphql/device';
 
 const styles = theme => ({
+    container: {
+        display: 'flex',
+        height: '100vh',
+        flexDirection: 'column'
+    },
     root: {
+        flex: 1,
         backgroundColor: theme.palette.background.paper
     },
     icon: {
@@ -195,6 +202,7 @@ class DeviceList extends Component {
         const {anchorEl, brightness, brightnessOpen, dialogOpen} = this.state;
         const {classes} = this.props;
         const devices = get(this.props, 'data.devices', []);
+        const loading = get(this.props, 'data.loading');
         const groupedDevices = devices.reduce((groups, device) => {
             const {isOwner} = device;
             const group = isOwner ? 'mine' : 'others';
@@ -219,7 +227,7 @@ class DeviceList extends Component {
         );
 
         return (
-            <div>
+            <div className={classes.container}>
                 <AppBar title="Devices" iconRenderer={menu} />
                 <Menu anchorEl={anchorEl} keepMounted={false} open={Boolean(anchorEl)} onClose={this.onMenuClose}>
                     <MenuItem onClick={this.onEnterCodeClick}>
@@ -269,57 +277,60 @@ class DeviceList extends Component {
                     </DialogActions>
                 </Dialog>
                 <div className={classes.root}>
-                    <List component="div">
-                        {Object.keys(groupedDevices).map(key => {
-                            const group = groupedDevices[key];
-                            const {label, devices = []} = group;
-                            const isMine = key === 'mine';
+                    {loading && <Loading message="Loading Your Devices..." />}
+                    {!loading &&
+                        <List component="div">
+                            {Object.keys(groupedDevices).map(key => {
+                                const group = groupedDevices[key];
+                                const {label, devices = []} = group;
+                                const isMine = key === 'mine';
 
-                            return (
-                                <Fragment key={key}>
-                                    <ListSubheader>{label}</ListSubheader>
-                                    {devices.map((device, idx) => {
-                                        const {_id, isDefault, name} = device;
+                                return (
+                                    <Fragment key={key}>
+                                        <ListSubheader>{label}</ListSubheader>
+                                        {devices.map((device, idx) => {
+                                            const {_id, isDefault, name} = device;
 
-                                        return (
-                                            <Fragment key={_id}>
-                                                <ListItem>
-                                                    <ListItemIcon button={isMine || undefined} onClick={isMine ? this.onDeviceClick.bind(this, _id) : undefined}>
-                                                        {isMine ?
-                                                            <AccountCircleIcon />
-                                                            :
-                                                            <SupervisedUserCircleIcon />
+                                            return (
+                                                <Fragment key={_id}>
+                                                    <ListItem>
+                                                        <ListItemIcon onClick={isMine ? this.onDeviceClick.bind(this, _id) : undefined}>
+                                                            {isMine ?
+                                                                <AccountCircleIcon />
+                                                                :
+                                                                <SupervisedUserCircleIcon />
+                                                            }
+                                                        </ListItemIcon>
+                                                        <ListItemText primary={name} style={{flexGrow: 1}} />
+                                                        {isMine &&
+                                                            <Fragment>
+                                                                <ListItemIcon onClick={this.onRestartClick.bind(this, _id)} className={classes.icon}>
+                                                                    <PowerSettingsNewIcon />
+                                                                </ListItemIcon>
+                                                                <ListItemIcon onClick={this.onTurnOffClick.bind(this, _id)} className={classes.icon}>
+                                                                    <FlashOffIcon />
+                                                                </ListItemIcon>
+                                                                <ListItemIcon onClick={this.onSetBrightnessClick.bind(this, _id)} className={classes.icon}>
+                                                                    <SettingsBrightnessIcon />
+                                                                </ListItemIcon>
+                                                                <ListItemIcon onClick={this.onViewHistoryClick.bind(this, _id)} className={classes.icon}>
+                                                                    <HistoryIcon />
+                                                                </ListItemIcon>
+                                                            </Fragment>
                                                         }
-                                                    </ListItemIcon>
-                                                    <ListItemText primary={name} style={{flexGrow: 1}} />
-                                                    {isMine &&
-                                                        <Fragment>
-                                                            <ListItemIcon onClick={this.onRestartClick.bind(this, _id)} className={classes.icon}>
-                                                                <PowerSettingsNewIcon />
-                                                            </ListItemIcon>
-                                                            <ListItemIcon onClick={this.onTurnOffClick.bind(this, _id)} className={classes.icon}>
-                                                                <FlashOffIcon />
-                                                            </ListItemIcon>
-                                                            <ListItemIcon onClick={this.onSetBrightnessClick.bind(this, _id)} className={classes.icon}>
-                                                                <SettingsBrightnessIcon />
-                                                            </ListItemIcon>
-                                                            <ListItemIcon onClick={this.onViewHistoryClick.bind(this, _id)} className={classes.icon}>
-                                                                <HistoryIcon />
-                                                            </ListItemIcon>
-                                                        </Fragment>
-                                                    }
-                                                    <ListItemIcon edge="end" className={classes.icon}>
-                                                        <SettingsRemoteIcon onClick={this.onDefaultClick.bind(this, _id)} style={{color: isDefault ? 'green' : undefined}} />
-                                                    </ListItemIcon>
-                                                </ListItem>
-                                                {idx !== devices.length - 1 && <Divider />}
-                                            </Fragment>
-                                        );
-                                    })}
-                                </Fragment>
-                            );
-                        })}
-                    </List>
+                                                        <ListItemIcon edge="end" className={classes.icon}>
+                                                            <SettingsRemoteIcon onClick={this.onDefaultClick.bind(this, _id)} style={{color: isDefault ? 'green' : undefined}} />
+                                                        </ListItemIcon>
+                                                    </ListItem>
+                                                    {idx !== devices.length - 1 && <Divider />}
+                                                </Fragment>
+                                            );
+                                        })}
+                                    </Fragment>
+                                );
+                            })}
+                        </List>
+                    }
                 </div>
             </div>
         );

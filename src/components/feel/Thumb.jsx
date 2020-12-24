@@ -236,8 +236,6 @@ class Thumb extends Component {
     };
 
     onTouchStart = e => {
-        const {feel, history} = this.props;
-        const {_id} = feel;
         const {currentTarget} = e;
 
         this.timer = setTimeout(() => {
@@ -245,7 +243,6 @@ class Thumb extends Component {
 
             this.timer = null;
             this.setState({anchorEl: currentTarget});
-            //history.push(`/canvas/${_id}`);
         }, 500);
     };
 

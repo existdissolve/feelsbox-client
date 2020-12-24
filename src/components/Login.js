@@ -2,7 +2,7 @@
 import React from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Icon from '@material-ui/core/Icon';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import {Redirect} from 'react-router-dom';
@@ -11,11 +11,7 @@ import AppBar from '-/components/AppBar';
 
 const styles = () => ({
     root: {
-        padding: '10px'
-    },
-    text: {
-        fontSize: 14,
-        fontFamily: 'sans-serif'
+        padding: '50px 30px'
     }
 });
 
@@ -25,24 +21,6 @@ class Login extends React.Component {
 
         this.state = {loginSuccess: false};
     }
-    onFacebookLoginClick = async() => {
-        const config = {
-            return_scopes: true,
-            scope: 'email'
-        };
-
-        FB.login(response => {
-            const {status} = response;
-
-            this.setState({loginSuccess: status === 'connected'});
-        }, config);
-    };
-
-    onFacebookLogoutClick = async() => {
-        FB.logout(response => {
-            console.log(response);
-        });
-    };
 
     onGoogleLoginClick = () => {
         const auth2 = gapi.auth2.getAuthInstance();
@@ -50,12 +28,6 @@ class Login extends React.Component {
         auth2.signIn({
             prompt: 'select_account'
         });
-    };
-
-    onGoogleLogoutClick = () => {
-        const auth2 = gapi.auth2.getAuthInstance();
-
-        auth2.signOut();
     };
 
     render() {
@@ -69,12 +41,15 @@ class Login extends React.Component {
         return (
             <div>
                 <CssBaseline />
-                <AppBar title="Login to Feelsbox Manager" includeNav={false} />
+                <AppBar title="Login to FeelsBox" includeNav={false} />
                 <div className={classes.root}>
-                    <Typography component="p" gutterBottom={true} paragraph={true}>
-                        To begin using your Feelsbox, login using either Facebook or Google.
+                    <Typography variant="h3" gutterBottom={true} paragraph={false}>
+                        Hi there!
                     </Typography>
-                    <Button variant="contained" onClick={this.onGoogleLoginClick} startIcon={<Icon className="fab fa-google" />}>Login with Google</Button>
+                    <Typography component="p" gutterBottom={true} paragraph={true}>
+                        To begin using your FeelsBox, login with your Google account.
+                    </Typography>
+                    <Button variant="contained" onClick={this.onGoogleLoginClick} startIcon={<AccountCircleIcon />}>Login with Google</Button>
                 </div>
             </div>
         );
