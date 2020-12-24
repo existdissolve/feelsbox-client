@@ -9,7 +9,8 @@ import AppBar from '-/components/AppBar';
 
 const styles = () => ({
     root: {
-        padding: '50px 30px',
+        height: '100%',
+        padding: '50% 0',
         textAlign: 'center'
     }
 });
