@@ -24,10 +24,10 @@ import FlipToBackIcon from '@material-ui/icons/FlipToBack';
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import PhotoAlbumIcon from '@material-ui/icons/PhotoAlbum';
 import SaveIcon from '@material-ui/icons/Save';
 import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
 import SettingsRemoteOutlinedIcon from '@material-ui/icons/SettingsRemoteOutlined';
-import TuneIcon from '@material-ui/icons/Tune';
 import UndoIcon from '@material-ui/icons/Undo';
 import {cloneDeep, get, isEmpty, pick, set, uniq} from 'lodash';
 
@@ -36,7 +36,6 @@ import Pixel from '-/components/canvas/Pixel';
 import Feelsbox from '-/components/canvas/picker/Feelsbox';
 import Form from '-/components/canvas/Form';
 import FrameForm from '-/components/canvas/FrameForm';
-import TuneForm from '-/components/canvas/TuneForm';
 import {addFeel, editFeel, getFeel, getFeels, testFeel} from '-/graphql/feel';
 
 const styles = theme => ({
@@ -47,11 +46,9 @@ const styles = theme => ({
     },
     root: {
         display: 'flex',
-        //justifyContent: 'space-around',
         backgroundColor: theme.palette.background.paper,
         'overscroll-behavior': 'contain',
         flex: 1,
-        //height: 'calc(100vh - 104px)',
         flexDirection: 'column',
         flexWrap: 'nowrap',
         overflow: 'hidden'
@@ -126,7 +123,7 @@ class CanvasGrid extends React.Component {
             testDuration: 1000,
             testRepeat: false,
             testReverse: false,
-            tuneOpen: false
+            thumbIndex: 0
         };
     }
 
@@ -139,6 +136,7 @@ class CanvasGrid extends React.Component {
         if (!activeFeelId || (currentId && currentId !== incomingId)) {
             const pixels = get(feel, 'frames[0].pixels', []);
             const frames = get(feel, 'frames', []);
+            const thumbIndex = frames.findIndex(frame => frame.isThumb);
 
             this.setState({
                 activeFeelId: currentId || 'new',
@@ -147,7 +145,8 @@ class CanvasGrid extends React.Component {
                 frames: frames.slice(),
                 history: [],
                 livePixels: pixels.slice(),
-                open: false
+                open: false,
+                thumbIndex: thumbIndex === -1 ? 0 : thumbIndex
             });
         }
     }
@@ -180,18 +179,34 @@ class CanvasGrid extends React.Component {
         });
     };
 
-    onTuneChange = e => {
-        const target = get(e, 'target', {});
-        const {name, value} = target;
+    onThumbClick = () => {
         const {currentFrame, data: oldData, frames: oldFrames} = this.state;
         const data = cloneDeep(oldData);
         const frames = cloneDeep(oldFrames);
-        const finalValue = parseInt(value);
+        const currentThumbIndex = frames.findIndex(frame => frame.isThumb);
+        const oldThumbIndex = currentThumbIndex === -1 ? 0 : currentThumbIndex;
 
-        set(data, `frames.${currentFrame}.${name}`, finalValue);
-        set(frames, `${currentFrame}.${name}`, finalValue);
+        let thumbIndex = currentFrame;
 
-        this.setState({data, frames});
+        if (currentFrame === oldThumbIndex) {
+            // index is the same, undo it and reset to zero
+            set(data, `frames.${currentFrame}.isThumb`, false);
+            set(frames, `${currentFrame}.isThumb`, false);
+            // set on zero index
+            set(data, 'frames.0.isThumb', true);
+            set(frames, '0.isThumb', true);
+
+            thumbIndex = 0;
+        } else {
+            // index is different; undo on previous index and set to current frame
+            set(data, `frames.${oldThumbIndex}.isThumb`, false);
+            set(frames, `${oldThumbIndex}.isThumb`, false);
+            // set to new index
+            set(data, `frames.${currentFrame}.isThumb`, true);
+            set(frames, `${currentFrame}.isThumb`, true);
+        }
+
+        this.setState({data, frames, thumbIndex});
     };
 
     onSaveClick = async() => {
@@ -509,14 +524,6 @@ class CanvasGrid extends React.Component {
         this.setState({anchorEl});
     };
 
-    onTuneClick = () => {
-        this.setState({tuneOpen: true});
-    };
-
-    onTuneClose = () => {
-        this.setState({tuneOpen: false});
-    };
-
     onMenuClose = () => {
         this.setState({anchorEl: null});
     };
@@ -552,7 +559,7 @@ class CanvasGrid extends React.Component {
     render() {
         const {classes} = this.props;
         const nodes = Array(64).fill(true);
-        const {anchorEl, currentFrame, data, frames = [], frameTestOpen, history, livePixels, open, selectedColor, testDuration, testRepeat, testReverse, tuneOpen} = this.state;
+        const {anchorEl, currentFrame, data, frames = [], frameTestOpen, history, livePixels, open, selectedColor, testDuration, testRepeat, testReverse, thumbIndex = 0} = this.state;
         const _id = get(this.props, 'match.params._id');
         const frameHistory = history[currentFrame] || [];
         const frameCount = frames.length || 1;
@@ -560,8 +567,7 @@ class CanvasGrid extends React.Component {
         const isNextActive = frameCount > (currentFrame + 1);
         const isPrevActive = currentFrame !== 0;
         const isDeleteActive = frameCount > 1;
-        const activeFrame = get(data, `frames.${currentFrame}`) || {};
-        const {brightness: currentFrameBrightness, duration: currentFrameDuration} = activeFrame;
+        const isThumb = currentFrame === thumbIndex;
         const presetColors = uniq(livePixels.map(pixel => {
             const {color} = pixel;
 
@@ -587,9 +593,11 @@ class CanvasGrid extends React.Component {
                     <IconButton onClick={this.onFrameMenuClick}>
                         <LibraryAddIcon />
                     </IconButton>
-                    <IconButton onClick={this.onTuneClick}>
-                        <TuneIcon />
-                    </IconButton>
+                    {frames.length > 1 &&
+                        <IconButton onClick={this.onThumbClick}>
+                            <PhotoAlbumIcon color={isThumb ? 'secondary' : 'action'} />
+                        </IconButton>
+                    }
                     <Typography variant="button" className={classes.frameCount}>{currentFrame + 1} / {frameCount}</Typography>
                 </Toolbar>
                 <Menu anchorEl={anchorEl} keepMounted={false} open={Boolean(anchorEl)} onClose={this.onMenuClose}>
@@ -614,15 +622,6 @@ class CanvasGrid extends React.Component {
                         </MenuItem>
                     }
                 </Menu>
-                <Dialog open={tuneOpen} onClose={this.onTuneClose} aria-labelledby="form-tune-title">
-                    <DialogTitle id="form-tune-title">Frame Options</DialogTitle>
-                    <DialogContent>
-                        <TuneForm onChange={this.onTuneChange} hasMultipleFrames={frames.length > 1} brightness={currentFrameBrightness} duration={currentFrameDuration} />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.onTuneClose} color="primary">Close</Button>
-                    </DialogActions>
-                </Dialog>
                 <Dialog open={frameTestOpen} onClose={this.onFramesFormClose} aria-labelledby="form-frame-title">
                     <DialogTitle id="form-frame-title">Test All Frames</DialogTitle>
                     <DialogContent>
