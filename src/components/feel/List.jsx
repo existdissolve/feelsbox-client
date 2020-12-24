@@ -27,7 +27,6 @@ import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import TextField from '@material-ui/core/TextField';
 import {Typography} from '@material-ui/core';
 import VideoLabelIcon from '@material-ui/icons/VideoLabel';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import {get} from 'lodash';
 
 import AppBar from '-/components/AppBar';
