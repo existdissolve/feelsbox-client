@@ -1,6 +1,7 @@
 import {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
 import {get} from 'lodash';
+import classnames from 'classnames';
 
 import {withStyles} from '@material-ui/core/styles';
 import {withRouter} from 'react-router-dom';
@@ -43,6 +44,9 @@ const styles = {
         boxShadow: '0px 1px 5px 0px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.2), 0px 3px 1px -2px rgba(0, 0, 0, 0.2)',
         '&:active': {
             background: '#3f51b5'
+        },
+        '&.isSubscribed': {
+            background: 'silver'
         }
     },
     gridList: {
@@ -287,10 +291,13 @@ class Thumb extends Component {
         const {classes, feel} = this.props;
         const devices = get(this.props, 'devices', []);
         const friends = get(this.props, 'friends', []);
-        const {frames = [], isOwner, isSubscribed, name} = feel;
+        const {frames = [], isOwner, isSubscribed, isSubscriptionOwner, name} = feel;
         const frame = frames.find(frame => frame.isThumb) || frames[0];
         const {pixels} = frame;
         const grid = new Array(64).fill(true);
+        const emojiCls = classnames(classes.emoji, {
+            isSubscribed
+        });
         const edit = (
             <MenuItem onClick={this.onEditClick} key="edit">
                 <ListItemIcon>
@@ -323,13 +330,53 @@ class Thumb extends Component {
                 Send to Friends
             </MenuItem>
         );
+        const saveToFavs = (
+            <MenuItem onClick={this.onSubscribeClick} key="save_feel">
+                <ListItemIcon>
+                    <AddBoxIcon />
+                </ListItemIcon>
+                Save to Favs
+            </MenuItem>
+        );
+        const removeFromFavs = (
+            <MenuItem onClick={this.onUnsubscribeClick} key="remove_feel">
+                <ListItemIcon>
+                    <IndeterminateCheckBoxIcon />
+                </ListItemIcon>
+                Remove from Favs
+            </MenuItem>
+        );
+        const copyFeel = (
+            <MenuItem onClick={this.onCopyClick} key="copy_feel_save">
+                <ListItemIcon>
+                    <FlipToBackIcon />
+                </ListItemIcon>
+                Copy to My Feels
+            </MenuItem>
+        );
+
+        const menu = [];
         const actions = [edit, remove, push, notify];
+
+        if (isOwner) {
+            menu.push(...actions);
+        } else {
+            menu.push(copyFeel);
+            menu.push(push);
+
+            if (!isSubscribed) {
+                menu.push(saveToFavs);
+            } else if (isSubscriptionOwner) {
+                menu.push(removeFromFavs);
+            }
+        }
+
 
         return (
             <Fragment>
                 <GridListTile style={{width: '33%'}}>
                     <div>
-                        <a id={name} className={classes.emoji} onTouchStart={this.onTouchStart} onTouchEnd={this.onTouchEnd} onTouchMove={this.onTouchMove}>
+                        <a id={name} className={emojiCls} onTouchStart={this.onTouchStart} onTouchEnd={this.onTouchEnd} onTouchMove={this.onTouchMove}>
                             <GridList className={classes.gridList} cols={8} spacing={0} cellHeight={8}>
                                 {grid.map((val, idx) => {
                                     let color = '000000';
@@ -347,41 +394,7 @@ class Thumb extends Component {
                     </div>
                 </GridListTile>
                 <Menu anchorEl={anchorEl} keepMounted={false} open={Boolean(anchorEl)} onClose={this.onMenuClose}>
-                    {isOwner && actions}
-                    {!isOwner && !isSubscribed &&
-                        [
-                            <MenuItem onClick={this.onSubscribeClick} key="save_feel">
-                                <ListItemIcon>
-                                    <AddBoxIcon />
-                                </ListItemIcon>
-                                Save to Favs
-                            </MenuItem>,
-                            <MenuItem onClick={this.onCopyClick} key="copy_feel_save">
-                                <ListItemIcon>
-                                    <FlipToBackIcon />
-                                </ListItemIcon>
-                                Copy to My Feels
-                            </MenuItem>,
-                            push
-                        ]
-                    }
-                    {!isOwner && isSubscribed &&
-                        [
-                            <MenuItem onClick={this.onUnsubscribeClick} key="remove_feel">
-                                <ListItemIcon>
-                                    <IndeterminateCheckBoxIcon />
-                                </ListItemIcon>
-                                Remove from Favs
-                            </MenuItem>,
-                            <MenuItem onClick={this.onCopyClick} key="copy_feel_remove">
-                                <ListItemIcon>
-                                    <FlipToBackIcon />
-                                </ListItemIcon>
-                                Copy to My Feels
-                            </MenuItem>,
-                            push
-                        ]
-                    }
+                    {menu}
                 </Menu>
                 <Dialog open={Boolean(dialogEl)} onClose={this.onDialogClose} keepMounted={false}>
                     <DialogTitle>Remove Feel?</DialogTitle>

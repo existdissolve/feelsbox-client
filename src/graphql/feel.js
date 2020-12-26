@@ -74,6 +74,7 @@ export const getFeels = gql`
             }
             isOwner
             isSubscribed
+            isSubscriptionOwner
             name
         }
     }
@@ -93,6 +94,7 @@ export const subscribe = gql`
         subscribe(_id: $_id) {
             _id
             isSubscribed
+            isSubscriptionOwner
         }
     }
 `;
@@ -120,6 +122,7 @@ export const unsubscribe = gql`
         unsubscribe(_id: $_id) {
             _id
             isSubscribed
+            isSubscriptionOwner
         }
     }
 `;

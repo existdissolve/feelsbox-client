@@ -181,15 +181,15 @@ class FeelsList extends Component {
         const devices = get(this.props, 'data_devices.devices') || [];
         const friends = get(this.props, 'data_friends.pushFriends') || [];
         const groupedFeels = feels.filter(feel => feel.active).reduce((groups, feel) => {
-            const {categories = [], isSubscribed} = feel;
+            const {categories = []} = feel;
 
-            if (isSubscribed || !categories.length) {
+            if (!categories.length) {
                 if (filter.length) {
                     return groups;
                 }
 
-                const categoryId = isSubscribed ? '__' : 'uncategorized';
-                const categoryName = isSubscribed ? 'Followed Feels' : 'Uncategorized';
+                const categoryId = 'uncategorized';
+                const categoryName = 'Uncategorized';
                 const group = groups.find(item => item._id === categoryId);
 
                 if (!group) {
