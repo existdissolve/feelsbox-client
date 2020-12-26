@@ -44,6 +44,7 @@
     "apollo-link-http": "^1.5.16",
     "axios": "^0.19.2",
     "base64-arraybuffer": "^0.2.0",
+    "classnames": "^2.2.6",
     "compression": "^1.7.4",
     "copy-to-clipboard": "^3.3.1",
     "email-validator": "^2.0.4",
