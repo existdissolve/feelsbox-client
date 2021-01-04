@@ -24,6 +24,7 @@ import Select from '@material-ui/core/Select';
 import Toolbar from '@material-ui/core/Toolbar';
 import RecentActorsIcon from '@material-ui/icons/RecentActors';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
+import MessageIcon from '@material-ui/icons/Message';
 import TextField from '@material-ui/core/TextField';
 import {Typography} from '@material-ui/core';
 import VideoLabelIcon from '@material-ui/icons/VideoLabel';
@@ -35,7 +36,7 @@ import Thumb from '-/components/feel/Thumb';
 import Loading from '-/components/Loading';
 import {getMyCategories} from '-/graphql/category';
 import {getDevices} from '-/graphql/device';
-import {getFeels, sendCarousel} from '-/graphql/feel';
+import {getFeels, sendCarousel, sendMessage} from '-/graphql/feel';
 import {getPushFriends} from '-/graphql/user';
 import client from '-/graphql/client';
 
@@ -83,6 +84,8 @@ class FeelsList extends Component {
             categories: [],
             deviceEl: undefined,
             duration: 1000,
+            message: '',
+            messageEl: undefined,
             selectedDevices: [],
             selectedFeels: []
         };
@@ -109,6 +112,19 @@ class FeelsList extends Component {
             selectedDevices: [],
             selectedFeels: []
         });
+    };
+
+    onMessageClick = e => {
+        this.setState({
+            messageEl: e.target,
+            selectedDevices: []
+        });
+    };
+
+    onMessageChange = e => {
+        const message = get(e, 'target.value');
+
+        this.setState({message});
     };
 
     onFeelSelect = _id => {
@@ -148,11 +164,31 @@ class FeelsList extends Component {
     };
 
     onDialogClose = () => {
-        this.setState({deviceEl: undefined});
+        this.setState({
+            deviceEl: undefined,
+            messageEl: undefined
+        });
     };
 
     onDeviceClick = e => {
         this.setState({deviceEl: e.target});
+    };
+
+    onSendMessageClick = async() => {
+        const {message, selectedDevices} = this.state;
+
+        await client.mutate({
+            mutation: sendMessage,
+            variables: {
+                data: {
+                    devices: selectedDevices,
+                    message
+                }
+            }
+        });
+
+        this.setState({selectedDevices: []});
+        this.onDialogClose();
     };
 
     onSendCarouselClick = async() => {
@@ -173,13 +209,14 @@ class FeelsList extends Component {
     };
 
     render() {
-        const {carouselMode, categories: filter = [], deviceEl, duration = 1000, selectedDevices = [], selectedFeels = []} = this.state;
+        const {carouselMode, categories: filter = [], deviceEl, duration = 1000, message, messageEl, selectedDevices = [], selectedFeels = []} = this.state;
         const {classes, showSnackbar, Snackbar} = this.props;
         const feels = get(this.props, 'data_feels.feels', []);
         const loading = get(this.props, 'data_feels.loading');
         const myCategories = get(this.props, 'data_categories.myCategories') || [];
         const devices = get(this.props, 'data_devices.devices') || [];
         const friends = get(this.props, 'data_friends.pushFriends') || [];
+        const messageCapableDevices = devices.slice().filter(device => get(device, 'capabilities.messages'));
         const groupedFeels = feels.filter(feel => feel.active).reduce((groups, feel) => {
             const {categories = []} = feel;
 
@@ -264,6 +301,11 @@ class FeelsList extends Component {
                         })}
                     </Select>
                     <div className={classes.grow} />
+                    {messageCapableDevices.length > 0 &&
+                        <IconButton onClick={this.onMessageClick}>
+                            <MessageIcon />
+                        </IconButton>
+                    }
                     <IconButton onClick={this.onCarouselClick} className={classes.carousel} edge="end">
                         <RecentActorsIcon />
                     </IconButton>
@@ -317,6 +359,38 @@ class FeelsList extends Component {
                             </DialogActions>
                         </Dialog>
                     </Fragment>
+                }
+                {messageCapableDevices.length > 0 &&
+                    <Dialog open={Boolean(messageEl)} onClose={this.onDialogClose} keepMounted={false}>
+                        <DialogTitle>Send Message to Devices</DialogTitle>
+                        <DialogContent>
+                            <FormControl component="fieldset" className={classes.formControl}>
+                                <TextField
+                                    autoFocus={true}
+                                    label="Message"
+                                    fullWidth={true}
+                                    onChange={this.onMessageChange}
+                                    value={message}
+                                    name="message"
+                                    variant="outlined" />
+                                <FormGroup>
+                                    {messageCapableDevices.map(device => {
+                                        const {_id: deviceId, name} = device;
+                                        const isChecked = selectedDevices.includes(deviceId);
+
+                                        return (
+                                            <FormControlLabel key={deviceId} control={<Checkbox checked={isChecked} onChange={this.onDeviceCheck} name={deviceId} />} label={name} />
+                                        );
+                                    })}
+                                </FormGroup>
+                            </FormControl>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={this.onSendMessageClick} color="primary" autoFocus>
+                                Send
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
                 }
                 <div className={classes.root}>
                     {loading && <Loading message="Loading Your Feels..." />}

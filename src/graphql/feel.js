@@ -111,6 +111,12 @@ export const sendFeel = gql`
     }
 `;
 
+export const sendMessage = gql`
+    mutation sendMessage($data: FeelMessageInput) {
+        sendMessage(data: $data)
+    }
+`;
+
 export const testFeel = gql`
     mutation testFeel($feel: TestFeelInput!) {
         testFeel(feel: $feel)

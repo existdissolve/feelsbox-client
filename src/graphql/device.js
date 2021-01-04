@@ -31,6 +31,9 @@ export const getDevices = gql`
     query getDevices {
         devices {
             _id
+            capabilities {
+                messages
+            }
             isDefault
             isOwner
             name
