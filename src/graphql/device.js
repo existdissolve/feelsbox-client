@@ -33,6 +33,7 @@ export const getDevices = gql`
             _id
             capabilities {
                 messages
+                updates
             }
             isDefault
             isOwner
@@ -62,6 +63,12 @@ export const setBrightness = gql`
 export const turnOff = gql`
     mutation turnOff($_id: ID!) {
         turnOff(_id: $_id)
+    }
+`;
+
+export const updateDevice = gql`
+    mutation updateDevice($_id: ID!) {
+        updateDevice(_id: $_id)
     }
 `;
 

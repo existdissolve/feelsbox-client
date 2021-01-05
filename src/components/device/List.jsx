@@ -32,12 +32,13 @@ import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import SettingsBrightnessIcon from '@material-ui/icons/SettingsBrightness';
 import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
 import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
+import SystemUpdateIcon from '@material-ui/icons/SystemUpdate';
 import {get} from 'lodash';
 
 import AppBar from '-/components/AppBar';
 import Loading from '-/components/Loading';
 import {setDefaultDevice} from '-/graphql/user';
-import {getDevices, restart, setBrightness, submitAccessCode, turnOff} from '-/graphql/device';
+import {getDevices, restart, setBrightness, submitAccessCode, turnOff, updateDevice} from '-/graphql/device';
 
 const styles = theme => ({
     container: {
@@ -194,6 +195,14 @@ class DeviceList extends Component {
         });
     };
 
+    onUpdateClick = _id => {
+        const {updateDevice} = this.props;
+
+        updateDevice({
+            variables: {_id}
+        });
+    };
+
     onViewHistoryClick = _id => {
         window.location = `/#/devices/${_id}/history`;
     };
@@ -290,6 +299,7 @@ class DeviceList extends Component {
                                         <ListSubheader>{label}</ListSubheader>
                                         {devices.map((device, idx) => {
                                             const {_id, isDefault, name} = device;
+                                            const isUpdateable = get(device, 'capabilities.updates');
 
                                             return (
                                                 <Fragment key={_id}>
@@ -304,6 +314,11 @@ class DeviceList extends Component {
                                                         <ListItemText primary={name} style={{flexGrow: 1}} />
                                                         {isMine &&
                                                             <Fragment>
+                                                                {isUpdateable &&
+                                                                    <ListItemIcon onClick={this.onUpdateClick.bind(this, _id)} className={classes.icon}>
+                                                                        <SystemUpdateIcon />
+                                                                    </ListItemIcon>
+                                                                }
                                                                 <ListItemIcon onClick={this.onRestartClick.bind(this, _id)} className={classes.icon}>
                                                                     <PowerSettingsNewIcon />
                                                                 </ListItemIcon>
@@ -349,6 +364,7 @@ export default withRouter(
         graphql(setBrightness, {name: 'setBrightness'}),
         graphql(setDefaultDevice, {name: 'setDefaultDevice'}),
         graphql(turnOff, {name: 'turnOff'}),
+        graphql(updateDevice, {name: 'updateDevice'}),
         withStyles(styles),
 
     )(DeviceList)
