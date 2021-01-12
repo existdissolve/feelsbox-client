@@ -288,7 +288,6 @@ class FeelsList extends Component {
 
     onMenuClose = () => {
         this.setState({
-            activeFeel: undefined,
             anchorEl: undefined
         });
     };
