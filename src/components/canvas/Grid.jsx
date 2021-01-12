@@ -574,32 +574,35 @@ class CanvasGrid extends React.Component {
             return `#${color}`;
         }));
 
+        const extraContent = (
+            <Toolbar className={classes.toolbar} variant="dense" disableGutters={true}>
+                <IconButton onClick={this.onUndoClick} disabled={!isUndoActive}>
+                    <UndoIcon />
+                </IconButton>
+                <IconButton onClick={this.onClearClick} disabled={!isUndoActive}>
+                    <ClearAllIcon />
+                </IconButton>
+                <IconButton onClick={this.onPreviousClick} disabled={!isPrevActive}>
+                    <NavigateBeforeIcon />
+                </IconButton>
+                <IconButton onClick={this.onNextClick} disabled={!isNextActive}>
+                    <NavigateNextIcon />
+                </IconButton>
+                <IconButton onClick={this.onFrameMenuClick}>
+                    <LibraryAddIcon />
+                </IconButton>
+                {frames.length > 1 &&
+                    <IconButton onClick={this.onThumbClick}>
+                        <PhotoAlbumIcon color={isThumb ? 'secondary' : 'action'} />
+                    </IconButton>
+                }
+                <Typography variant="button" className={classes.frameCount}>{currentFrame + 1} / {frameCount}</Typography>
+            </Toolbar>
+        );
+
         return (
             <div className={classes.container}>
-                <AppBar title={_id ? 'Edit Emoji' : 'Create Emoji'} iconRenderer={this.renderIcons()} />
-                <Toolbar className={classes.toolbar} variant="dense" disableGutters={true}>
-                    <IconButton onClick={this.onUndoClick} disabled={!isUndoActive}>
-                        <UndoIcon />
-                    </IconButton>
-                    <IconButton onClick={this.onClearClick} disabled={!isUndoActive}>
-                        <ClearAllIcon />
-                    </IconButton>
-                    <IconButton onClick={this.onPreviousClick} disabled={!isPrevActive}>
-                        <NavigateBeforeIcon />
-                    </IconButton>
-                    <IconButton onClick={this.onNextClick} disabled={!isNextActive}>
-                        <NavigateNextIcon />
-                    </IconButton>
-                    <IconButton onClick={this.onFrameMenuClick}>
-                        <LibraryAddIcon />
-                    </IconButton>
-                    {frames.length > 1 &&
-                        <IconButton onClick={this.onThumbClick}>
-                            <PhotoAlbumIcon color={isThumb ? 'secondary' : 'action'} />
-                        </IconButton>
-                    }
-                    <Typography variant="button" className={classes.frameCount}>{currentFrame + 1} / {frameCount}</Typography>
-                </Toolbar>
+                <AppBar title={_id ? 'Edit Emoji' : 'Create Emoji'} iconRenderer={this.renderIcons()} extraContent={extraContent} position="" />
                 <Menu anchorEl={anchorEl} keepMounted={false} open={Boolean(anchorEl)} onClose={this.onMenuClose}>
                     <MenuItem onClick={this.onAddClick}>
                         <ListItemIcon>
