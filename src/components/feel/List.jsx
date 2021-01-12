@@ -1,50 +1,62 @@
 import {Component, Fragment} from 'react';
 import {withStyles} from '@material-ui/core/styles';
+import {Typography} from '@material-ui/core';
 import {graphql} from 'react-apollo';
 import {compose} from 'recompose';
 import {withRouter} from 'react-router-dom';
+import {get} from 'lodash';
+
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Divider from '@material-ui/core/Divider';
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import GridList from '@material-ui/core/GridList';
-import GridOnIcon from '@material-ui/icons/GridOn';
-import Subheader from '@material-ui/core/ListSubheader';
+import IconButton from '@material-ui/core/IconButton';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import Fab from '@material-ui/core/Fab';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
-import ListAltIcon from '@material-ui/icons/ListAlt';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import IconButton from '@material-ui/core/IconButton';
-import AddIcon from '@material-ui/icons/Add';
+import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import Toolbar from '@material-ui/core/Toolbar';
-import RecentActorsIcon from '@material-ui/icons/RecentActors';
-import AccessTimeIcon from '@material-ui/icons/AccessTime';
-import MessageIcon from '@material-ui/icons/Message';
+import Subheader from '@material-ui/core/ListSubheader';
 import TextField from '@material-ui/core/TextField';
-import {Typography} from '@material-ui/core';
+import Toolbar from '@material-ui/core/Toolbar';
+
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
+import AddIcon from '@material-ui/icons/Add';
+import AddBoxIcon from '@material-ui/icons/AddBox';
+import CloseIcon from '@material-ui/icons/Close';
+import EditIcon from '@material-ui/icons/Edit';
+import FlipToBackIcon from '@material-ui/icons/FlipToBack';
+import GridOnIcon from '@material-ui/icons/GridOn';
+import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
+import ListAltIcon from '@material-ui/icons/ListAlt';
+import MessageIcon from '@material-ui/icons/Message';
+import RecentActorsIcon from '@material-ui/icons/RecentActors';
+import RecordVoiceOverIcon from '@material-ui/icons/RecordVoiceOver';
+import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
 import VideoLabelIcon from '@material-ui/icons/VideoLabel';
 import ViewListIcon from '@material-ui/icons/ViewList';
-import {get} from 'lodash';
 
 import AppBar from '-/components/AppBar';
 import SimpleThumb from '-/components/feel/SimpleThumb';
 import Thumb from '-/components/feel/Thumb';
 import Loading from '-/components/Loading';
+
 import {getMyCategories} from '-/graphql/category';
 import {getDevices} from '-/graphql/device';
-import {getFeels, sendCarousel, sendMessage} from '-/graphql/feel';
+import {copyFeel, getFeels, removeFeel, sendCarousel, sendFeel, sendMessage, subscribe, unsubscribe} from '-/graphql/feel';
 import {getPushFriends} from '-/graphql/user';
 import client from '-/graphql/client';
 
@@ -103,15 +115,21 @@ class FeelsList extends Component {
         super(props);
 
         this.state = {
+            activeFeel: undefined,
+            anchorEl: undefined,
             carouselMode: false,
             categories: [],
             deviceEl: undefined,
+            dialogEl: undefined,
             displayMode: 'grid',
             duration: 1000,
             message: '',
+            notification: '',
+            notificationEl: undefined,
             messageEl: undefined,
             selectedDevices: [],
-            selectedFeels: []
+            selectedFeels: [],
+            selectedFriends: []
         };
     }
 
@@ -138,34 +156,23 @@ class FeelsList extends Component {
         });
     };
 
-    onDisplayModeClick = displayMode => {
-        this.setState({displayMode});
-    };
+    onCopyClick = () => {
+        const {showSnackbar} = this.props;
+        const _id = get(this.state, 'activeFeel._id');
 
-    onMessageClick = e => {
-        this.setState({
-            messageEl: e.target,
-            selectedDevices: []
+        client.mutate({
+            mutation: copyFeel,
+            awaitRefetchQueries: true,
+            refetchQueries: [{
+                fetchPolicy: 'network-only',
+                query: getFeels
+            }],
+            variables: {_id}
+        }).then(() => {
+            showSnackbar('Added to My Feels!');
         });
-    };
 
-    onMessageChange = e => {
-        const message = get(e, 'target.value');
-
-        this.setState({message});
-    };
-
-    onFeelSelect = _id => {
-        const {selectedFeels} = this.state;
-        const selectedIndex = selectedFeels.findIndex(selectedFeel => selectedFeel === _id);
-
-        if (selectedIndex !== -1) {
-            selectedFeels.splice(selectedIndex, 1);
-        } else {
-            selectedFeels.push(_id);
-        }
-
-        this.setState({selectedFeels});
+        this.onMenuClose();
     };
 
     onDeviceCheck = e => {
@@ -187,36 +194,154 @@ class FeelsList extends Component {
         this.setState({selectedDevices: devices});
     };
 
-    onDurationChange = e => {
-        this.setState({duration: e.target.value});
+    onDeviceClick = e => {
+        this.setState({deviceEl: e.target});
     };
 
     onDialogClose = () => {
         this.setState({
             deviceEl: undefined,
-            messageEl: undefined
+            dialogEl: undefined,
+            messageEl: undefined,
+            notificationEl: undefined
         });
     };
 
-    onDeviceClick = e => {
-        this.setState({deviceEl: e.target});
+    onDialogSubmit = async() => {
+        const {showSnackbar} = this.props;
+        const _id = get(this.state, 'activeFeel._id');
+
+        client.mutate({
+            mutation: removeFeel,
+            variables: {_id}
+        }).then(() => {
+            showSnackbar('Feel was successfully removed');
+        });
+
+        this.onDialogClose();
     };
 
-    onSendMessageClick = async() => {
-        const {message, selectedDevices} = this.state;
+    onDisplayModeClick = displayMode => {
+        this.setState({displayMode});
+    };
 
-        await client.mutate({
-            mutation: sendMessage,
+    onDurationChange = e => {
+        this.setState({duration: e.target.value});
+    };
+
+    onEditClick = () => {
+        const {history} = this.props;
+        const _id = get(this.state, 'activeFeel._id');
+
+        history.push(`/canvas/${_id}`);
+    };
+
+    onFeelSelect = _id => {
+        const {selectedFeels} = this.state;
+        const selectedIndex = selectedFeels.findIndex(selectedFeel => selectedFeel === _id);
+
+        if (selectedIndex !== -1) {
+            selectedFeels.splice(selectedIndex, 1);
+        } else {
+            selectedFeels.push(_id);
+        }
+
+        this.setState({selectedFeels});
+    };
+
+    onFriendCheck = e => {
+        const {selectedFriends} = this.state;
+        const friends = selectedFriends.slice();
+        const {target} = e;
+        const {checked, name} = target;
+
+        if (checked) {
+            friends.push(name);
+        } else {
+            const index = friends.findIndex(item => item === name);
+
+            if (index !== -1) {
+                friends.splice(index, 1);
+            }
+        }
+
+        this.setState({selectedFriends: friends});
+    };
+
+    onMessageClick = e => {
+        this.setState({
+            messageEl: e.target,
+            selectedDevices: []
+        });
+    };
+
+    onMessageChange = e => {
+        const message = get(e, 'target.value');
+
+        this.setState({message});
+    };
+
+    onMenuOpen = (anchorEl, activeFeel) => {
+        this.setState({activeFeel, anchorEl});
+    };
+
+    onMenuClose = () => {
+        this.setState({anchorEl: undefined});
+    };
+
+    onNotificationChange = e => {
+        const notification = get(e, 'target.value');
+
+        this.setState({notification});
+    };
+
+    onNotifyClick = e => {
+        this.onMenuClose();
+        this.setState({notificationEl: e.target});
+    };
+
+    onNotifyFriendsClick = () => {
+        const {notification, selectedFriends} = this.state;
+        const _id = get(this.state, 'activeFeel._id');
+
+        client.mutate({
+            mutation: sendFeel,
             variables: {
+                _id,
                 data: {
-                    devices: selectedDevices,
-                    message
+                    isNotification: true,
+                    notification,
+                    users: selectedFriends
                 }
             }
         });
 
-        this.setState({selectedDevices: []});
         this.onDialogClose();
+    };
+
+    onPushClick = e => {
+        this.onMenuClose();
+        this.setState({deviceEl: e.target});
+    };
+
+    onPushDevicesClick = () => {
+        const {selectedDevices} = this.state;
+        const _id = get(this.state, 'activeFeel._id');
+
+        client.mutate({
+            mutation: sendFeel,
+            variables: {
+                _id,
+                data: {devices: selectedDevices}
+            }
+        });
+
+        this.onDialogClose();
+    };
+
+    onRemoveClick = e => {
+        this.onMenuClose();
+        this.setState({dialogEl: e.target});
     };
 
     onSendCarouselClick = async() => {
@@ -236,9 +361,77 @@ class FeelsList extends Component {
         this.onCarouselClick();
     };
 
+    onSendMessageClick = async() => {
+        const {message, selectedDevices} = this.state;
+
+        await client.mutate({
+            mutation: sendMessage,
+            variables: {
+                data: {
+                    devices: selectedDevices,
+                    message
+                }
+            }
+        });
+
+        this.setState({selectedDevices: []});
+        this.onDialogClose();
+    };
+
+    onSubscribeClick = () => {
+        const {showSnackbar} = this.props;
+        const _id = get(this.state, 'activeFeel._id');
+
+        client.mutate({
+            mutation: subscribe,
+            variables: {_id}
+        }).then(() => {
+            showSnackbar('Added to Favs!');
+        });
+
+        this.onMenuClose();
+    };
+
+    onTap = _id => {
+        client.mutate({
+            mutation: sendFeel,
+            variables: {_id}
+        });
+    };
+
+    onUnsubscribeClick = () => {
+        const {showSnackbar} = this.props;
+        const _id = get(this.state, 'activeFeel._id');
+
+        client.mutate({
+            mutation: unsubscribe,
+            variables: {_id}
+        }).then(() => {
+            showSnackbar('Removed from Favs');
+        });
+
+        this.onMenuClose();
+    };
+
     render() {
-        const {carouselMode, categories: filter = [], deviceEl, displayMode, duration = 1000, message, messageEl, selectedDevices = [], selectedFeels = []} = this.state;
-        const {classes, showSnackbar, Snackbar} = this.props;
+        const {
+            activeFeel,
+            anchorEl,
+            carouselMode,
+            categories: filter = [],
+            deviceEl,
+            dialogEl,
+            displayMode,
+            duration = 1000,
+            message,
+            messageEl,
+            notification,
+            notificationEl,
+            selectedDevices = [],
+            selectedFeels = [],
+            selectedFriends = []
+        } = this.state;
+        const {classes, Snackbar} = this.props;
         const feels = get(this.props, 'data_feels.feels', []);
         const loading = get(this.props, 'data_feels.loading');
         const myCategories = get(this.props, 'data_categories.myCategories') || [];
@@ -370,6 +563,90 @@ class FeelsList extends Component {
                 }
             </Fragment>
         );
+        const menu = [];
+
+        if (activeFeel) {
+            const {isOwner, isSubscribed, isSubscriptionOwner, name} = activeFeel;
+            const edit = (
+                <MenuItem onClick={this.onEditClick} key="edit">
+                    <ListItemIcon>
+                        <EditIcon />
+                    </ListItemIcon>
+                    Edit Feel
+                </MenuItem>
+            );
+            const remove = (
+                <MenuItem onClick={this.onRemoveClick} key="remove">
+                    <ListItemIcon>
+                        <CloseIcon />
+                    </ListItemIcon>
+                    Remove Feel
+                </MenuItem>
+            );
+            const push = (
+                <MenuItem onClick={this.onPushClick} key="push">
+                    <ListItemIcon>
+                        <SettingsRemoteIcon />
+                    </ListItemIcon>
+                    Send to Devices
+                </MenuItem>
+            );
+            const notify = (
+                <MenuItem onClick={this.onNotifyClick} key="notification">
+                    <ListItemIcon>
+                        <RecordVoiceOverIcon />
+                    </ListItemIcon>
+                    Send to Friends
+                </MenuItem>
+            );
+            const saveToFavs = (
+                <MenuItem onClick={this.onSubscribeClick} key="save_feel">
+                    <ListItemIcon>
+                        <AddBoxIcon />
+                    </ListItemIcon>
+                    Save to Favs
+                </MenuItem>
+            );
+            const removeFromFavs = (
+                <MenuItem onClick={this.onUnsubscribeClick} key="remove_feel">
+                    <ListItemIcon>
+                        <IndeterminateCheckBoxIcon />
+                    </ListItemIcon>
+                    Remove from Favs
+                </MenuItem>
+            );
+            const copyFeel = (
+                <MenuItem onClick={this.onCopyClick} key="copy_feel_save">
+                    <ListItemIcon>
+                        <FlipToBackIcon />
+                    </ListItemIcon>
+                    Copy to My Feels
+                </MenuItem>
+            );
+            const nameLabel = (
+                <MenuItem key="feel-name">
+                    <Typography variant="h6">
+                        {name}
+                    </Typography>
+                </MenuItem>
+            );
+            const actions = [edit, remove, push, notify];
+
+            menu.push(nameLabel);
+
+            if (isOwner) {
+                menu.push(...actions);
+            } else {
+                menu.push(copyFeel);
+                menu.push(push);
+
+                if (!isSubscribed) {
+                    menu.push(saveToFavs);
+                } else if (isSubscriptionOwner) {
+                    menu.push(removeFromFavs);
+                }
+            }
+        }
 
         return (
             <div className={classes.container}>
@@ -432,6 +709,94 @@ class FeelsList extends Component {
                         </DialogActions>
                     </Dialog>
                 }
+                {activeFeel &&
+                    <Fragment>
+                        <Menu anchorEl={anchorEl} keepMounted={false} open={Boolean(anchorEl)} onClose={this.onMenuClose}>
+                            {menu}
+                        </Menu>
+                        <Dialog open={Boolean(dialogEl)} onClose={this.onDialogClose} keepMounted={false}>
+                            <DialogTitle>Remove Feel?</DialogTitle>
+                            <DialogContent>
+                                <DialogContentText>
+                                    Are you sure you want to remove this Feel from your collection permanently?
+                                </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={this.onDialogClose} color="default" variant="contained" size="small">
+                                    Cancel
+                                </Button>
+                                <Button onClick={this.onDialogSubmit} color="secondary" variant="contained" size="small" autoFocus>
+                                    Agree
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
+
+                        <Dialog open={Boolean(deviceEl)} onClose={this.onDialogClose} keepMounted={false}>
+                            <DialogTitle>Send to Devices</DialogTitle>
+                            <DialogContent>
+                                <FormControl component="fieldset" className={classes.formControl}>
+                                    <FormGroup>
+                                        {devices.map(device => {
+                                            const {_id: deviceId, name} = device;
+                                            const isChecked = selectedDevices.includes(deviceId);
+
+                                            return (
+                                                <FormControlLabel key={deviceId} control={<Checkbox checked={isChecked} onChange={this.onDeviceCheck} name={deviceId} />} label={name} />
+                                            );
+                                        })}
+                                    </FormGroup>
+                                </FormControl>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={this.onDialogClose} color="default" variant="contained" size="small">
+                                    Cancel
+                                </Button>
+                                <Button onClick={this.onPushDevicesClick} color="secondary" variant="contained" size="small" autoFocus>
+                                    Send
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
+
+                        <Dialog open={Boolean(notificationEl)} onClose={this.onDialogClose} keepMounted={false}>
+                            <DialogTitle>Send to Friends</DialogTitle>
+                            <DialogContent>
+                                <FormControl component="fieldset" className={classes.formControl}>
+                                    <FormGroup>
+                                        {friends.map(friend => {
+                                            const {_id: userId, email, name} = friend;
+                                            const isChecked = selectedFriends.includes(userId);
+
+                                            return (
+                                                <FormControlLabel
+                                                    key={userId}
+                                                    control={
+                                                        <Checkbox checked={isChecked} onChange={this.onFriendCheck} name={userId} />
+                                                    }
+                                                    label={name || email} />
+                                            );
+                                        })}
+                                    </FormGroup>
+                                    <TextField
+                                        autoFocus={true}
+                                        label="Message"
+                                        fullWidth={true}
+                                        onChange={this.onNotificationChange}
+                                        value={notification}
+                                        name="notification"
+                                        variant="outlined" />
+                                </FormControl>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={this.onDialogClose} color="default" variant="contained" size="small">
+                                    Cancel
+                                </Button>
+                                <Button onClick={this.onNotifyFriendsClick} color="secondary" variant="contained" size="small" autoFocus>
+                                    Send
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
+                    </Fragment>
+                }
                 <div className={classes.root} style={{marginTop: carouselMode ? 155 : 103}}>
                     {loading && <Loading message="Loading Your Feels..." />}
                     {!loading &&
@@ -469,11 +834,10 @@ class FeelsList extends Component {
                                                             <ListItem key={_id} component="div" className={classes.listItem}>
                                                                 <ListItemIcon className={classes.listIcon}>
                                                                     <Thumb
-                                                                        devices={devices}
                                                                         displayMode={displayMode}
-                                                                        friends={friends}
                                                                         feel={feel}
-                                                                        showSnackbar={showSnackbar} />
+                                                                        menuOpenHandler={this.onMenuOpen}
+                                                                        tapHandler={this.onTap} />
                                                                 </ListItemIcon>
                                                                 <ListItemText primary={feel.name} style={{flexGrow: 1}} />
                                                             </ListItem>
@@ -518,12 +882,11 @@ class FeelsList extends Component {
                                                         } else {
                                                             return (
                                                                 <Thumb
-                                                                    devices={devices}
-                                                                    displayMode={displayMode}
-                                                                    friends={friends}
-                                                                    feel={feel}
                                                                     key={_id}
-                                                                    showSnackbar={showSnackbar} />
+                                                                    displayMode={displayMode}
+                                                                    feel={feel}
+                                                                    menuOpenHandler={this.onMenuOpen}
+                                                                    tapHandler={this.onTap} />
                                                             );
                                                         }
                                                     })}
