@@ -200,6 +200,7 @@ class FeelsList extends Component {
 
     onDialogClose = () => {
         this.setState({
+            activeFeel: undefined,
             deviceEl: undefined,
             dialogEl: undefined,
             messageEl: undefined,
@@ -286,7 +287,10 @@ class FeelsList extends Component {
     };
 
     onMenuClose = () => {
-        this.setState({anchorEl: undefined});
+        this.setState({
+            activeFeel: undefined,
+            anchorEl: undefined
+        });
     };
 
     onNotificationChange = e => {
