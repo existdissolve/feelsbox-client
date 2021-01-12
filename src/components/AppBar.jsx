@@ -17,10 +17,10 @@ const styles = {
 };
 
 function FBAppBar(props) {
-    const {classes, title, iconRenderer = false, includeNav = true} = props;
+    const {classes, extraContent, title, iconRenderer = false, includeNav = true} = props;
     return (
         <div className={classes.root}>
-            <AppBar position="static">
+            <AppBar position="fixed">
                 <Toolbar>
                     {includeNav && <Navigation />}
                     <Typography variant="h6" color="inherit" className={classes.flex}>
@@ -28,6 +28,7 @@ function FBAppBar(props) {
                     </Typography>
                     {iconRenderer}
                 </Toolbar>
+                {extraContent}
             </AppBar>
         </div>
     );

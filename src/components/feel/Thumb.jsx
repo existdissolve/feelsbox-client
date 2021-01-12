@@ -1,6 +1,6 @@
 import {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
-import {get} from 'lodash';
+import {get, isEqual} from 'lodash';
 import classnames from 'classnames';
 
 import {withStyles} from '@material-ui/core/styles';
@@ -28,6 +28,7 @@ import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox'
 import RecordVoiceOverIcon from '@material-ui/icons/RecordVoiceOver';
 import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
 import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
 import {copyFeel, getFeels, removeFeel, sendFeel, subscribe, unsubscribe} from '-/graphql/feel';
 import client from '-/graphql/client';
 
@@ -44,13 +45,21 @@ const styles = {
         boxShadow: '0px 1px 5px 0px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.2), 0px 3px 1px -2px rgba(0, 0, 0, 0.2)',
         '&:active': {
             background: '#3f51b5'
-        },
-        '&.isSubscribed': {
-            background: 'silver'
         }
     },
-    gridList: {
-
+    listEmoji: {
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'space-around',
+        overflow: 'hidden',
+        width: 50,
+        height: 50,
+        margin: '10px 10px 10px 2px',
+        padding: 5,
+        boxShadow: '0px 1px 5px 0px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.2), 0px 3px 1px -2px rgba(0, 0, 0, 0.2)',
+        '&:active': {
+            background: '#3f51b5'
+        }
     }
 };
 
@@ -70,6 +79,17 @@ class Thumb extends Component {
             selectedDevices: [],
             selectedFriends: []
         };
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        const sameProps = isEqual(nextProps, this.props);
+        const sameState = isEqual(nextState, this.state);
+
+        if (sameProps && sameState) {
+            return false;
+        }
+
+        return true;
     }
 
     onEditClick = () => {
@@ -288,7 +308,7 @@ class Thumb extends Component {
 
     render() {
         const {anchorEl, deviceEl, dialogEl, notification, notifyEl, selectedDevices, selectedFriends} = this.state;
-        const {classes, feel} = this.props;
+        const {classes, displayMode = 'grid', feel} = this.props;
         const devices = get(this.props, 'devices', []);
         const friends = get(this.props, 'friends', []);
         const {frames = [], isOwner, isSubscribed, isSubscriptionOwner, name} = feel;
@@ -296,6 +316,8 @@ class Thumb extends Component {
         const {pixels} = frame;
         const grid = new Array(64).fill(true);
         const emojiCls = classnames(classes.emoji, {
+            [classes.emoji]: displayMode === 'grid',
+            [classes.listEmoji]: displayMode === 'list',
             isSubscribed
         });
         const edit = (
@@ -371,13 +393,20 @@ class Thumb extends Component {
             }
         }
 
+        const tileStyle = {
+            ...displayMode === 'grid' && {
+                width: '33%'
+            }
+        };
+        const height = displayMode === 'grid' ? 8 : 5;
+        const width = displayMode === 'grid' ? 8 : 5;
 
         return (
             <Fragment>
-                <GridListTile style={{width: '33%'}}>
+                <GridListTile style={tileStyle}>
                     <div>
                         <a id={name} className={emojiCls} onTouchStart={this.onTouchStart} onTouchEnd={this.onTouchEnd} onTouchMove={this.onTouchMove}>
-                            <GridList className={classes.gridList} cols={8} spacing={0} cellHeight={8}>
+                            <GridList className={classes.gridList} cols={8} spacing={0} cellHeight={height}>
                                 {grid.map((val, idx) => {
                                     let color = '000000';
 
@@ -387,13 +416,18 @@ class Thumb extends Component {
                                         ({color} = pixel);
                                     }
 
-                                    return <GridListTile key={`${name}-${idx}`} style={{width: '8px', backgroundColor: `#${color}`}} />;
+                                    return <div key={`${name}-${idx}`} style={{width, backgroundColor: `#${color}`}} />;
                                 })}
                             </GridList>
                         </a>
                     </div>
                 </GridListTile>
                 <Menu anchorEl={anchorEl} keepMounted={false} open={Boolean(anchorEl)} onClose={this.onMenuClose}>
+                    <MenuItem key="feel-name">
+                        <Typography variant="h6">
+                            {name}
+                        </Typography>
+                    </MenuItem>
                     {menu}
                 </Menu>
                 <Dialog open={Boolean(dialogEl)} onClose={this.onDialogClose} keepMounted={false}>
@@ -404,10 +438,10 @@ class Thumb extends Component {
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.onDialogClose} color="primary">
+                        <Button onClick={this.onDialogClose} color="default" variant="contained" size="small">
                             Cancel
                         </Button>
-                        <Button onClick={this.onDialogSubmit} color="primary" autoFocus>
+                        <Button onClick={this.onDialogSubmit} color="secondary" variant="contained" size="small" autoFocus>
                             Agree
                         </Button>
                     </DialogActions>
@@ -430,10 +464,10 @@ class Thumb extends Component {
                         </FormControl>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.onDialogClose} color="primary">
+                        <Button onClick={this.onDialogClose} color="default" variant="contained" size="small">
                             Cancel
                         </Button>
-                        <Button onClick={this.onPushDevicesClick} color="primary" autoFocus>
+                        <Button onClick={this.onPushDevicesClick} color="secondary" variant="contained" size="small" autoFocus>
                             Send
                         </Button>
                     </DialogActions>
@@ -464,10 +498,10 @@ class Thumb extends Component {
                         </FormControl>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.onDialogClose} color="primary">
+                        <Button onClick={this.onDialogClose} color="default" variant="contained" size="small">
                             Cancel
                         </Button>
-                        <Button onClick={this.onNotifyFriendsClick} color="primary" autoFocus>
+                        <Button onClick={this.onNotifyFriendsClick} color="secondary" variant="contained" size="small" autoFocus>
                             Send
                         </Button>
                     </DialogActions>

@@ -44,15 +44,24 @@ const styles = theme => ({
     container: {
         display: 'flex',
         height: '100vh',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        overflow: 'hidden'
     },
     root: {
         flex: 1,
-        backgroundColor: theme.palette.background.paper
+        position: 'relative',
+        padding: '0px !important',
+        backgroundColor: theme.palette.background.paper,
+        overflowY: 'scroll',
+        marginTop: 56
     },
     icon: {
         minWidth: 24,
         padding: 5
+    },
+    subheader: {
+        backgroundColor: theme.palette.secondary.main,
+        lineHeight: '30px'
     }
 });
 
@@ -255,8 +264,8 @@ class DeviceList extends Component {
                         <TextField autoFocus margin="dense" label="Access Code" fullWidth onChange={this.onCodeChange} type="number" />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.onDialogClose}>Cancel</Button>
-                        <Button onClick={this.onCodeSubmit}>Submit</Button>
+                        <Button onClick={this.onDialogClose} color="default" variant="contained" size="small">Cancel</Button>
+                        <Button onClick={this.onCodeSubmit} color="secondary" variant="contained" size="small">Submit</Button>
                     </DialogActions>
                 </Dialog>
                 <Dialog open={brightnessOpen} keepMounted={false} onClose={this.onDialogClose}>
@@ -281,14 +290,14 @@ class DeviceList extends Component {
                         </Grid>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.onDialogClose}>Cancel</Button>
-                        <Button onClick={this.onBrightnessSubmit}>Submit</Button>
+                        <Button onClick={this.onDialogClose} color="default" variant="contained" size="small">Cancel</Button>
+                        <Button onClick={this.onBrightnessSubmit} color="secondary" variant="contained" size="small">Submit</Button>
                     </DialogActions>
                 </Dialog>
                 <div className={classes.root}>
                     {loading && <Loading message="Loading Your Devices..." />}
                     {!loading &&
-                        <List component="div">
+                        <List component="div" style={{padding: 0}}>
                             {Object.keys(groupedDevices).map(key => {
                                 const group = groupedDevices[key];
                                 const {label, devices = []} = group;
@@ -296,7 +305,7 @@ class DeviceList extends Component {
 
                                 return (
                                     <Fragment key={key}>
-                                        <ListSubheader>{label}</ListSubheader>
+                                        <ListSubheader className={classes.subheader}>{label}</ListSubheader>
                                         {devices.map((device, idx) => {
                                             const {_id, isDefault, name} = device;
                                             const isUpdateable = get(device, 'capabilities.updates');

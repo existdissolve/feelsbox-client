@@ -9,12 +9,19 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Divider from '@material-ui/core/Divider';
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import GridList from '@material-ui/core/GridList';
+import GridOnIcon from '@material-ui/icons/GridOn';
 import Subheader from '@material-ui/core/ListSubheader';
 import Fab from '@material-ui/core/Fab';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListSubheader from '@material-ui/core/ListSubheader';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
@@ -28,6 +35,7 @@ import MessageIcon from '@material-ui/icons/Message';
 import TextField from '@material-ui/core/TextField';
 import {Typography} from '@material-ui/core';
 import VideoLabelIcon from '@material-ui/icons/VideoLabel';
+import ViewListIcon from '@material-ui/icons/ViewList';
 import {get} from 'lodash';
 
 import AppBar from '-/components/AppBar';
@@ -44,11 +52,15 @@ const styles = theme => ({
     container: {
         display: 'flex',
         height: '100vh',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        overflow: 'hidden'
     },
     root: {
         flex: 1,
-        backgroundColor: theme.palette.background.paper
+        position: 'relative',
+        padding: '0px !important',
+        backgroundColor: theme.palette.background.paper,
+        overflowY: 'scroll'
     },
     grid: {
         margin: '0px !important'
@@ -72,6 +84,17 @@ const styles = theme => ({
         flex: 1,
         paddingRight: 15,
         textAlign: 'left'
+    },
+    listItem: {
+
+    },
+    listIcon: {
+        minWidth: 50,
+        marginRight: 10
+    },
+    subheader: {
+        backgroundColor: theme.palette.secondary.main,
+        lineHeight: '30px'
     }
 });
 
@@ -83,6 +106,7 @@ class FeelsList extends Component {
             carouselMode: false,
             categories: [],
             deviceEl: undefined,
+            displayMode: 'grid',
             duration: 1000,
             message: '',
             messageEl: undefined,
@@ -112,6 +136,10 @@ class FeelsList extends Component {
             selectedDevices: [],
             selectedFeels: []
         });
+    };
+
+    onDisplayModeClick = displayMode => {
+        this.setState({displayMode});
     };
 
     onMessageClick = e => {
@@ -209,7 +237,7 @@ class FeelsList extends Component {
     };
 
     render() {
-        const {carouselMode, categories: filter = [], deviceEl, duration = 1000, message, messageEl, selectedDevices = [], selectedFeels = []} = this.state;
+        const {carouselMode, categories: filter = [], deviceEl, displayMode, duration = 1000, message, messageEl, selectedDevices = [], selectedFeels = []} = this.state;
         const {classes, showSnackbar, Snackbar} = this.props;
         const feels = get(this.props, 'data_feels.feels', []);
         const loading = get(this.props, 'data_feels.loading');
@@ -277,11 +305,15 @@ class FeelsList extends Component {
                 <AccessTimeIcon />
             </InputAdornment>
         );
-
-        return (
-            <div className={classes.container}>
-                <AppBar title="My Feels" />
-                <Toolbar className={classes.toolbar} variant="dense" disableGutters={false}>
+        const extraContent = (
+            <Fragment>
+                <Toolbar position="fixed" className={classes.toolbar} variant="dense" disableGutters={false}>
+                    <IconButton onClick={this.onDisplayModeClick.bind(this, 'grid')} edge="start" color={displayMode === 'grid' ? 'secondary' : 'default'}>
+                        <GridOnIcon />
+                    </IconButton>
+                    <IconButton onClick={this.onDisplayModeClick.bind(this, 'list')} edge="start" color={displayMode === 'list' ? 'secondary' : 'default'}>
+                        <ViewListIcon />
+                    </IconButton>
                     <Select
                         value={filter}
                         onChange={this.onCategoriesChanges}
@@ -311,54 +343,61 @@ class FeelsList extends Component {
                     </IconButton>
                 </Toolbar>
                 {carouselMode &&
-                    <Fragment>
-                        <Toolbar className={classes.toolbar} variant="dense" disableGutters={false}>
-                            <Typography variant="button" className={classes.selectionCount}>{selectedFeels.length} {selectedFeels.length === 1 ? 'Selection' : 'Selections'}</Typography>
-                            <TextField
-                                style={{flex: 1}}
-                                name="duration"
-                                margin="dense"
-                                value={duration || 1000}
-                                onChange={this.onDurationChange}
-                                type="number"
-                                size="small"
-                                variant="outlined"
-                                InputProps={{
-                                    min: 1,
-                                    max: 100000,
-                                    size: 'small',
-                                    startAdornment: durationAdornment
-                                }} />
-                            <IconButton onClick={this.onDeviceClick}>
-                                <VideoLabelIcon />
-                            </IconButton>
-                            <Button onClick={this.onSendCarouselClick} color="primary" autoFocus>
-                                Send
-                            </Button>
-                        </Toolbar>
-                        <Dialog open={Boolean(deviceEl)} onClose={this.onDialogClose} keepMounted={false}>
-                            <DialogTitle>Send to Devices</DialogTitle>
-                            <DialogContent>
-                                <FormControl component="fieldset" className={classes.formControl}>
-                                    <FormGroup>
-                                        {devices.map(device => {
-                                            const {_id: deviceId, name} = device;
-                                            const isChecked = selectedDevices.includes(deviceId);
+                    <Toolbar className={classes.toolbar} variant="dense" disableGutters={false}>
+                        <Typography variant="button" className={classes.selectionCount}>{selectedFeels.length} {selectedFeels.length === 1 ? 'Selection' : 'Selections'}</Typography>
+                        <TextField
+                            style={{flex: 1}}
+                            name="duration"
+                            margin="dense"
+                            value={duration || 1000}
+                            onChange={this.onDurationChange}
+                            type="number"
+                            size="small"
+                            variant="outlined"
+                            InputProps={{
+                                min: 1,
+                                max: 100000,
+                                size: 'small',
+                                startAdornment: durationAdornment
+                            }} />
+                        <IconButton onClick={this.onDeviceClick}>
+                            <VideoLabelIcon />
+                        </IconButton>
+                        <Button onClick={this.onSendCarouselClick} color="secondary" variant="contained" autoFocus edge="end" size="small">
+                            Send
+                        </Button>
+                    </Toolbar>
+                }
+            </Fragment>
+        );
 
-                                            return (
-                                                <FormControlLabel key={deviceId} control={<Checkbox checked={isChecked} onChange={this.onDeviceCheck} name={deviceId} />} label={name} />
-                                            );
-                                        })}
-                                    </FormGroup>
-                                </FormControl>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={this.onDialogClose} color="primary" autoFocus>
-                                    Select
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
-                    </Fragment>
+        return (
+            <div className={classes.container}>
+                <AppBar title="My Feels" extraContent={extraContent} />
+
+                {carouselMode &&
+                    <Dialog open={Boolean(deviceEl)} onClose={this.onDialogClose} keepMounted={false}>
+                        <DialogTitle>Send to Devices</DialogTitle>
+                        <DialogContent>
+                            <FormControl component="fieldset" className={classes.formControl}>
+                                <FormGroup>
+                                    {devices.map(device => {
+                                        const {_id: deviceId, name} = device;
+                                        const isChecked = selectedDevices.includes(deviceId);
+
+                                        return (
+                                            <FormControlLabel key={deviceId} control={<Checkbox checked={isChecked} onChange={this.onDeviceCheck} name={deviceId} />} label={name} />
+                                        );
+                                    })}
+                                </FormGroup>
+                            </FormControl>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={this.onDialogClose} color="secondary" variant="contained" size="small" autoFocus>
+                                Select
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
                 }
                 {messageCapableDevices.length > 0 &&
                     <Dialog open={Boolean(messageEl)} onClose={this.onDialogClose} keepMounted={false}>
@@ -372,7 +411,8 @@ class FeelsList extends Component {
                                     onChange={this.onMessageChange}
                                     value={message}
                                     name="message"
-                                    variant="outlined" />
+                                    variant="outlined"
+                                    style={{marginBottom: 10}} />
                                 <FormGroup>
                                     {messageCapableDevices.map(device => {
                                         const {_id: deviceId, name} = device;
@@ -386,37 +426,116 @@ class FeelsList extends Component {
                             </FormControl>
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={this.onSendMessageClick} color="primary" autoFocus>
+                            <Button onClick={this.onSendMessageClick} color="secondary" variant="contained" size="small" autoFocus>
                                 Send
                             </Button>
                         </DialogActions>
                     </Dialog>
                 }
-                <div className={classes.root}>
+                <div className={classes.root} style={{marginTop: carouselMode ? 155 : 103}}>
                     {loading && <Loading message="Loading Your Feels..." />}
-                    {!loading && groupedFeels.map(group => {
-                        const {_id, name, feels = []} = group;
+                    {!loading &&
+                        <Fragment>
+                            {displayMode === 'list' &&
+                                <List component="div" dense={true} style={{padding: 0}}>
+                                    {groupedFeels.map(group => {
+                                        const {_id, name, feels = []} = group;
 
-                        return (
-                            <Fragment key={_id}>
-                                <Subheader component="div">{name}</Subheader>
-                                <GridList cols={3} cellHeight={64} className={classes.grid}>
-                                    {feels.map(feel => {
-                                        const {_id} = feel;
+                                        return (
+                                            <Fragment key={_id}>
+                                                <ListSubheader className={classes.subheader}>{name}</ListSubheader>
 
-                                        if (carouselMode) {
-                                            const isSelected = selectedFeels.some(selectedFeel => selectedFeel === _id);
+                                                {feels.map((feel, idx) => {
+                                                    const {_id} = feel;
+                                                    let content;
 
-                                            return <SimpleThumb key={_id} feel={feel} selectionHandler={this.onFeelSelect} isSelected={isSelected} />;
-                                        } else {
-                                            return <Thumb devices={devices} friends={friends} feel={feel} key={_id} showSnackbar={showSnackbar} />;
-                                        }
+                                                    if (carouselMode) {
+                                                        const isSelected = selectedFeels.some(selectedFeel => selectedFeel === _id);
+
+                                                        content = (
+                                                            <ListItem key={_id} component="div" className={classes.listItem}>
+                                                                <ListItemIcon className={classes.listIcon}>
+                                                                    <SimpleThumb
+                                                                        displayMode={displayMode}
+                                                                        feel={feel}
+                                                                        selectionHandler={this.onFeelSelect}
+                                                                        isSelected={isSelected} />
+                                                                </ListItemIcon>
+                                                                <ListItemText primary={feel.name} style={{flexGrow: 1}} />
+                                                            </ListItem>
+                                                        );
+                                                    } else {
+                                                        content = (
+                                                            <ListItem key={_id} component="div" className={classes.listItem}>
+                                                                <ListItemIcon className={classes.listIcon}>
+                                                                    <Thumb
+                                                                        devices={devices}
+                                                                        displayMode={displayMode}
+                                                                        friends={friends}
+                                                                        feel={feel}
+                                                                        showSnackbar={showSnackbar} />
+                                                                </ListItemIcon>
+                                                                <ListItemText primary={feel.name} style={{flexGrow: 1}} />
+                                                            </ListItem>
+                                                        );
+                                                    }
+
+                                                    return (
+                                                        <Fragment key={_id}>
+                                                            {content}
+                                                            {idx !== feels.length - 1 && <Divider />}
+                                                        </Fragment>
+                                                    );
+                                                })}
+                                            </Fragment>
+                                        );
                                     })}
-                                </GridList>
-                            </Fragment>
+                                </List>
+                            }
+                            {displayMode === 'grid' &&
+                                <Fragment>
+                                    {groupedFeels.map(group => {
+                                        const {_id, name, feels = []} = group;
 
-                        );
-                    })}
+                                        return (
+                                            <Fragment key={_id}>
+                                                <Subheader component="div" className={classes.subheader}>{name}</Subheader>
+                                                <GridList cols={3} cellHeight={64} className={classes.grid}>
+                                                    {feels.map(feel => {
+                                                        const {_id} = feel;
+
+                                                        if (carouselMode) {
+                                                            const isSelected = selectedFeels.some(selectedFeel => selectedFeel === _id);
+
+                                                            return (
+                                                                <SimpleThumb
+                                                                    key={_id}
+                                                                    displayMode={displayMode}
+                                                                    feel={feel}
+                                                                    selectionHandler={this.onFeelSelect}
+                                                                    isSelected={isSelected} />
+                                                            );
+                                                        } else {
+                                                            return (
+                                                                <Thumb
+                                                                    devices={devices}
+                                                                    displayMode={displayMode}
+                                                                    friends={friends}
+                                                                    feel={feel}
+                                                                    key={_id}
+                                                                    showSnackbar={showSnackbar} />
+                                                            );
+                                                        }
+                                                    })}
+                                                </GridList>
+                                            </Fragment>
+
+                                        );
+                                    })}
+                                </Fragment>
+                            }
+                        </Fragment>
+                    }
                 </div>
                 {Snackbar}
                 <Fab className={classes.fab} color="primary" onClick={this.onAddClick}>

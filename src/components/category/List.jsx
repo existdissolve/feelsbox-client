@@ -29,16 +29,25 @@ const styles = theme => ({
     container: {
         display: 'flex',
         height: '100vh',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        overflow: 'hidden'
     },
     root: {
         flex: 1,
-        backgroundColor: theme.palette.background.paper
+        position: 'relative',
+        padding: '0px !important',
+        backgroundColor: theme.palette.background.paper,
+        overflowY: 'scroll',
+        marginTop: 56
     },
     fab: {
         position: 'absolute',
         bottom: theme.spacing(2),
         right: theme.spacing(2)
+    },
+    subheader: {
+        backgroundColor: theme.palette.secondary.main,
+        lineHeight: '30px'
     }
 });
 
@@ -138,15 +147,15 @@ class CategoryList extends React.Component {
                             value={category} />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.onDialogClose}>Cancel</Button>
-                        <Button onClick={this.onSaveClick}>Submit</Button>
+                        <Button onClick={this.onDialogClose} color="default" variant="contained" size="small">Cancel</Button>
+                        <Button onClick={this.onSaveClick} color="secondary" variant="contained" size="small">Submit</Button>
                     </DialogActions>
                 </Dialog>
                 <div className={classes.root}>
                     {loading && <Loading message="Loading Categories..." />}
                     {!loading &&
-                        <List component="div">
-                            <ListSubheader>My Custom Categories</ListSubheader>
+                        <List component="div" style={{padding: 0}}>
+                            <ListSubheader className={classes.subheader}>My Custom Categories</ListSubheader>
                             {categories.map((device, idx) => {
                                 const {_id, name} = device;
 
