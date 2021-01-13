@@ -11,7 +11,7 @@ import AppBar from '-/components/AppBar';
 
 const styles = () => ({
     root: {
-        padding: '50px 30px'
+        padding: '80px 30px'
     }
 });
 

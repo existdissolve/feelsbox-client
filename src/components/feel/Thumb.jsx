@@ -68,7 +68,9 @@ class Thumb extends Component {
 
             this.timer = null;
 
-            menuOpenHandler(currentTarget, feel);
+            if (typeof menuOpenHandler === 'function') {
+                menuOpenHandler(currentTarget, feel);
+            }
         }, 500);
     };
 

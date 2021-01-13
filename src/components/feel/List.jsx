@@ -104,8 +104,16 @@ const styles = theme => ({
         minWidth: 50,
         marginRight: 10
     },
+    listitemicon: {
+        width: 35,
+        minWidth: 35
+    },
     subheader: {
-        backgroundColor: theme.palette.secondary.main,
+        backgroundColor: theme.palette.grey.A400,
+        borderTop: 'solid 1px',
+        borderTopColor: theme.palette.grey['900'],
+        borderBottom: 'solid 1px',
+        borderBottomColor: theme.palette.grey['900'],
         lineHeight: '30px'
     }
 });
@@ -267,6 +275,14 @@ class FeelsList extends Component {
         }
 
         this.setState({selectedFriends: friends});
+    };
+
+    onIconClick = (activeFeel, fn, e) => {
+        e.persist();
+
+        this.setState({activeFeel}, () => {
+            this[fn](e);
+        });
     };
 
     onMessageClick = e => {
@@ -814,7 +830,7 @@ class FeelsList extends Component {
                                                 <ListSubheader className={classes.subheader}>{name}</ListSubheader>
 
                                                 {feels.map((feel, idx) => {
-                                                    const {_id} = feel;
+                                                    const {_id, isOwner, isSubscribed, isSubscriptionOwner} = feel;
                                                     let content;
 
                                                     if (carouselMode) {
@@ -833,16 +849,64 @@ class FeelsList extends Component {
                                                             </ListItem>
                                                         );
                                                     } else {
+                                                        const icons = [];
+                                                        const editIcon = (
+                                                            <ListItemIcon className={classes.listitemicon} key="editIcon" onClick={this.onIconClick.bind(this, feel, 'onEditClick')}>
+                                                                <EditIcon />
+                                                            </ListItemIcon>
+                                                        );
+                                                        const removeIcon = (
+                                                            <ListItemIcon className={classes.listitemicon} key="removeIcon" onClick={this.onIconClick.bind(this, feel, 'onRemoveClick')}>
+                                                                <CloseIcon />
+                                                            </ListItemIcon>
+                                                        );
+                                                        const pushIcon = (
+                                                            <ListItemIcon className={classes.listitemicon} key="pushIcon" onClick={this.onIconClick.bind(this, feel, 'onPushClick')}>
+                                                                <SettingsRemoteIcon />
+                                                            </ListItemIcon>
+                                                        );
+                                                        const notifyIcon = (
+                                                            <ListItemIcon className={classes.listitemicon} key="notifyIcon" onClick={this.onIconClick.bind(this, feel, 'onNotifyClick')}>
+                                                                <RecordVoiceOverIcon />
+                                                            </ListItemIcon>
+                                                        );
+                                                        const saveToFavsIcon = (
+                                                            <ListItemIcon className={classes.listitemicon} key="subscribeIcon" onClick={this.onIconClick.bind(this, feel, 'onSubscribeClick')}>
+                                                                <AddBoxIcon />
+                                                            </ListItemIcon>
+                                                        );
+                                                        const removeFromFavsIcon = (
+                                                            <ListItemIcon className={classes.listitemicon} key="unsubscribeIcon" onClick={this.onIconClick.bind(this, feel, 'onUnsubscribeClick')}>
+                                                                <IndeterminateCheckBoxIcon />
+                                                            </ListItemIcon>
+                                                        );
+                                                        const copyFeelIcon = (
+                                                            <ListItemIcon className={classes.listitemicon} key="copyIcon" onClick={this.onIconClick.bind(this, feel._id, 'onCopyClick')}>
+                                                                <FlipToBackIcon />
+                                                            </ListItemIcon>
+                                                        );
+
+                                                        if (isOwner) {
+                                                            icons.push(...[editIcon, removeIcon, pushIcon, notifyIcon]);
+                                                        } else {
+                                                            if (!isSubscribed) {
+                                                                icons.push(saveToFavsIcon);
+                                                            } else if (isSubscriptionOwner) {
+                                                                icons.push(removeFromFavsIcon);
+                                                            }
+
+                                                            icons.push(...[copyFeelIcon, pushIcon, notifyIcon]);
+                                                        }
                                                         content = (
                                                             <ListItem key={_id} component="div" className={classes.listItem}>
                                                                 <ListItemIcon className={classes.listIcon}>
                                                                     <Thumb
                                                                         displayMode={displayMode}
                                                                         feel={feel}
-                                                                        menuOpenHandler={this.onMenuOpen}
                                                                         tapHandler={this.onTap} />
                                                                 </ListItemIcon>
                                                                 <ListItemText primary={feel.name} style={{flexGrow: 1}} />
+                                                                {icons}
                                                             </ListItem>
                                                         );
                                                     }

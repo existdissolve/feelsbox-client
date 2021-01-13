@@ -46,7 +46,11 @@ const styles = theme => ({
         right: theme.spacing(2)
     },
     subheader: {
-        backgroundColor: theme.palette.secondary.main,
+        backgroundColor: theme.palette.grey.A400,
+        borderTop: 'solid 1px',
+        borderTopColor: theme.palette.grey['900'],
+        borderBottom: 'solid 1px',
+        borderBottomColor: theme.palette.grey['900'],
         lineHeight: '30px'
     }
 });
