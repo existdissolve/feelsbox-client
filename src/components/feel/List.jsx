@@ -72,7 +72,7 @@ const styles = theme => ({
         position: 'relative',
         padding: '0px !important',
         backgroundColor: theme.palette.background.paper,
-        overflowY: 'scroll'
+        overflowY: 'auto'
     },
     grid: {
         margin: '0px !important'
