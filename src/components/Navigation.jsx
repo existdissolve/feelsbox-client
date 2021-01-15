@@ -1,6 +1,7 @@
 /*global gapi*/
 import React from 'react';
 import PropTypes from 'prop-types';
+import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
@@ -109,6 +110,14 @@ class Navigation extends React.Component {
                                 </ListItemIcon>
                                 <Link to="/devices" className={classes.link}>
                                     <ListItemText primary="Devices" />
+                                </Link>
+                            </ListItem>
+                            <ListItem button>
+                                <ListItemIcon>
+                                    <AccountBoxIcon />
+                                </ListItemIcon>
+                                <Link to="/account" className={classes.link}>
+                                    <ListItemText primary="My Account" />
                                 </Link>
                             </ListItem>
                             <ListItem button>

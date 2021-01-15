@@ -27,6 +27,7 @@ import {editDevice, generateCode, getDevice} from '-/graphql/device';
 const styles = theme => ({
     root: {
         padding: 20,
+        marginTop: 56,
         backgroundColor: theme.palette.background.paper
     },
     details: {

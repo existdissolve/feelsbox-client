@@ -122,6 +122,8 @@ class FeelsList extends Component {
     constructor(props) {
         super(props);
 
+        const displayMode = localStorage.getItem('displayMode');
+
         this.state = {
             activeFeel: undefined,
             anchorEl: undefined,
@@ -129,7 +131,7 @@ class FeelsList extends Component {
             categories: [],
             deviceEl: undefined,
             dialogEl: undefined,
-            displayMode: 'grid',
+            displayMode: displayMode || 'grid',
             duration: 1000,
             message: '',
             messageDuration: 50,

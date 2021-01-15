@@ -5,6 +5,7 @@ import {compose} from 'recompose';
 import {Redirect, Route, Switch, withRouter} from 'react-router-dom';
 import {get, isUndefined} from 'lodash';
 
+import Account from '-/components/account/Form';
 import Feels from '-/components/feel/List';
 import Search from '-/components/feel/Search';
 import Splash from '-/components/Splash';
@@ -179,6 +180,9 @@ class Landing extends Component {
                     </Route>
                     <Route exact path="/devices">
                         <Devices {...this.props} showSnackbar={showSnackbar} />
+                    </Route>
+                    <Route exact path="/account">
+                        <Account {...this.props} showSnackbar={showSnackbar} />
                     </Route>
                     <Route exact path="/canvas/:_id">
                         <CanvasGrid {...this.props} showSnackbar={showSnackbar} />
