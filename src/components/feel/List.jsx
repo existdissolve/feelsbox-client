@@ -132,6 +132,7 @@ class FeelsList extends Component {
             displayMode: 'grid',
             duration: 1000,
             message: '',
+            messageDuration: 50,
             notification: '',
             notificationEl: undefined,
             messageEl: undefined,
@@ -298,6 +299,10 @@ class FeelsList extends Component {
         this.setState({message});
     };
 
+    onMessageDurationChange = e => {
+        this.setState({messageDuration: e.target.value});
+    };
+
     onMenuOpen = (anchorEl, activeFeel) => {
         this.setState({activeFeel, anchorEl});
     };
@@ -381,13 +386,14 @@ class FeelsList extends Component {
     };
 
     onSendMessageClick = async() => {
-        const {message, selectedDevices} = this.state;
+        const {message, messageDuration, selectedDevices} = this.state;
 
         await client.mutate({
             mutation: sendMessage,
             variables: {
                 data: {
                     devices: selectedDevices,
+                    duration: Number(messageDuration),
                     message
                 }
             }
@@ -443,6 +449,7 @@ class FeelsList extends Component {
             displayMode,
             duration = 1000,
             message,
+            messageDuration = 50,
             messageEl,
             notification,
             notificationEl,
@@ -550,7 +557,7 @@ class FeelsList extends Component {
                             <MessageIcon />
                         </IconButton>
                     }
-                    <IconButton onClick={this.onCarouselClick} className={classes.carousel} edge="end">
+                    <IconButton onClick={this.onCarouselClick} className={classes.carousel} edge="end" color={carouselMode ? 'secondary' : 'default'}>
                         <RecentActorsIcon />
                     </IconButton>
                 </Toolbar>
@@ -707,8 +714,23 @@ class FeelsList extends Component {
                                     onChange={this.onMessageChange}
                                     value={message}
                                     name="message"
+                                    style={{marginBottom: 10}}
+                                    variant="outlined" />
+                                <TextField
+                                    style={{marginBottom: 10}}
+                                    name="messageDuration"
+                                    value={messageDuration || 50}
+                                    onChange={this.onMessageDurationChange}
+                                    type="number"
+                                    fullWidth={true}
                                     variant="outlined"
-                                    style={{marginBottom: 10}} />
+                                    label="Duration"
+                                    InputProps={{
+                                        min: 1,
+                                        max: 100000,
+                                        size: 'small',
+                                        startAdornment: durationAdornment
+                                    }} />
                                 <FormGroup>
                                     {messageCapableDevices.map(device => {
                                         const {_id: deviceId, name} = device;
@@ -968,7 +990,7 @@ class FeelsList extends Component {
                     }
                 </div>
                 {Snackbar}
-                <Fab className={classes.fab} color="primary" onClick={this.onAddClick}>
+                <Fab className={classes.fab} color="secondary" onClick={this.onAddClick}>
                     <AddIcon />
                 </Fab>
             </div>

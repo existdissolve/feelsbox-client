@@ -180,7 +180,7 @@ class CategoryList extends React.Component {
                         </List>
                     }
                 </div>
-                <Fab className={classes.fab} color="primary" onClick={this.onAddClick}>
+                <Fab className={classes.fab} color="secondary" onClick={this.onAddClick}>
                     <AddIcon />
                 </Fab>
             </div>
