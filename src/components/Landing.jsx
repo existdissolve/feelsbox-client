@@ -5,7 +5,7 @@ import {compose} from 'recompose';
 import {Redirect, Route, Switch, withRouter} from 'react-router-dom';
 import {get, isUndefined} from 'lodash';
 
-import Account from '-/components/account/Form';
+import Account from '-/components/account';
 import Feels from '-/components/feel/List';
 import Search from '-/components/feel/Search';
 import Splash from '-/components/Splash';

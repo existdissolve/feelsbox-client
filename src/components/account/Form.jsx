@@ -13,9 +13,8 @@ import AppBar from '-/components/AppBar';
 
 const styles = theme => ({
     root: {
-        padding: 20,
-        backgroundColor: theme.palette.background.paper,
-        marginTop: 56
+        flex: .5,
+        padding: 20
     },
     details: {
         marginBottom: 20
@@ -63,9 +62,7 @@ class AccountForm extends Component {
 
         return (
             <div>
-                <AppBar title="My Account" />
                 <div className={classes.root}>
-                    <Typography variant="subtitle1" className={classes.details}>App Preferences</Typography>
                     <FormControl component="fieldset" style={{marginBottom: 20}}>
                         <FormLabel component="legend" className={classes.label}>Feels Display Style</FormLabel>
                         <RadioGroup row name="displayMode" defaultValue="grid">
