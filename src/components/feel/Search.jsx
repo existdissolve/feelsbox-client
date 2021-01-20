@@ -17,7 +17,8 @@ import SearchGrid from '-/components/feel/SearchGrid';
 
 const styles = theme => ({
     root: {
-        backgroundColor: theme.palette.background.paper
+        backgroundColor: theme.palette.background.paper,
+        marginTop: 56
     },
     grid: {
         margin: '0px !important'
@@ -99,14 +100,16 @@ class SearchList extends React.Component {
         return (
             <div>
                 <AppBar title="Feels" />
-                <Toolbar className={classes.toolbar} variant="dense" disableGutters={false}>
-                    <Select open={open} onClose={this.onClose} onOpen={this.onOpen} value={sort} onChange={this.onSortChange} startAdornment={adornment}>
-                        <MenuItem value="MOSTPOPULAR">Most Popular</MenuItem>
-                        <MenuItem value="MOSTRECENT">Most Recent</MenuItem>
-                    </Select>
-                    <Input type="text" value={search} onChange={this.onSearchChange} endAdornment={searchAdornment} placeholder="Search" className={classes.search} />
-                </Toolbar>
-                <SearchGrid criteria={criteria} showSnackbar={showSnackbar} />
+                <div className={classes.root}>
+                    <Toolbar className={classes.toolbar} variant="dense" disableGutters={false}>
+                        <Select open={open} onClose={this.onClose} onOpen={this.onOpen} value={sort} onChange={this.onSortChange} startAdornment={adornment}>
+                            <MenuItem value="MOSTPOPULAR">Most Popular</MenuItem>
+                            <MenuItem value="MOSTRECENT">Most Recent</MenuItem>
+                        </Select>
+                        <Input type="text" value={search} onChange={this.onSearchChange} endAdornment={searchAdornment} placeholder="Search" className={classes.search} />
+                    </Toolbar>
+                    <SearchGrid criteria={criteria} showSnackbar={showSnackbar} />
+                </div>
             </div>
         );
     }

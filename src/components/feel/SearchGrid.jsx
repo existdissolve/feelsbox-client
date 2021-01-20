@@ -7,6 +7,7 @@ import GridList from '@material-ui/core/GridList';
 import {get} from 'lodash';
 
 import Thumb from '-/components/feel/Thumb';
+import Loading from '-/components/Loading';
 import {getFeels} from '-/graphql/feel';
 
 const styles = theme => ({
@@ -22,16 +23,20 @@ class SearchGrid extends React.Component {
     render() {
         const {classes, showSnackbar} = this.props;
         const feels = get(this.props, 'data.feels', []);
+        const loading = get(this.props, 'data.loading');
 
         return (
             <div className={classes.root}>
-                <GridList cols={3} cellHeight={64} className={classes.grid}>
-                    {feels.map(feel => {
-                        const {_id} = feel;
+                {loading && <Loading message="Loading Feels..." />}
+                {!loading &&
+                    <GridList cols={3} cellHeight={64} className={classes.grid}>
+                        {feels.map(feel => {
+                            const {_id} = feel;
 
-                        return <Thumb feel={feel} key={_id} showSnackbar={showSnackbar} />;
-                    })}
-                </GridList>
+                            return <Thumb feel={feel} key={_id} showSnackbar={showSnackbar} />;
+                        })}
+                    </GridList>
+                }
             </div>
         );
     }

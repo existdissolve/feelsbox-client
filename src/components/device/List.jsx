@@ -347,7 +347,7 @@ class DeviceList extends Component {
                                                             </Fragment>
                                                         }
                                                         <ListItemIcon edge="end" className={classes.icon}>
-                                                            <SettingsRemoteIcon onClick={this.onDefaultClick.bind(this, _id)} style={{color: isDefault ? 'green' : undefined}} />
+                                                            <SettingsRemoteIcon onClick={this.onDefaultClick.bind(this, _id)} color={isDefault ? 'secondary' : 'action'} />
                                                         </ListItemIcon>
                                                     </ListItem>
                                                     {idx !== devices.length - 1 && <Divider />}

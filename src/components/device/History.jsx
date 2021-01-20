@@ -20,13 +20,15 @@ import ListItemText from '@material-ui/core/ListItemText';
 import {get} from 'lodash';
 
 import AppBar from '-/components/AppBar';
+import Loading from '-/components/Loading';
 import {getHistory} from '-/graphql/history';
 import {cloneFromHistory} from '-/graphql/feel';
 import client from '-/graphql/client';
 
 const styles = theme => ({
     root: {
-        backgroundColor: theme.palette.background.paper
+        backgroundColor: theme.palette.background.paper,
+        marginTop: 56
     },
     gridList: {
         justifyContent: 'center',
@@ -87,6 +89,7 @@ class DeviceList extends Component {
         const {open} = this.state;
         const {classes} = this.props;
         const history = get(this.props, 'data.history', []);
+        const loading = get(this.props, 'data.loading');
 
         return (
             <div>
@@ -95,7 +98,7 @@ class DeviceList extends Component {
                     <DialogTitle id="history-title">Create New Feel?</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
-                            Are you sure you want to create a new Feel from this history item? Don't worry...it will start off uncategorized, and you can tweak it however you like when you're ready!
+                            Are you sure you want to create a new Feel from this history item? Don&apos;t worry...it will start off uncategorized, and you can tweak it however you like when you're ready!
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
@@ -104,39 +107,42 @@ class DeviceList extends Component {
                     </DialogActions>
                 </Dialog>
                 <div className={classes.root}>
-                    <List component="div" dense={true}>
-                        {history.map((item, idx) => {
-                            const {_id, createdAt, feelSnapshot = {}} = item;
-                            const {frames = []} = feelSnapshot;
-                            const thumb = frames.find(frame => frame.isThumb) || frames[0];
-                            const nodes = Array(64).fill(true);
+                    {loading && <Loading message="Loading History..." />}
+                    {!loading &&
+                        <List component="div" dense={true}>
+                            {history.map((item, idx) => {
+                                const {_id, createdAt, feelSnapshot = {}} = item;
+                                const {frames = []} = feelSnapshot;
+                                const thumb = frames.find(frame => frame.isThumb) || frames[0];
+                                const nodes = Array(64).fill(true);
 
-                            return (
-                                <Fragment key={_id}>
-                                    <ListItem>
-                                        <ListItemText>
-                                            <GridList className={classes.gridList} cols={8}>
-                                                {nodes.map((item, index) => {
-                                                    const {pixels = []} = thumb;
-                                                    const pixel = pixels.find(pixel => pixel.position === index) || {};
-                                                    const {color = '000'} = pixel;
+                                return (
+                                    <Fragment key={_id}>
+                                        <ListItem>
+                                            <ListItemText>
+                                                <GridList className={classes.gridList} cols={8}>
+                                                    {nodes.map((item, index) => {
+                                                        const {pixels = []} = thumb;
+                                                        const pixel = pixels.find(pixel => pixel.position === index) || {};
+                                                        const {color = '000'} = pixel;
 
-                                                    return (
-                                                        <div key={index} style={{backgroundColor: `#${color}`, width: 4, height: 4}}> </div>
-                                                    );
-                                                })}
-                                            </GridList>
-                                        </ListItemText>
-                                        <ListItemText primary={moment(createdAt).format('MM/DD/YY hh:mm a')} />
-                                        <ListItemSecondaryAction>
-                                            <AddCircleOutlineIcon edge="end" onClick={this.onAddClick.bind(this, _id)} />
-                                        </ListItemSecondaryAction>
-                                    </ListItem>
-                                    {idx !== history.length - 1 && <Divider />}
-                                </Fragment>
-                            );
-                        })}
-                    </List>
+                                                        return (
+                                                            <div key={index} style={{backgroundColor: `#${color}`, width: 4, height: 4}}> </div>
+                                                        );
+                                                    })}
+                                                </GridList>
+                                            </ListItemText>
+                                            <ListItemText primary={moment(createdAt).format('MM/DD/YY hh:mm a')} />
+                                            <ListItemSecondaryAction>
+                                                <AddCircleOutlineIcon edge="end" onClick={this.onAddClick.bind(this, _id)} />
+                                            </ListItemSecondaryAction>
+                                        </ListItem>
+                                        {idx !== history.length - 1 && <Divider />}
+                                    </Fragment>
+                                );
+                            })}
+                        </List>
+                    }
                 </div>
             </div>
         );

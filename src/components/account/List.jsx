@@ -13,6 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import {get} from 'lodash';
 
 import {getMessages} from '-/graphql/message';
+import Loading from '-/components/Loading';
 
 const styles = theme => ({
     root: {
@@ -41,53 +42,57 @@ class MessageList extends Component {
     render() {
         const {classes} = this.props;
         const messages = get(this.props, 'data.messages', []);
+        const loading = get(this.props, 'data.loading');
 
         return (
             <div className={classes.root}>
-                <List component="div" dense={true}>
-                    {messages.map((item, idx) => {
-                        const {_id, createdAt, feelSnapshot = {}, message} = item;
-                        const name = get(item, 'createdBy.name', 'N/A');
-                        const {frames = []} = feelSnapshot;
-                        const thumb = frames.find(frame => frame.isThumb) || frames[0];
-                        const nodes = Array(64).fill(true);
+                {loading && <Loading message="Loading Your Messages..." />}
+                {!loading &&
+                    <List component="div" dense={true}>
+                        {messages.map((item, idx) => {
+                            const {_id, createdAt, feelSnapshot = {}, message} = item;
+                            const name = get(item, 'createdBy.name', 'N/A');
+                            const {frames = []} = feelSnapshot;
+                            const thumb = frames.find(frame => frame.isThumb) || frames[0];
+                            const nodes = Array(64).fill(true);
 
-                        return (
-                            <Fragment key={_id}>
-                                <ListItem>
-                                    <ListItemText>
-                                        <GridList className={classes.gridList} cols={8}>
-                                            {nodes.map((item, index) => {
-                                                const {pixels = []} = thumb;
-                                                const pixel = pixels.find(pixel => pixel.position === index) || {};
-                                                const {color = '000'} = pixel;
+                            return (
+                                <Fragment key={_id}>
+                                    <ListItem>
+                                        <ListItemText>
+                                            <GridList className={classes.gridList} cols={8}>
+                                                {nodes.map((item, index) => {
+                                                    const {pixels = []} = thumb;
+                                                    const pixel = pixels.find(pixel => pixel.position === index) || {};
+                                                    const {color = '000'} = pixel;
 
-                                                return (
-                                                    <div key={index} style={{backgroundColor: `#${color}`, width: 4, height: 4}}> </div>
-                                                );
-                                            })}
-                                        </GridList>
-                                    </ListItemText>
-                                    <ListItemText primary={message} />
-                                    <ListItemText
-                                        style={{flex: 2}}
-                                        primary={
-                                            <div style={{fontSize: '.1rem'}}>
-                                                From: {name}<br />
-                                                {moment(createdAt).format('MM/DD/YY hh:mm a')}
-                                            </div>
-                                        } />
-                                </ListItem>
-                                {idx !== history.length - 1 && <Divider />}
-                            </Fragment>
-                        );
-                    })}
-                    {messages.length === 0 &&
-                        <Typography component="p" gutterBottom={true} paragraph={true} style={{padding: 20}}>
-                            You haven&apos;t received any messages...yet!
-                        </Typography>
-                    }
-                </List>
+                                                    return (
+                                                        <div key={index} style={{backgroundColor: `#${color}`, width: 4, height: 4}}> </div>
+                                                    );
+                                                })}
+                                            </GridList>
+                                        </ListItemText>
+                                        <ListItemText primary={message} />
+                                        <ListItemText
+                                            style={{flex: 2}}
+                                            primary={
+                                                <div style={{fontSize: '.1rem'}}>
+                                                    From: {name}<br />
+                                                    {moment(createdAt).format('MM/DD/YY hh:mm a')}
+                                                </div>
+                                            } />
+                                    </ListItem>
+                                    {idx !== history.length - 1 && <Divider />}
+                                </Fragment>
+                            );
+                        })}
+                        {messages.length === 0 &&
+                            <Typography component="p" gutterBottom={true} paragraph={true} style={{padding: 20}}>
+                                You haven&apos;t received any messages...yet!
+                            </Typography>
+                        }
+                    </List>
+                }
             </div>
         );
     }
