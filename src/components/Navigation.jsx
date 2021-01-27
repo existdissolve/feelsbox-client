@@ -123,6 +123,14 @@ class Navigation extends React.Component {
                             </ListItem>
                             <ListItem button>
                                 <ListItemIcon>
+                                    <VideoLabelIcon />
+                                </ListItemIcon>
+                                <Link to="/devicegroups" className={classes.link}>
+                                    <ListItemText primary="Device Groups" />
+                                </Link>
+                            </ListItem>
+                            <ListItem button>
+                                <ListItemIcon>
                                     <AccountBoxIcon />
                                 </ListItemIcon>
                                 <Link to="/account" className={classes.link}>

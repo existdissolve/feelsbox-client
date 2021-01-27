@@ -79,7 +79,7 @@ const styles = theme => ({
     }
 });
 
-class FeelGroupsList extends Component {
+class FeelGroupsForm extends Component {
     constructor(props) {
         super(props);
 
@@ -410,5 +410,5 @@ export default withRouter(
             }
         }),
         withStyles(styles)
-    )(FeelGroupsList)
+    )(FeelGroupsForm)
 );
