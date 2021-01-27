@@ -7,6 +7,8 @@ import {get, isUndefined} from 'lodash';
 
 import Account from '-/components/account';
 import Feels from '-/components/feel/List';
+import FeelGroup from '-/components/feel/group/Form';
+import FeelGroups from '-/components/feel/group/List';
 import Search from '-/components/feel/Search';
 import Splash from '-/components/Splash';
 import CanvasGrid from '-/components/canvas/Grid';
@@ -192,6 +194,12 @@ class Landing extends Component {
                     </Route>
                     <Route exact path="/feels/search">
                         <Search {...this.props} showSnackbar={showSnackbar} />
+                    </Route>
+                    <Route exact path="/feelgroups/:_id">
+                        <FeelGroup {...this.props} showSnackbar={showSnackbar} />
+                    </Route>
+                    <Route exact path="/feelgroups">
+                        <FeelGroups {...this.props} showSnackbar={showSnackbar} />
                     </Route>
                     <Route>
                         <Redirect to="/feels" />

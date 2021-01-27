@@ -28,7 +28,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
 import Subheader from '@material-ui/core/ListSubheader';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -41,7 +40,6 @@ import EditIcon from '@material-ui/icons/Edit';
 import FlipToBackIcon from '@material-ui/icons/FlipToBack';
 import GridOnIcon from '@material-ui/icons/GridOn';
 import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
-import ListAltIcon from '@material-ui/icons/ListAlt';
 import MessageIcon from '@material-ui/icons/Message';
 import RecentActorsIcon from '@material-ui/icons/RecentActors';
 import RecordVoiceOverIcon from '@material-ui/icons/RecordVoiceOver';
@@ -53,8 +51,9 @@ import AppBar from '-/components/AppBar';
 import SimpleThumb from '-/components/feel/SimpleThumb';
 import Thumb from '-/components/feel/Thumb';
 import Loading from '-/components/Loading';
+import CategoriesSelect from '-/components/feel/CategoriesSelect';
+import {groupFeels} from '-/components/feel/utils';
 
-import {getMyCategories} from '-/graphql/category';
 import {getDevices} from '-/graphql/device';
 import {copyFeel, getFeels, removeFeel, sendCarousel, sendFeel, sendMessage, subscribe, unsubscribe} from '-/graphql/feel';
 import {getPushFriends} from '-/graphql/user';
@@ -150,9 +149,7 @@ class FeelsList extends Component {
         history.push('/canvas');
     };
 
-    onCategoriesChanges = e => {
-        const categories = get(e, 'target.value');
-
+    onCategoriesChange = categories => {
         this.setState({categories});
     };
 
@@ -462,65 +459,10 @@ class FeelsList extends Component {
         const {classes, Snackbar} = this.props;
         const feels = get(this.props, 'data_feels.feels', []);
         const loading = get(this.props, 'data_feels.loading');
-        const myCategories = get(this.props, 'data_categories.myCategories') || [];
         const devices = get(this.props, 'data_devices.devices') || [];
         const friends = get(this.props, 'data_friends.pushFriends') || [];
         const messageCapableDevices = devices.slice().filter(device => get(device, 'capabilities.messages'));
-        const groupedFeels = feels.filter(feel => feel.active).reduce((groups, feel) => {
-            const {categories = []} = feel;
-
-            if (!categories.length) {
-                if (filter.length) {
-                    return groups;
-                }
-
-                const categoryId = 'uncategorized';
-                const categoryName = 'Uncategorized';
-                const group = groups.find(item => item._id === categoryId);
-
-                if (!group) {
-                    groups.push({
-                        _id: categoryId,
-                        name: categoryName,
-                        feels: [feel]
-                    });
-                } else {
-                    group.feels.push(feel);
-                }
-            } else {
-                categories.forEach(category => {
-                    const {_id, name} = category;
-
-                    if (filter.length && !filter.includes(_id)) {
-                        return false;
-                    }
-
-                    const group = groups.find(item => item._id === _id);
-
-                    if (!group) {
-                        groups.push({
-                            _id,
-                            name,
-                            feels: [feel]
-                        });
-                    } else {
-                        group.feels.push(feel);
-                    }
-                });
-            }
-
-            return groups.sort((prev, next) => {
-                const {name: pn} = prev;
-                const {name: nn} = next;
-
-                return pn < nn ? -1 : pn > nn ? 1 : 0;
-            });
-        }, []);
-        const adornment = (
-            <InputAdornment position="start">
-                <ListAltIcon />
-            </InputAdornment>
-        );
+        const groupedFeels = groupFeels(feels, {filter});
         const durationAdornment = (
             <InputAdornment position="start">
                 <AccessTimeIcon />
@@ -535,24 +477,7 @@ class FeelsList extends Component {
                     <IconButton onClick={this.onDisplayModeClick.bind(this, 'list')} edge="start" color={displayMode === 'list' ? 'secondary' : 'default'}>
                         <ViewListIcon />
                     </IconButton>
-                    <Select
-                        value={filter}
-                        onChange={this.onCategoriesChanges}
-                        startAdornment={adornment}
-                        multiple={true}
-                        autoWidth={false}
-                        style={{width: '50%'}}
-                        margin="dense"
-                        size="small"
-                        variant="outlined">
-                        {myCategories.map(category => {
-                            const {_id, name} = category;
-
-                            return (
-                                <MenuItem key={_id} value={_id}>{name}</MenuItem>
-                            );
-                        })}
-                    </Select>
+                    <CategoriesSelect categorySelectionHandler={this.onCategoriesChange} />
                     <div className={classes.grow} />
                     {messageCapableDevices.length > 0 &&
                         <IconButton onClick={this.onMessageClick}>
@@ -1005,12 +930,6 @@ export default withRouter(
 
         graphql(getFeels, {
             name: 'data_feels',
-            options: {
-                notifyOnNetworkStatusChange: true
-            }
-        }),
-        graphql(getMyCategories, {
-            name: 'data_categories',
             options: {
                 notifyOnNetworkStatusChange: true
             }

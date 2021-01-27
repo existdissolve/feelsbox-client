@@ -8,6 +8,7 @@ import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import SearchIcon from '@material-ui/icons/Search';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ListAltIcon from '@material-ui/icons/ListAlt';
+import RecentActorsIcon from '@material-ui/icons/RecentActors';
 import ReplayIcon from '@material-ui/icons/Replay';
 import VideoLabelIcon from '@material-ui/icons/VideoLabel';
 import Drawer from '@material-ui/core/Drawer';
@@ -86,6 +87,14 @@ class Navigation extends React.Component {
                                 </ListItemIcon>
                                 <Link to="/feels" className={classes.link}>
                                     <ListItemText primary="My Feels" />
+                                </Link>
+                            </ListItem>
+                            <ListItem button>
+                                <ListItemIcon>
+                                    <RecentActorsIcon />
+                                </ListItemIcon>
+                                <Link to="/feelgroups" className={classes.link}>
+                                    <ListItemText primary="Feels Groups" />
                                 </Link>
                             </ListItem>
                             <ListItem button>
