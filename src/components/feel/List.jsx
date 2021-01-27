@@ -44,18 +44,16 @@ import MessageIcon from '@material-ui/icons/Message';
 import RecentActorsIcon from '@material-ui/icons/RecentActors';
 import RecordVoiceOverIcon from '@material-ui/icons/RecordVoiceOver';
 import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
-import VideoLabelIcon from '@material-ui/icons/VideoLabel';
 import ViewListIcon from '@material-ui/icons/ViewList';
 
 import AppBar from '-/components/AppBar';
-import SimpleThumb from '-/components/feel/SimpleThumb';
 import Thumb from '-/components/feel/Thumb';
 import Loading from '-/components/Loading';
 import CategoriesSelect from '-/components/feel/CategoriesSelect';
 import {groupFeels} from '-/components/feel/utils';
 
 import {getDevices} from '-/graphql/device';
-import {copyFeel, getFeels, removeFeel, sendCarousel, sendFeel, sendMessage, subscribe, unsubscribe} from '-/graphql/feel';
+import {copyFeel, getFeels, removeFeel, sendFeel, sendMessage, subscribe, unsubscribe} from '-/graphql/feel';
 import {getPushFriends} from '-/graphql/user';
 import client from '-/graphql/client';
 
@@ -87,9 +85,6 @@ const styles = theme => ({
     },
     grow: {
         flexGrow: 1
-    },
-    carousel: {
-
     },
     selectionCount: {
         flex: 1,
@@ -126,7 +121,6 @@ class FeelsList extends Component {
         this.state = {
             activeFeel: undefined,
             anchorEl: undefined,
-            carouselMode: false,
             categories: [],
             deviceEl: undefined,
             dialogEl: undefined,
@@ -154,14 +148,9 @@ class FeelsList extends Component {
     };
 
     onCarouselClick = () => {
-        const {carouselMode} = this.state;
+        const {history} = this.props;
 
-        this.setState({
-            carouselMode: !carouselMode,
-            duration: 1000,
-            selectedDevices: [],
-            selectedFeels: []
-        });
+        history.push('/feelgroups');
     };
 
     onCopyClick = () => {
@@ -367,23 +356,6 @@ class FeelsList extends Component {
         this.setState({dialogEl: e.target});
     };
 
-    onSendCarouselClick = async() => {
-        const {duration, selectedDevices, selectedFeels} = this.state;
-
-        await client.mutate({
-            mutation: sendCarousel,
-            variables: {
-                feels: selectedFeels,
-                data: {
-                    devices: selectedDevices,
-                    duration: Number(duration)
-                }
-            }
-        });
-
-        this.onCarouselClick();
-    };
-
     onSendMessageClick = async() => {
         const {message, messageDuration, selectedDevices} = this.state;
 
@@ -441,19 +413,16 @@ class FeelsList extends Component {
         const {
             activeFeel,
             anchorEl,
-            carouselMode,
             categories: filter = [],
             deviceEl,
             dialogEl,
             displayMode,
-            duration = 1000,
             message,
             messageDuration = 50,
             messageEl,
             notification,
             notificationEl,
             selectedDevices = [],
-            selectedFeels = [],
             selectedFriends = []
         } = this.state;
         const {classes, Snackbar} = this.props;
@@ -469,52 +438,24 @@ class FeelsList extends Component {
             </InputAdornment>
         );
         const extraContent = (
-            <Fragment>
-                <Toolbar position="fixed" className={classes.toolbar} variant="dense" disableGutters={false}>
-                    <IconButton onClick={this.onDisplayModeClick.bind(this, 'grid')} edge="start" color={displayMode === 'grid' ? 'secondary' : 'default'}>
-                        <GridOnIcon />
+            <Toolbar position="fixed" className={classes.toolbar} variant="dense" disableGutters={false}>
+                <IconButton onClick={this.onDisplayModeClick.bind(this, 'grid')} edge="start" color={displayMode === 'grid' ? 'secondary' : 'default'}>
+                    <GridOnIcon />
+                </IconButton>
+                <IconButton onClick={this.onDisplayModeClick.bind(this, 'list')} edge="start" color={displayMode === 'list' ? 'secondary' : 'default'}>
+                    <ViewListIcon />
+                </IconButton>
+                <CategoriesSelect categorySelectionHandler={this.onCategoriesChange} />
+                <div className={classes.grow} />
+                {messageCapableDevices.length > 0 &&
+                    <IconButton onClick={this.onMessageClick}>
+                        <MessageIcon />
                     </IconButton>
-                    <IconButton onClick={this.onDisplayModeClick.bind(this, 'list')} edge="start" color={displayMode === 'list' ? 'secondary' : 'default'}>
-                        <ViewListIcon />
-                    </IconButton>
-                    <CategoriesSelect categorySelectionHandler={this.onCategoriesChange} />
-                    <div className={classes.grow} />
-                    {messageCapableDevices.length > 0 &&
-                        <IconButton onClick={this.onMessageClick}>
-                            <MessageIcon />
-                        </IconButton>
-                    }
-                    <IconButton onClick={this.onCarouselClick} className={classes.carousel} edge="end" color={carouselMode ? 'secondary' : 'default'}>
-                        <RecentActorsIcon />
-                    </IconButton>
-                </Toolbar>
-                {carouselMode &&
-                    <Toolbar className={classes.toolbar} variant="dense" disableGutters={false}>
-                        <Typography variant="button" className={classes.selectionCount}>{selectedFeels.length} {selectedFeels.length === 1 ? 'Selection' : 'Selections'}</Typography>
-                        <TextField
-                            style={{flex: 1}}
-                            name="duration"
-                            margin="dense"
-                            value={duration || 1000}
-                            onChange={this.onDurationChange}
-                            type="number"
-                            size="small"
-                            variant="outlined"
-                            InputProps={{
-                                min: 1,
-                                max: 100000,
-                                size: 'small',
-                                startAdornment: durationAdornment
-                            }} />
-                        <IconButton onClick={this.onDeviceClick}>
-                            <VideoLabelIcon />
-                        </IconButton>
-                        <Button onClick={this.onSendCarouselClick} color="secondary" variant="contained" autoFocus edge="end" size="small">
-                            Send
-                        </Button>
-                    </Toolbar>
                 }
-            </Fragment>
+                <IconButton onClick={this.onCarouselClick} className={classes.carousel} edge="end">
+                    <RecentActorsIcon />
+                </IconButton>
+            </Toolbar>
         );
         const menu = [];
 
@@ -605,30 +546,6 @@ class FeelsList extends Component {
             <div className={classes.container}>
                 <AppBar title="My Feels" extraContent={extraContent} />
 
-                {carouselMode &&
-                    <Dialog open={Boolean(deviceEl)} onClose={this.onDialogClose} keepMounted={false}>
-                        <DialogTitle>Send to Devices</DialogTitle>
-                        <DialogContent>
-                            <FormControl component="fieldset" className={classes.formControl}>
-                                <FormGroup>
-                                    {devices.map(device => {
-                                        const {_id: deviceId, name} = device;
-                                        const isChecked = selectedDevices.includes(deviceId);
-
-                                        return (
-                                            <FormControlLabel key={deviceId} control={<Checkbox checked={isChecked} onChange={this.onDeviceCheck} name={deviceId} />} label={name} />
-                                        );
-                                    })}
-                                </FormGroup>
-                            </FormControl>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={this.onDialogClose} color="secondary" variant="contained" size="small" autoFocus>
-                                Select
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
-                }
                 {messageCapableDevices.length > 0 &&
                     <Dialog open={Boolean(messageEl)} onClose={this.onDialogClose} keepMounted={false}>
                         <DialogTitle>Send Message to Devices</DialogTitle>
@@ -765,7 +682,7 @@ class FeelsList extends Component {
                         </Dialog>
                     </Fragment>
                 }
-                <div className={classes.root} style={{marginTop: carouselMode ? 155 : 103}}>
+                <div className={classes.root} style={{marginTop: 103}}>
                     {loading && <Loading message="Loading Your Feels..." />}
                     {!loading &&
                         <Fragment>
@@ -780,85 +697,67 @@ class FeelsList extends Component {
 
                                                 {feels.map((feel, idx) => {
                                                     const {_id, isOwner, isSubscribed, isSubscriptionOwner} = feel;
-                                                    let content;
+                                                    const icons = [];
+                                                    const editIcon = (
+                                                        <ListItemIcon className={classes.listitemicon} key="editIcon" onClick={this.onIconClick.bind(this, feel, 'onEditClick')}>
+                                                            <EditIcon />
+                                                        </ListItemIcon>
+                                                    );
+                                                    const removeIcon = (
+                                                        <ListItemIcon className={classes.listitemicon} key="removeIcon" onClick={this.onIconClick.bind(this, feel, 'onRemoveClick')}>
+                                                            <CloseIcon />
+                                                        </ListItemIcon>
+                                                    );
+                                                    const pushIcon = (
+                                                        <ListItemIcon className={classes.listitemicon} key="pushIcon" onClick={this.onIconClick.bind(this, feel, 'onPushClick')}>
+                                                            <SettingsRemoteIcon />
+                                                        </ListItemIcon>
+                                                    );
+                                                    const notifyIcon = (
+                                                        <ListItemIcon className={classes.listitemicon} key="notifyIcon" onClick={this.onIconClick.bind(this, feel, 'onNotifyClick')}>
+                                                            <RecordVoiceOverIcon />
+                                                        </ListItemIcon>
+                                                    );
+                                                    const saveToFavsIcon = (
+                                                        <ListItemIcon className={classes.listitemicon} key="subscribeIcon" onClick={this.onIconClick.bind(this, feel, 'onSubscribeClick')}>
+                                                            <AddBoxIcon />
+                                                        </ListItemIcon>
+                                                    );
+                                                    const removeFromFavsIcon = (
+                                                        <ListItemIcon className={classes.listitemicon} key="unsubscribeIcon" onClick={this.onIconClick.bind(this, feel, 'onUnsubscribeClick')}>
+                                                            <IndeterminateCheckBoxIcon />
+                                                        </ListItemIcon>
+                                                    );
+                                                    const copyFeelIcon = (
+                                                        <ListItemIcon className={classes.listitemicon} key="copyIcon" onClick={this.onIconClick.bind(this, feel._id, 'onCopyClick')}>
+                                                            <FlipToBackIcon />
+                                                        </ListItemIcon>
+                                                    );
 
-                                                    if (carouselMode) {
-                                                        const isSelected = selectedFeels.some(selectedFeel => selectedFeel === _id);
-
-                                                        content = (
-                                                            <ListItem key={_id} component="div" className={classes.listItem}>
-                                                                <ListItemIcon className={classes.listIcon}>
-                                                                    <SimpleThumb
-                                                                        displayMode={displayMode}
-                                                                        feel={feel}
-                                                                        selectionHandler={this.onFeelSelect}
-                                                                        isSelected={isSelected} />
-                                                                </ListItemIcon>
-                                                                <ListItemText primary={feel.name} style={{flexGrow: 1}} />
-                                                            </ListItem>
-                                                        );
+                                                    if (isOwner) {
+                                                        icons.push(...[editIcon, removeIcon, pushIcon, notifyIcon]);
                                                     } else {
-                                                        const icons = [];
-                                                        const editIcon = (
-                                                            <ListItemIcon className={classes.listitemicon} key="editIcon" onClick={this.onIconClick.bind(this, feel, 'onEditClick')}>
-                                                                <EditIcon />
-                                                            </ListItemIcon>
-                                                        );
-                                                        const removeIcon = (
-                                                            <ListItemIcon className={classes.listitemicon} key="removeIcon" onClick={this.onIconClick.bind(this, feel, 'onRemoveClick')}>
-                                                                <CloseIcon />
-                                                            </ListItemIcon>
-                                                        );
-                                                        const pushIcon = (
-                                                            <ListItemIcon className={classes.listitemicon} key="pushIcon" onClick={this.onIconClick.bind(this, feel, 'onPushClick')}>
-                                                                <SettingsRemoteIcon />
-                                                            </ListItemIcon>
-                                                        );
-                                                        const notifyIcon = (
-                                                            <ListItemIcon className={classes.listitemicon} key="notifyIcon" onClick={this.onIconClick.bind(this, feel, 'onNotifyClick')}>
-                                                                <RecordVoiceOverIcon />
-                                                            </ListItemIcon>
-                                                        );
-                                                        const saveToFavsIcon = (
-                                                            <ListItemIcon className={classes.listitemicon} key="subscribeIcon" onClick={this.onIconClick.bind(this, feel, 'onSubscribeClick')}>
-                                                                <AddBoxIcon />
-                                                            </ListItemIcon>
-                                                        );
-                                                        const removeFromFavsIcon = (
-                                                            <ListItemIcon className={classes.listitemicon} key="unsubscribeIcon" onClick={this.onIconClick.bind(this, feel, 'onUnsubscribeClick')}>
-                                                                <IndeterminateCheckBoxIcon />
-                                                            </ListItemIcon>
-                                                        );
-                                                        const copyFeelIcon = (
-                                                            <ListItemIcon className={classes.listitemicon} key="copyIcon" onClick={this.onIconClick.bind(this, feel._id, 'onCopyClick')}>
-                                                                <FlipToBackIcon />
-                                                            </ListItemIcon>
-                                                        );
-
-                                                        if (isOwner) {
-                                                            icons.push(...[editIcon, removeIcon, pushIcon, notifyIcon]);
-                                                        } else {
-                                                            if (!isSubscribed) {
-                                                                icons.push(saveToFavsIcon);
-                                                            } else if (isSubscriptionOwner) {
-                                                                icons.push(removeFromFavsIcon);
-                                                            }
-
-                                                            icons.push(...[copyFeelIcon, pushIcon, notifyIcon]);
+                                                        if (!isSubscribed) {
+                                                            icons.push(saveToFavsIcon);
+                                                        } else if (isSubscriptionOwner) {
+                                                            icons.push(removeFromFavsIcon);
                                                         }
-                                                        content = (
-                                                            <ListItem key={_id} component="div" className={classes.listItem}>
-                                                                <ListItemIcon className={classes.listIcon}>
-                                                                    <Thumb
-                                                                        displayMode={displayMode}
-                                                                        feel={feel}
-                                                                        tapHandler={this.onTap} />
-                                                                </ListItemIcon>
-                                                                <ListItemText primary={feel.name} style={{flexGrow: 1}} />
-                                                                {icons}
-                                                            </ListItem>
-                                                        );
+
+                                                        icons.push(...[copyFeelIcon, pushIcon, notifyIcon]);
                                                     }
+
+                                                    const content = (
+                                                        <ListItem key={_id} component="div" className={classes.listItem}>
+                                                            <ListItemIcon className={classes.listIcon}>
+                                                                <Thumb
+                                                                    displayMode={displayMode}
+                                                                    feel={feel}
+                                                                    tapHandler={this.onTap} />
+                                                            </ListItemIcon>
+                                                            <ListItemText primary={feel.name} style={{flexGrow: 1}} />
+                                                            {icons}
+                                                        </ListItem>
+                                                    );
 
                                                     return (
                                                         <Fragment key={_id}>
@@ -883,28 +782,14 @@ class FeelsList extends Component {
                                                 <GridList cols={3} cellHeight={64} className={classes.grid}>
                                                     {feels.map(feel => {
                                                         const {_id} = feel;
-
-                                                        if (carouselMode) {
-                                                            const isSelected = selectedFeels.some(selectedFeel => selectedFeel === _id);
-
-                                                            return (
-                                                                <SimpleThumb
-                                                                    key={_id}
-                                                                    displayMode={displayMode}
-                                                                    feel={feel}
-                                                                    selectionHandler={this.onFeelSelect}
-                                                                    isSelected={isSelected} />
-                                                            );
-                                                        } else {
-                                                            return (
-                                                                <Thumb
-                                                                    key={_id}
-                                                                    displayMode={displayMode}
-                                                                    feel={feel}
-                                                                    menuOpenHandler={this.onMenuOpen}
-                                                                    tapHandler={this.onTap} />
-                                                            );
-                                                        }
+                                                        return (
+                                                            <Thumb
+                                                                key={_id}
+                                                                displayMode={displayMode}
+                                                                feel={feel}
+                                                                menuOpenHandler={this.onMenuOpen}
+                                                                tapHandler={this.onTap} />
+                                                        );
                                                     })}
                                                 </GridList>
                                             </Fragment>

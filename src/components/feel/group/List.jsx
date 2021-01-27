@@ -277,7 +277,8 @@ class FeelGroupsList extends Component {
                                                     <SimpleThumb
                                                         key={`${_id}_${xdx}`}
                                                         displayMode="grid"
-                                                        feel={feel} />
+                                                        feel={feel}
+                                                        selectionHandler={() => {}} />
                                                 );
                                             })}
                                         </GridList>

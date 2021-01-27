@@ -99,12 +99,6 @@ export const subscribe = gql`
     }
 `;
 
-export const sendCarousel = gql`
-    mutation sendCarousel($feels: [ID]!, $data: FeelCarouselInput) {
-        sendCarousel(feels: $feels, data: $data)
-    }
-`;
-
 export const sendFeel = gql`
     mutation sendFeel($_id: ID!, $data: SendFeelInput) {
         sendFeel(_id: $_id, data: $data)
