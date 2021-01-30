@@ -26,7 +26,7 @@ import {
 } from '@material-ui/icons';
 
 import {AppBar, IconButton, Loading} from '-/components/shared';
-import SimpleThumb from '-/components/feel/SimpleThumb';
+import Thumb from '-/components/feel/Thumb';
 import DevicesSelect from '-/components/feel/DevicesSelect';
 
 import {getFeelGroups, removeFeelGroup, sendFeelGroup} from '-/graphql/feelGroup';
@@ -255,7 +255,7 @@ class FeelGroupsList extends Component {
                                                 const {_id} = feel;
 
                                                 return (
-                                                    <SimpleThumb
+                                                    <Thumb
                                                         key={`${_id}_${xdx}`}
                                                         displayMode="grid"
                                                         feel={feel}

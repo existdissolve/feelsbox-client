@@ -31,7 +31,7 @@ import {
 } from '@material-ui/icons';
 
 import {AppBar, IconButton, Loading} from '-/components/shared';
-import SimpleThumb from '-/components/feel/SimpleThumb';
+import Thumb from '-/components/feel/Thumb';
 import CategoriesSelect from '-/components/feel/CategoriesSelect';
 import {groupFeels} from '-/components/feel/utils';
 
@@ -293,12 +293,13 @@ class FeelGroupsForm extends Component {
                                         const isSelected = idx === activeFeelIdx;
 
                                         return (
-                                            <SimpleThumb
+                                            <Thumb
                                                 key={`${_id}_${idx}`}
                                                 displayMode="grid"
                                                 feel={feel}
                                                 isSelected={isSelected}
-                                                selectionHandler={this.onFeelTap.bind(this, idx)} />
+                                                selectionMode={true}
+                                                tapHandler={this.onFeelTap.bind(this, idx)} />
                                         );
                                     })}
                                 </GridList>
@@ -321,10 +322,10 @@ class FeelGroupsForm extends Component {
                                                     const content = (
                                                         <ListItem key={_id} component="div" className={classes.listItem}>
                                                             <ListItemIcon className={classes.listIcon}>
-                                                                <SimpleThumb
+                                                                <Thumb
                                                                     displayMode="list"
                                                                     feel={feel}
-                                                                    selectionHandler={this.onFeelSelect} />
+                                                                    tapHandler={this.onFeelSelect} />
                                                             </ListItemIcon>
                                                             <ListItemText primary={feel.name} style={{flexGrow: 1}} />
                                                             <ListItemIcon className={classes.listitemicon} onClick={this.onFeelSelect.bind(this, _id)} style={{minWidth: 'auto'}}>
