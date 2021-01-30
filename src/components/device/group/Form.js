@@ -18,6 +18,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Subheader from '@material-ui/core/ListSubheader';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
+import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 
 import CloseIcon from '@material-ui/icons/Close';
@@ -268,15 +269,21 @@ class DeviceGroupForm extends Component {
         );
         const extraContent = (
             <Toolbar className={classes.toolbar} variant="dense" disableGutters={true}>
-                <IconButton onClick={this.onClearClick} disabled={!selections.length}>
-                    <ClearAllIcon />
-                </IconButton>
-                <IconButton onClick={this.onRemoveClick} disabled={!isActive}>
-                    <CloseIcon />
-                </IconButton>
-                <IconButton onClick={this.onAddClick} disabled={isActive}>
-                    <AddIcon />
-                </IconButton>
+                <Tooltip title="Remove all devices">
+                    <IconButton onClick={this.onClearClick} disabled={!selections.length}>
+                        <ClearAllIcon />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Remove selected device">
+                    <IconButton onClick={this.onRemoveClick} disabled={!isActive}>
+                        <CloseIcon />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Add device">
+                    <IconButton onClick={this.onAddClick} disabled={isActive}>
+                        <AddIcon />
+                    </IconButton>
+                </Tooltip>
             </Toolbar>
         );
         const DevicePill = props => {

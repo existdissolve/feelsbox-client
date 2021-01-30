@@ -21,6 +21,7 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import Subheader from '@material-ui/core/ListSubheader';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
+import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 
 import CloseIcon from '@material-ui/icons/Close';
@@ -269,18 +270,26 @@ class FeelGroupsForm extends Component {
         );
         const extraContent = (
             <Toolbar className={classes.toolbar} variant="dense" disableGutters={true}>
-                <IconButton onClick={this.onClearClick}>
-                    <ClearAllIcon />
-                </IconButton>
-                <IconButton onClick={this.onRemoveClick} disabled={!isActive}>
-                    <CloseIcon />
-                </IconButton>
-                <IconButton onClick={this.onPreviousClick} disabled={!isActive}>
-                    <NavigateBeforeIcon />
-                </IconButton>
-                <IconButton onClick={this.onNextClick} disabled={!isActive}>
-                    <NavigateNextIcon />
-                </IconButton>
+                <Tooltip title="Remove all Feels">
+                    <IconButton onClick={this.onClearClick}>
+                        <ClearAllIcon />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Remove selected Feel">
+                    <IconButton onClick={this.onRemoveClick} disabled={!isActive}>
+                        <CloseIcon />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Move selected Feel to the left">
+                    <IconButton onClick={this.onPreviousClick} disabled={!isActive}>
+                        <NavigateBeforeIcon />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Move selected Feel to the right">
+                    <IconButton onClick={this.onNextClick} disabled={!isActive}>
+                        <NavigateNextIcon />
+                    </IconButton>
+                </Tooltip>
             </Toolbar>
         );
 
@@ -339,7 +348,11 @@ class FeelGroupsForm extends Component {
                                                             </ListItemIcon>
                                                             <ListItemText primary={feel.name} style={{flexGrow: 1}} />
                                                             <ListItemIcon className={classes.listitemicon} onClick={this.onFeelSelect.bind(this, _id)} style={{minWidth: 'auto'}}>
-                                                                <AddIcon edge="end" />
+                                                                <Tooltip title="Add Feel to group">
+                                                                    <IconButton edge="end">
+                                                                        <AddIcon />
+                                                                    </IconButton>
+                                                                </Tooltip>
                                                             </ListItemIcon>
                                                         </ListItem>
                                                     );

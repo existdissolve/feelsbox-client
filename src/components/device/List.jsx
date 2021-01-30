@@ -23,6 +23,8 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Slider from '@material-ui/core/Slider';
 import TextField from '@material-ui/core/TextField';
+import Tooltip from '@material-ui/core/Tooltip';
+
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import BrightnessLowIcon from '@material-ui/icons/BrightnessLow';
 import BrightnessHighIcon from '@material-ui/icons/BrightnessHigh';
@@ -56,8 +58,8 @@ const styles = theme => ({
         marginTop: 56
     },
     icon: {
-        minWidth: 24,
-        padding: 5
+        maxWidth: 40,
+        minWidth: 20
     },
     subheader: {
         backgroundColor: theme.palette.grey.A400,
@@ -74,11 +76,12 @@ class DeviceList extends Component {
         super(props);
 
         this.state = {
+            actionsEl: null,
+            activeDevice: null,
             anchorEl: null,
             brightness: 100,
             brightnessOpen: false,
             code: undefined,
-            currentDevice: null,
             dialogOpen: false
         };
     }
@@ -92,13 +95,14 @@ class DeviceList extends Component {
     };
 
     onBrightnessSubmit = async() => {
-        const {brightness, currentDevice} = this.state;
+        const {brightness, activeDevice} = this.state;
         const {showSnackbar, setBrightness} = this.props;
+        const {_id} = activeDevice;
 
         try {
             await setBrightness({
                 variables: {
-                    _id: currentDevice,
+                    _id,
                     brightness
                 }
             });
@@ -162,8 +166,8 @@ class DeviceList extends Component {
 
     onDialogClose = () => {
         this.setState({
+            activeDevice: null,
             brightnessOpen: false,
-            currentDevice: null,
             dialogOpen: false
         });
     };
@@ -175,6 +179,15 @@ class DeviceList extends Component {
         });
     };
 
+    onActionsClick = (device, e) => {
+        const {currentTarget} = e;
+
+        this.setState({
+            actionsEl: currentTarget,
+            activeDevice: device
+        });
+    };
+
     onMenuClick = e => {
         const {currentTarget} = e;
 
@@ -182,46 +195,66 @@ class DeviceList extends Component {
     };
 
     onMenuClose = () => {
-        this.setState({anchorEl: null});
-    };
-
-    onRestartClick = _id => {
-        const {restart} = this.props;
-
-        restart({
-            variables: {_id}
+        this.setState({
+            activeDevice: null,
+            actionsEl: null,
+            anchorEl: null
         });
     };
 
-    onSetBrightnessClick = _id => {
+    onRestartClick = () => {
+        const {restart, showSnackbar} = this.props;
+        const {activeDevice} = this.state;
+        const _id = get(activeDevice, '_id');
+
+        restart({
+            variables: {_id}
+        }).then(() => {
+            this.onMenuClose();
+            showSnackbar('Device will restart shortly');
+        });
+    };
+
+    onSetBrightnessClick = device => {
         this.setState({
             brightnessOpen: true,
-            currentDevice: _id
+            activeDevice: device
         });
     };
 
     onTurnOffClick = _id => {
-        const {turnOff} = this.props;
+        const {showSnackbar, turnOff} = this.props;
 
         turnOff({
             variables: {_id}
+        }).then(() => {
+            this.onMenuClose();
+            showSnackbar('Device display was turned off successfully!');
         });
     };
 
-    onUpdateClick = _id => {
-        const {updateDevice} = this.props;
+    onUpdateClick = () => {
+        const {showSnackbar, updateDevice} = this.props;
+        const {activeDevice} = this.state;
+        const _id = get(activeDevice, '_id');
 
         updateDevice({
             variables: {_id}
+        }).then(() => {
+            this.onMenuClose();
+            showSnackbar('Device will update and restart shortly');
         });
     };
 
-    onViewHistoryClick = _id => {
+    onViewHistoryClick = () => {
+        const {activeDevice} = this.state;
+        const _id = get(activeDevice, '_id');
+
         window.location = `/#/devices/${_id}/history`;
     };
 
     render() {
-        const {anchorEl, brightness, brightnessOpen, dialogOpen} = this.state;
+        const {actionsEl, activeDevice, anchorEl, brightness, brightnessOpen, dialogOpen} = this.state;
         const {classes} = this.props;
         const devices = get(this.props, 'data.devices', []);
         const loading = get(this.props, 'data.loading');
@@ -247,6 +280,8 @@ class DeviceList extends Component {
                 <MoreVertIcon />
             </IconButton>
         );
+        const isUpdateable = get(activeDevice, 'capabilities.updates');
+        const _id = get(activeDevice, '_id');
 
         return (
             <div className={classes.container}>
@@ -257,6 +292,28 @@ class DeviceList extends Component {
                             <LockOpenIcon />
                         </ListItemIcon>
                         Enter Device Code
+                    </MenuItem>
+                </Menu>
+                <Menu anchorEl={actionsEl} keepMounted={false} open={Boolean(actionsEl)} onClose={this.onMenuClose}>
+                    <MenuItem onClick={this.onRestartClick}>
+                        <ListItemIcon>
+                            <PowerSettingsNewIcon />
+                        </ListItemIcon>
+                        Restart Device
+                    </MenuItem>
+                    {isUpdateable &&
+                        <MenuItem onClick={this.onUpdateClick}>
+                            <ListItemIcon>
+                                <SystemUpdateIcon />
+                            </ListItemIcon>
+                            Update Device
+                        </MenuItem>
+                    }
+                    <MenuItem onClick={this.onViewHistoryClick}>
+                        <ListItemIcon>
+                            <HistoryIcon />
+                        </ListItemIcon>
+                        Device History
                     </MenuItem>
                 </Menu>
                 <Dialog open={dialogOpen} keepMounted={false} onClose={this.onDialogClose}>
@@ -312,7 +369,6 @@ class DeviceList extends Component {
                                         <ListSubheader className={classes.subheader}>{label}</ListSubheader>
                                         {devices.map((device, idx) => {
                                             const {_id, isDefault, name} = device;
-                                            const isUpdateable = get(device, 'capabilities.updates');
 
                                             return (
                                                 <Fragment key={_id}>
@@ -327,27 +383,35 @@ class DeviceList extends Component {
                                                         <ListItemText primary={name} style={{flexGrow: 1}} />
                                                         {isMine &&
                                                             <Fragment>
-                                                                {isUpdateable &&
-                                                                    <ListItemIcon onClick={this.onUpdateClick.bind(this, _id)} className={classes.icon}>
-                                                                        <SystemUpdateIcon />
-                                                                    </ListItemIcon>
-                                                                }
-                                                                <ListItemIcon onClick={this.onRestartClick.bind(this, _id)} className={classes.icon}>
-                                                                    <PowerSettingsNewIcon />
-                                                                </ListItemIcon>
                                                                 <ListItemIcon onClick={this.onTurnOffClick.bind(this, _id)} className={classes.icon}>
-                                                                    <FlashOffIcon />
+                                                                    <Tooltip title="Turn off display">
+                                                                        <IconButton>
+                                                                            <FlashOffIcon />
+                                                                        </IconButton>
+                                                                    </Tooltip>
                                                                 </ListItemIcon>
-                                                                <ListItemIcon onClick={this.onSetBrightnessClick.bind(this, _id)} className={classes.icon}>
-                                                                    <SettingsBrightnessIcon />
+                                                                <ListItemIcon onClick={this.onSetBrightnessClick.bind(this, device)} className={classes.icon}>
+                                                                    <Tooltip title="Change device brightness">
+                                                                        <IconButton>
+                                                                            <SettingsBrightnessIcon />
+                                                                        </IconButton>
+                                                                    </Tooltip>
                                                                 </ListItemIcon>
-                                                                <ListItemIcon onClick={this.onViewHistoryClick.bind(this, _id)} className={classes.icon}>
-                                                                    <HistoryIcon />
+                                                                <ListItemIcon onClick={this.onActionsClick.bind(this, device)} className={classes.icon}>
+                                                                    <Tooltip title="See more actions">
+                                                                        <IconButton>
+                                                                            <MoreVertIcon />
+                                                                        </IconButton>
+                                                                    </Tooltip>
                                                                 </ListItemIcon>
                                                             </Fragment>
                                                         }
                                                         <ListItemIcon edge="end" className={classes.icon}>
-                                                            <SettingsRemoteIcon onClick={this.onDefaultClick.bind(this, _id)} color={isDefault ? 'secondary' : 'action'} />
+                                                            <Tooltip title="Make default device">
+                                                                <IconButton>
+                                                                    <SettingsRemoteIcon onClick={this.onDefaultClick.bind(this, _id)} color={isDefault ? 'secondary' : 'action'} />
+                                                                </IconButton>
+                                                            </Tooltip>
                                                         </ListItemIcon>
                                                     </ListItem>
                                                     {idx !== devices.length - 1 && <Divider />}

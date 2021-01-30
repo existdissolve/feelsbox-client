@@ -16,6 +16,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Toolbar from '@material-ui/core/Toolbar';
+import Tooltip from '@material-ui/core/Tooltip';
 import {Typography} from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import ClearAllIcon from '@material-ui/icons/ClearAll';
@@ -541,17 +542,23 @@ class CanvasGrid extends React.Component {
 
         return (
             <React.Fragment>
-                <IconButton onClick={this.onTestClick}>
-                    <SettingsRemoteIcon />
-                </IconButton>
-                {frames.length > 1 &&
-                    <IconButton onClick={this.onTestFramesClick}>
-                        <SettingsRemoteOutlinedIcon />
+                <Tooltip title="Test on default device">
+                    <IconButton onClick={this.onTestClick}>
+                        <SettingsRemoteIcon />
                     </IconButton>
+                </Tooltip>
+                {frames.length > 1 &&
+                    <Tooltip title="Test animation on default device">
+                        <IconButton onClick={this.onTestFramesClick}>
+                            <SettingsRemoteOutlinedIcon />
+                        </IconButton>
+                    </Tooltip>
                 }
-                <IconButton onClick={this.onEditClick}>
-                    <SaveIcon />
-                </IconButton>
+                <Tooltip title="Save Feel">
+                    <IconButton onClick={this.onEditClick}>
+                        <SaveIcon />
+                    </IconButton>
+                </Tooltip>
             </React.Fragment>
         );
     }
@@ -576,25 +583,37 @@ class CanvasGrid extends React.Component {
 
         const extraContent = (
             <Toolbar className={classes.toolbar} variant="dense" disableGutters={true}>
-                <IconButton onClick={this.onUndoClick} disabled={!isUndoActive}>
-                    <UndoIcon />
-                </IconButton>
-                <IconButton onClick={this.onClearClick} disabled={!isUndoActive}>
-                    <ClearAllIcon />
-                </IconButton>
-                <IconButton onClick={this.onPreviousClick} disabled={!isPrevActive}>
-                    <NavigateBeforeIcon />
-                </IconButton>
-                <IconButton onClick={this.onNextClick} disabled={!isNextActive}>
-                    <NavigateNextIcon />
-                </IconButton>
-                <IconButton onClick={this.onFrameMenuClick}>
-                    <LibraryAddIcon />
-                </IconButton>
-                {frames.length > 1 &&
-                    <IconButton onClick={this.onThumbClick}>
-                        <PhotoAlbumIcon color={isThumb ? 'secondary' : 'action'} />
+                <Tooltip title="Undo">
+                    <IconButton onClick={this.onUndoClick} disabled={!isUndoActive}>
+                        <UndoIcon />
                     </IconButton>
+                </Tooltip>
+                <Tooltip title="Clear pixels">
+                    <IconButton onClick={this.onClearClick} disabled={!isUndoActive}>
+                        <ClearAllIcon />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Go to previous frame">
+                    <IconButton onClick={this.onPreviousClick} disabled={!isPrevActive}>
+                        <NavigateBeforeIcon />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Go to next frame">
+                    <IconButton onClick={this.onNextClick} disabled={!isNextActive}>
+                        <NavigateNextIcon />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Add/Copy/Remove frame">
+                    <IconButton onClick={this.onFrameMenuClick}>
+                        <LibraryAddIcon />
+                    </IconButton>
+                </Tooltip>
+                {frames.length > 1 &&
+                    <Tooltip title="Make thumbnail">
+                        <IconButton onClick={this.onThumbClick}>
+                            <PhotoAlbumIcon color={isThumb ? 'secondary' : 'action'} />
+                        </IconButton>
+                    </Tooltip>
                 }
                 <Typography variant="button" className={classes.frameCount}>{currentFrame + 1} / {frameCount}</Typography>
             </Toolbar>

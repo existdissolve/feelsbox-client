@@ -31,6 +31,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Subheader from '@material-ui/core/ListSubheader';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import AddIcon from '@material-ui/icons/Add';
@@ -434,20 +435,28 @@ class FeelsList extends Component {
         );
         const extraContent = (
             <Toolbar position="fixed" className={classes.toolbar} variant="dense" disableGutters={false}>
-                <IconButton onClick={this.onDisplayModeClick.bind(this, 'grid')} edge="start" color={displayMode === 'grid' ? 'secondary' : 'default'}>
-                    <GridOnIcon />
-                </IconButton>
-                <IconButton onClick={this.onDisplayModeClick.bind(this, 'list')} edge="start" color={displayMode === 'list' ? 'secondary' : 'default'}>
-                    <ViewListIcon />
-                </IconButton>
+                <Tooltip title="View as grid">
+                    <IconButton onClick={this.onDisplayModeClick.bind(this, 'grid')} edge="start" color={displayMode === 'grid' ? 'secondary' : 'default'}>
+                        <GridOnIcon />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="View as list">
+                    <IconButton onClick={this.onDisplayModeClick.bind(this, 'list')} edge="start" color={displayMode === 'list' ? 'secondary' : 'default'}>
+                        <ViewListIcon />
+                    </IconButton>
+                </Tooltip>
                 <CategoriesSelect categorySelectionHandler={this.onCategoriesChange} />
                 <div className={classes.grow} />
-                <IconButton onClick={this.onMessageClick}>
-                    <MessageIcon />
-                </IconButton>
-                <IconButton onClick={this.onCarouselClick} className={classes.carousel} edge="end">
-                    <RecentActorsIcon />
-                </IconButton>
+                <Tooltip title="Send text message">
+                    <IconButton onClick={this.onMessageClick}>
+                        <MessageIcon />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="View Feel Groups">
+                    <IconButton onClick={this.onCarouselClick} className={classes.carousel} edge="end">
+                        <RecentActorsIcon />
+                    </IconButton>
+                </Tooltip>
             </Toolbar>
         );
         const menu = [];

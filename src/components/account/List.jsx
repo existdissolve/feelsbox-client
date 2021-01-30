@@ -59,7 +59,7 @@ class MessageList extends Component {
                             return (
                                 <Fragment key={_id}>
                                     <ListItem>
-                                        <ListItemText>
+                                        <ListItemText style={{width: 40, flex: 'none', marginRight: 20}}>
                                             <GridList className={classes.gridList} cols={8}>
                                                 {nodes.map((item, index) => {
                                                     const {pixels = []} = thumb;
@@ -72,13 +72,14 @@ class MessageList extends Component {
                                                 })}
                                             </GridList>
                                         </ListItemText>
-                                        <ListItemText primary={message} />
+                                        <ListItemText primary={message} style={{textAlign: 'left', flex: '10 1 100%'}} />
                                         <ListItemText
-                                            style={{flex: 2}}
+                                            style={{width: 130, paddingLeft: 10}}
                                             primary={
                                                 <div style={{fontSize: '.1rem'}}>
-                                                    From: {name}<br />
-                                                    {moment(createdAt).format('MM/DD/YY hh:mm a')}
+                                                    {name}<br />
+                                                    {moment(createdAt).format('MM/DD/YY')}<br />
+                                                    {moment(createdAt).format('hh:mm a')}
                                                 </div>
                                             } />
                                     </ListItem>

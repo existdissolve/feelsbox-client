@@ -17,6 +17,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import TextField from '@material-ui/core/TextField';
+import Tooltip from '@material-ui/core/Tooltip';
+
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import {get} from 'lodash';
@@ -168,9 +170,11 @@ class CategoryList extends React.Component {
                                         <ListItem>
                                             <ListItemText primary={name} />
                                             <ListItemSecondaryAction>
-                                                <IconButton edge="end" onClick={this.onEditClick.bind(this, _id)}>
-                                                    <EditIcon />
-                                                </IconButton>
+                                                <Tooltip title="Edit category">
+                                                    <IconButton edge="end" onClick={this.onEditClick.bind(this, _id)}>
+                                                        <EditIcon />
+                                                    </IconButton>
+                                                </Tooltip>
                                             </ListItemSecondaryAction>
                                         </ListItem>
                                         {idx !== categories.length - 1 && <Divider />}
