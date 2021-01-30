@@ -1,6 +1,5 @@
 import {Component} from 'react';
 import {withStyles} from '@material-ui/core/styles';
-import {withRouter} from 'react-router-dom';
 import {
     FormControl,
     FormControlLabel,
@@ -87,6 +86,4 @@ class AccountForm extends Component {
     }
 }
 
-export default withRouter(
-    withStyles(styles)(AccountForm)
-);
+export default withStyles(styles)(AccountForm);

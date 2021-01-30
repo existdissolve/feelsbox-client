@@ -1,4 +1,4 @@
-import React from 'react';
+import {Component} from 'react';
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
 
@@ -30,7 +30,7 @@ const styles = () => ({
     }
 });
 
-class PresetColors extends React.Component {
+class PresetColors extends Component {
     handleClick = (hex, e) => {
         const {onClick = () => {}} = this.props;
 

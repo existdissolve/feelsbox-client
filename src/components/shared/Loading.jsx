@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import React from 'react';
+import {Component} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import {CircularProgress, Typography} from '@material-ui/core';
 
@@ -11,7 +11,7 @@ const styles = () => ({
     }
 });
 
-class Loading extends React.Component {
+class Loading extends Component {
     render() {
         const {classes, message} = this.props;
 

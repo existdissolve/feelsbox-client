@@ -1,7 +1,5 @@
-import React from 'react';
-import {compose} from 'recompose';
+import {Component} from 'react';
 import {get} from 'lodash';
-import {withRouter} from 'react-router-dom';
 import {withStyles} from '@material-ui/core/styles';
 import {
     Input,
@@ -34,7 +32,7 @@ const styles = theme => ({
     }
 });
 
-class SearchList extends React.Component {
+class SearchList extends Component {
     constructor(props) {
         super(props);
 
@@ -116,8 +114,4 @@ class SearchList extends React.Component {
     }
 }
 
-export default withRouter(
-    compose(
-        withStyles(styles)
-    )(SearchList)
-);
+export default withStyles(styles)(SearchList);

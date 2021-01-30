@@ -1,4 +1,4 @@
-import React from 'react';
+import {Component} from 'react';
 import PropTypes from 'prop-types';
 import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
@@ -108,7 +108,7 @@ const findPixel = (index, pixel) => {
     return pixel.position === index;
 };
 
-class CanvasGrid extends React.Component {
+class CanvasGrid extends Component {
     constructor(props) {
         super(props);
 

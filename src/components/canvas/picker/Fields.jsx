@@ -1,4 +1,4 @@
-import React from 'react';
+import {Component} from 'react';
 import reactCSS from 'reactcss';
 import color from 'react-color/lib/helpers/color';
 

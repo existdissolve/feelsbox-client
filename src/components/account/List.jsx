@@ -3,7 +3,6 @@ import moment from 'moment';
 import {withStyles} from '@material-ui/core/styles';
 import {graphql} from 'react-apollo';
 import {compose} from 'recompose';
-import {withRouter} from 'react-router-dom';
 import {
     Divider,
     GridList,
@@ -101,14 +100,12 @@ class MessageList extends Component {
     }
 }
 
-export default withRouter(
-    compose(
-        graphql(getMessages, {
-            options: () => ({
-                fetchPolicy: 'network-only',
-                notifyOnNetworkStatusChange: true
-            })
-        }),
-        withStyles(styles)
-    )(MessageList)
-);
+export default compose(
+    graphql(getMessages, {
+        options: () => ({
+            fetchPolicy: 'network-only',
+            notifyOnNetworkStatusChange: true
+        })
+    }),
+    withStyles(styles)
+)(MessageList);

@@ -1,4 +1,4 @@
-import React from 'react';
+import {Component} from 'react';
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
 import {GridListTile} from '@material-ui/core';
@@ -20,7 +20,7 @@ const styles = {
 
 let timer;
 
-class Pixel extends React.Component {
+class Pixel extends Component {
     constructor(props) {
         super(props);
 

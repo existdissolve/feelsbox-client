@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import React from 'react';
+import {Component} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import {Button, CssBaseline, Typography} from '@material-ui/core';
 import {AccountCircle as AccountCircleIcon} from '@material-ui/icons';
@@ -13,7 +13,7 @@ const styles = () => ({
     }
 });
 
-class Login extends React.Component {
+class Login extends Component {
     constructor(props) {
         super(props);
 

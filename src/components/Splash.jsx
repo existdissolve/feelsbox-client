@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import React from 'react';
+import {Component} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import {CssBaseline, CircularProgress, Typography} from '@material-ui/core';
 
@@ -13,7 +13,7 @@ const styles = () => ({
     }
 });
 
-class Splash extends React.Component {
+class Splash extends Component {
     render() {
         const {classes, message} = this.props;
 

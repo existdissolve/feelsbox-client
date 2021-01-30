@@ -1,8 +1,6 @@
 import {Component, Fragment} from 'react';
-import PropTypes from 'prop-types';
 import {get, isEqual} from 'lodash';
 import classnames from 'classnames';
-import {withRouter} from 'react-router-dom';
 import {withStyles} from '@material-ui/core/styles';
 import {GridList, GridListTile} from '@material-ui/core';
 
@@ -174,10 +172,4 @@ class Thumb extends Component {
     }
 }
 
-Thumb.propTypes = {
-    classes: PropTypes.object.isRequired
-};
-
-export default withRouter(
-    withStyles(styles)(Thumb)
-);
+export default withStyles(styles)(Thumb);

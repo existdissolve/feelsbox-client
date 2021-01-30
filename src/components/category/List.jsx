@@ -1,8 +1,7 @@
-import React from 'react';
+import {Component} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import {graphql} from 'react-apollo';
 import {compose} from 'recompose';
-import {withRouter} from 'react-router-dom';
 import {
     Button,
     Dialog,
@@ -54,7 +53,7 @@ const styles = theme => ({
     }
 });
 
-class CategoryList extends React.Component {
+class CategoryList extends Component {
     constructor(props) {
         super(props);
 
@@ -189,15 +188,13 @@ class CategoryList extends React.Component {
     }
 }
 
-export default withRouter(
-    compose(
-        graphql(getMyCategories, {
-            options: {
-                notifyOnNetworkStatusChange: true
-            }
-        }),
-        graphql(addCategory, {name: 'addCategory'}),
-        graphql(editCategory, {name: 'editCategory'}),
-        withStyles(styles)
-    )(CategoryList)
-);
+export default compose(
+    graphql(getMyCategories, {
+        options: {
+            notifyOnNetworkStatusChange: true
+        }
+    }),
+    graphql(addCategory, {name: 'addCategory'}),
+    graphql(editCategory, {name: 'editCategory'}),
+    withStyles(styles)
+)(CategoryList);

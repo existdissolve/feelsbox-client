@@ -3,7 +3,6 @@ import moment from 'moment';
 import {withStyles} from '@material-ui/core/styles';
 import {graphql} from 'react-apollo';
 import {compose} from 'recompose';
-import {withRouter} from 'react-router-dom';
 import {
     Button,
     Dialog,
@@ -150,20 +149,18 @@ class DeviceList extends Component {
     }
 }
 
-export default withRouter(
-    compose(
-        graphql(getHistory, {
-            options: props => ({
-                fetchPolicy: 'network-only',
-                notifyOnNetworkStatusChange: true,
-                variables: {
-                    criteria: {
-                        device: get(props, 'match.params._id')
-                    }
+export default compose(
+    graphql(getHistory, {
+        options: props => ({
+            fetchPolicy: 'network-only',
+            notifyOnNetworkStatusChange: true,
+            variables: {
+                criteria: {
+                    device: get(props, 'match.params._id')
                 }
-            })
-        }),
-        withStyles(styles),
+            }
+        })
+    }),
+    withStyles(styles),
 
-    )(DeviceList)
-);
+)(DeviceList);

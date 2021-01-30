@@ -1,5 +1,5 @@
 /*global gapi*/
-import React from 'react';
+import {Component} from 'react';
 import PropTypes from 'prop-types';
 import {
     AccountBox as AccountBoxIcon,
@@ -22,7 +22,7 @@ import {
     ListItemText
 } from '@material-ui/core';
 import {withStyles} from '@material-ui/core/styles';
-import {Link, withRouter} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
 const styles = {
     menuButton: {
@@ -35,7 +35,7 @@ const styles = {
     }
 };
 
-class Navigation extends React.Component {
+class Navigation extends Component {
     constructor(props) {
         super(props);
 
@@ -167,6 +167,4 @@ Navigation.propTypes = {
     classes: PropTypes.object.isRequired
 };
 
-export default withRouter(
-    withStyles(styles)(Navigation)
-);
+export default withStyles(styles)(Navigation);

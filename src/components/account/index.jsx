@@ -1,6 +1,5 @@
 import {Component} from 'react';
 import {withStyles} from '@material-ui/core/styles';
-import {withRouter} from 'react-router-dom';
 import {ListSubheader} from '@material-ui/core';
 
 import Form from '-/components/account/Form';
@@ -45,6 +44,4 @@ class Account extends Component {
     }
 }
 
-export default withRouter(
-    withStyles(styles)(Account)
-);
+export default withStyles(styles)(Account);

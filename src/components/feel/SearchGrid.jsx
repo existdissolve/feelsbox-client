@@ -1,8 +1,7 @@
-import React from 'react';
+import {Component} from 'react';
 import {graphql} from 'react-apollo';
 import {compose} from 'recompose';
 import {get} from 'lodash';
-import {withRouter} from 'react-router-dom';
 import {withStyles} from '@material-ui/core/styles';
 import {
     GridList,
@@ -31,7 +30,7 @@ const styles = theme => ({
     }
 });
 
-class SearchGrid extends React.Component {
+class SearchGrid extends Component {
     constructor(props) {
         super(props);
 
@@ -179,17 +178,15 @@ class SearchGrid extends React.Component {
     }
 }
 
-export default withRouter(
-    compose(
-        graphql(getFeels, {
-            options: props => ({
-                notifyOnNetworkStatusChange: true,
-                fetchPolicy: 'network-only',
-                variables: {
-                    criteria: props.criteria
-                }
-            })
-        }),
-        withStyles(styles)
-    )(SearchGrid)
-);
+export default compose(
+    graphql(getFeels, {
+        options: props => ({
+            notifyOnNetworkStatusChange: true,
+            fetchPolicy: 'network-only',
+            variables: {
+                criteria: props.criteria
+            }
+        })
+    }),
+    withStyles(styles)
+)(SearchGrid);
