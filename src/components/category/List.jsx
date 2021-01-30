@@ -3,22 +3,22 @@ import {withStyles} from '@material-ui/core/styles';
 import {graphql} from 'react-apollo';
 import {compose} from 'recompose';
 import {withRouter} from 'react-router-dom';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Divider from '@material-ui/core/Divider';
-import Fab from '@material-ui/core/Fab';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import TextField from '@material-ui/core/TextField';
-
-import AddIcon from '@material-ui/icons/Add';
-import EditIcon from '@material-ui/icons/Edit';
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Divider,
+    Fab,
+    List,
+    ListItem,
+    ListItemSecondaryAction,
+    ListItemText,
+    ListSubheader,
+    TextField
+} from '@material-ui/core';
+import {Add as AddIcon, Edit as EditIcon} from '@material-ui/icons';
 import {get} from 'lodash';
 
 import {AppBar, IconButton, Loading} from '-/components/shared';

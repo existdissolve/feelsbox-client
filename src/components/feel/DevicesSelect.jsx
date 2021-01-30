@@ -2,12 +2,13 @@ import {Component} from 'react';
 import {graphql} from 'react-apollo';
 import {compose} from 'recompose';
 import {get} from 'lodash';
-
-import Checkbox from '@material-ui/core/Checkbox';
-import FormControl from '@material-ui/core/FormControl';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import {Typography} from '@material-ui/core';
+import {
+    Checkbox,
+    FormControl,
+    FormControlLabel,
+    FormGroup,
+    Typography
+} from '@material-ui/core';
 
 import {getDevices} from '-/graphql/device';
 import {getDeviceGroups} from '-/graphql/deviceGroup';

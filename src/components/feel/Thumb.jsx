@@ -2,12 +2,9 @@ import {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
 import {get, isEqual} from 'lodash';
 import classnames from 'classnames';
-
-import {withStyles} from '@material-ui/core/styles';
 import {withRouter} from 'react-router-dom';
-
-import GridList from '@material-ui/core/GridList';
-import GridListTile from '@material-ui/core/GridListTile';
+import {withStyles} from '@material-ui/core/styles';
+import {GridList, GridListTile} from '@material-ui/core';
 
 const styles = {
     emoji: {

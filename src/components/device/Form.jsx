@@ -4,20 +4,24 @@ import {compose} from 'recompose';
 import {graphql} from 'react-apollo';
 import copy from 'copy-to-clipboard';
 import {withRouter} from 'react-router-dom';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
-import SaveIcon from '@material-ui/icons/Save';
-import ClearIcon from '@material-ui/icons/Clear';
-import FileCopyIcon from '@material-ui/icons/FileCopy';
-import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import Divider from '@material-ui/core/Divider';
+import {
+    Button,
+    Divider,
+    InputAdornment,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemSecondaryAction,
+    ListItemText,
+    TextField,
+    Typography
+} from '@material-ui/core';
+import {
+    Clear as ClearIcon,
+    FileCopy as FileCopyIcon,
+    Save as SaveIcon,
+    SupervisedUserCircle as SupervisedUserCircleIcon
+} from '@material-ui/icons';
 import {get} from 'lodash';
 
 import {AppBar, IconButton} from '-/components/shared';

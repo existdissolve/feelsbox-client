@@ -1,7 +1,6 @@
 import React from 'react';
-import IconButton from '@material-ui/core/IconButton';
-import ClearIcon from '@material-ui/icons/Clear';
-import Snackbar from '@material-ui/core/Snackbar';
+import {IconButton, Snackbar} from '@material-ui/core';
+import {Clear as ClearIcon} from '@material-ui/icons';
 
 const withSnackbar = () => WrappedComponent => {
     return class extends React.Component {

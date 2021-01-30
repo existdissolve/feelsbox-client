@@ -1,15 +1,17 @@
 import {Component, Fragment} from 'react';
 import {compose} from 'recompose';
 import {graphql} from 'react-apollo';
-import {withStyles} from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
-import Select from '@material-ui/core/Select';
 import {get} from 'lodash';
+import {withStyles} from '@material-ui/core/styles';
+import {
+    FormControl,
+    FormControlLabel,
+    InputLabel,
+    MenuItem,
+    Select,
+    Switch,
+    TextField
+} from '@material-ui/core';
 
 import {getMyCategories} from '-/graphql/category';
 

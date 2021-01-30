@@ -1,7 +1,7 @@
 import {Component} from 'react';
 import {compose} from 'recompose';
 import {withStyles} from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
+import {TextField} from '@material-ui/core';
 
 class FramesForm extends Component {
     render() {

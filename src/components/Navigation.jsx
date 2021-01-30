@@ -1,22 +1,26 @@
 /*global gapi*/
 import React from 'react';
 import PropTypes from 'prop-types';
-import AccountBoxIcon from '@material-ui/icons/AccountBox';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
-import SearchIcon from '@material-ui/icons/Search';
-import DevicesIcon from '@material-ui/icons/Devices';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import ListAltIcon from '@material-ui/icons/ListAlt';
-import RecentActorsIcon from '@material-ui/icons/RecentActors';
-import ReplayIcon from '@material-ui/icons/Replay';
-import VideoLabelIcon from '@material-ui/icons/VideoLabel';
-import Drawer from '@material-ui/core/Drawer';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
+import {
+    AccountBox as AccountBoxIcon,
+    Devices as DevicesIcon,
+    ExitToApp as ExitToAppIcon,
+    InsertEmoticon as InsertEmoticonIcon,
+    ListAlt as ListAltIcon,
+    Menu as MenuIcon,
+    RecentActors as RecentActorsIcon,
+    Replay as ReplayIcon,
+    Search as SearchIcon,
+    VideoLabel as VideoLabelIcon
+} from '@material-ui/icons';
+import {
+    Drawer,
+    IconButton,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText
+} from '@material-ui/core';
 import {withStyles} from '@material-ui/core/styles';
 import {Link, withRouter} from 'react-router-dom';
 

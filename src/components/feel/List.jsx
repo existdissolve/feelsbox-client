@@ -1,49 +1,50 @@
 import {Component, Fragment} from 'react';
-import {withStyles} from '@material-ui/core/styles';
-import {Typography} from '@material-ui/core';
 import {graphql} from 'react-apollo';
 import {compose} from 'recompose';
 import {withRouter} from 'react-router-dom';
 import {get} from 'lodash';
-
-import Button from '@material-ui/core/Button';
-import Checkbox from '@material-ui/core/Checkbox';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Divider from '@material-ui/core/Divider';
-import FormControl from '@material-ui/core/FormControl';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import GridList from '@material-ui/core/GridList';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import Fab from '@material-ui/core/Fab';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import Subheader from '@material-ui/core/ListSubheader';
-import TextField from '@material-ui/core/TextField';
-import Toolbar from '@material-ui/core/Toolbar';
-
-import AccessTimeIcon from '@material-ui/icons/AccessTime';
-import AddIcon from '@material-ui/icons/Add';
-import AddBoxIcon from '@material-ui/icons/AddBox';
-import CloseIcon from '@material-ui/icons/Close';
-import EditIcon from '@material-ui/icons/Edit';
-import FlipToBackIcon from '@material-ui/icons/FlipToBack';
-import GridOnIcon from '@material-ui/icons/GridOn';
-import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
-import MessageIcon from '@material-ui/icons/Message';
-import RecentActorsIcon from '@material-ui/icons/RecentActors';
-import RecordVoiceOverIcon from '@material-ui/icons/RecordVoiceOver';
-import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
-import ViewListIcon from '@material-ui/icons/ViewList';
+import {withStyles} from '@material-ui/core/styles';
+import {
+    Button,
+    Checkbox,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Divider,
+    Fab,
+    FormControl,
+    FormControlLabel,
+    FormGroup,
+    GridList,
+    InputAdornment,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    ListSubheader,
+    Menu,
+    MenuItem,
+    TextField,
+    Toolbar,
+    Typography
+} from '@material-ui/core';
+import {
+    AccessTime as AccessTimeIcon,
+    Add as AddIcon,
+    AddBox as AddBoxIcon,
+    Close as CloseIcon,
+    Edit as EditIcon,
+    FlipToBack as FlipToBackIcon,
+    GridOn as GridOnIcon,
+    IndeterminateCheckBox as IndeterminateCheckBoxIcon,
+    Message as MessageIcon,
+    RecentActors as RecentActorsIcon,
+    RecordVoiceOver as RecordVoiceOverIcon,
+    SettingsRemote as SettingsRemoteIcon,
+    ViewList as ViewListIcon
+} from '@material-ui/icons';
 
 import Thumb from '-/components/feel/Thumb';
 import {AppBar, IconButton, Loading} from '-/components/shared';
@@ -749,7 +750,7 @@ class FeelsList extends Component {
 
                                         return (
                                             <Fragment key={_id}>
-                                                <Subheader component="div" className={classes.subheader}>{name}</Subheader>
+                                                <ListSubheader component="div" className={classes.subheader}>{name}</ListSubheader>
                                                 <GridList cols={3} cellHeight={64} className={classes.grid}>
                                                     {feels.map(feel => {
                                                         const {_id} = feel;

@@ -1,34 +1,38 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {withStyles} from '@material-ui/core/styles';
 import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import {graphql} from 'react-apollo';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import GridList from '@material-ui/core/GridList';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import Toolbar from '@material-ui/core/Toolbar';
-import {Typography} from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-import ClearAllIcon from '@material-ui/icons/ClearAll';
-import CloseIcon from '@material-ui/icons/Close';
-import FlipToBackIcon from '@material-ui/icons/FlipToBack';
-import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
-import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import PhotoAlbumIcon from '@material-ui/icons/PhotoAlbum';
-import SaveIcon from '@material-ui/icons/Save';
-import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
-import SettingsRemoteOutlinedIcon from '@material-ui/icons/SettingsRemoteOutlined';
-import UndoIcon from '@material-ui/icons/Undo';
 import {cloneDeep, get, isEmpty, pick, set, uniq} from 'lodash';
+import {withStyles} from '@material-ui/core/styles';
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    GridList,
+    ListItemIcon,
+    ListItemText,
+    Menu,
+    MenuItem,
+    Toolbar,
+    Typography
+} from '@material-ui/core';
+import {
+    Add as AddIcon,
+    ClearAll as ClearAllIcon,
+    Close as CloseIcon,
+    FlipToBack as FlipToBackIcon,
+    LibraryAdd as LibraryAddIcon,
+    NavigateBefore as NavigateBeforeIcon,
+    NavigateNext as NavigateNextIcon,
+    PhotoAlbum as PhotoAlbumIcon,
+    Save as SaveIcon,
+    SettingsRemote as SettingsRemoteIcon,
+    SettingsRemoteOutlined as SettingsRemoteOutlinedIcon,
+    Undo as UndoIcon
+} from '@material-ui/icons';
 
 import {AppBar, IconButton} from '-/components/shared';
 import Pixel from '-/components/canvas/Pixel';

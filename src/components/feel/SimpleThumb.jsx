@@ -3,8 +3,7 @@ import {get} from 'lodash';
 import classnames from 'classnames';
 
 import {withStyles} from '@material-ui/core/styles';
-import GridList from '@material-ui/core/GridList';
-import GridListTile from '@material-ui/core/GridListTile';
+import {GridList, GridListTile} from '@material-ui/core';
 
 const baseEmoji = {
     display: 'flex',

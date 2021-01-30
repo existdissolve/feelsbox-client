@@ -1,6 +1,6 @@
 /*global gapi */
 import {Component} from 'react';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import {CssBaseline} from '@material-ui/core';
 import {compose} from 'recompose';
 import {Redirect, Route, Switch, withRouter} from 'react-router-dom';
 import {get, isUndefined} from 'lodash';

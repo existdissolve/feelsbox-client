@@ -1,10 +1,12 @@
 import {Component} from 'react';
 import {compose} from 'recompose';
 import {withStyles} from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
+import {
+    FormControl,
+    FormControlLabel,
+    Switch,
+    TextField
+} from '@material-ui/core';
 
 class FramesForm extends Component {
     render() {

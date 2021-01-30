@@ -1,10 +1,8 @@
 /* eslint-disable no-undef */
 import React from 'react';
 import {withStyles} from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
+import {Button, CssBaseline, Typography} from '@material-ui/core';
+import {AccountCircle as AccountCircleIcon} from '@material-ui/icons';
 import {Redirect} from 'react-router-dom';
 
 import {AppBar} from '-/components/shared';

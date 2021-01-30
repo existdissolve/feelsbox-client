@@ -1,29 +1,31 @@
 import {Component, Fragment} from 'react';
-import {withStyles} from '@material-ui/core/styles';
 import {graphql} from 'react-apollo';
 import {compose} from 'recompose';
 import {withRouter} from 'react-router-dom';
 import {get} from 'lodash';
-
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import GridList from '@material-ui/core/GridList';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import Subheader from '@material-ui/core/ListSubheader';
-import TextField from '@material-ui/core/TextField';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-
-import CloseIcon from '@material-ui/icons/Close';
-import AddIcon from '@material-ui/icons/Add';
-import ClearAllIcon from '@material-ui/icons/ClearAll';
-import SaveIcon from '@material-ui/icons/Save';
-import VideoLabelIcon from '@material-ui/icons/VideoLabel';
+import {withStyles} from '@material-ui/core/styles';
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    GridList,
+    ListItemIcon,
+    ListSubheader,
+    Menu,
+    MenuItem,
+    TextField,
+    Toolbar,
+    Typography
+} from '@material-ui/core';
+import {
+    Add as AddIcon,
+    ClearAll as ClearAllIcon,
+    Close as CloseIcon,
+    Save as SaveIcon,
+    VideoLabel as VideoLabelIcon
+} from '@material-ui/icons';
 
 import {AppBar, IconButton, Loading} from '-/components/shared';
 
@@ -289,7 +291,7 @@ class DeviceGroupForm extends Component {
                     {!loading &&
                         <Fragment>
                             <div className={classes.selections}>
-                                <Subheader component="div" className={classes.subheader}>{name}</Subheader>
+                                <ListSubheader component="div" className={classes.subheader}>{name}</ListSubheader>
                                 {selections.length === 0 &&
                                     <Typography component="p" gutterBottom={true} paragraph={true} style={{padding: 20}}>
                                         You haven&apos;t added any devices to the group...yet!

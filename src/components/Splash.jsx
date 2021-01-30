@@ -1,9 +1,7 @@
 /* eslint-disable no-undef */
 import React from 'react';
 import {withStyles} from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Typography from '@material-ui/core/Typography';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import {CssBaseline, CircularProgress, Typography} from '@material-ui/core';
 
 import {AppBar} from '-/components/shared';
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
-import GridListTile from '@material-ui/core/GridListTile';
+import {GridListTile} from '@material-ui/core';
 import {includes} from 'lodash';
 
 const styles = {
@@ -59,7 +59,7 @@ class Pixel extends React.Component {
 
     onTouchMove(e) {
         const {touches} = e;
-        const touch = touches[0];
+        const [touch] = touches;
 
         if (touch) {
             const target = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -67,6 +67,7 @@ class Pixel extends React.Component {
             if (target && target.parentNode) {
                 const index = parseInt(target.parentNode.id.replace('pixel-', ''), 10);
                 const {drawnIndices} = this.state;
+                const {onDragMove} = this.props;
                 const copiedIndices = drawnIndices.slice();
 
                 if (!includes(copiedIndices, index)) {
@@ -80,7 +81,7 @@ class Pixel extends React.Component {
                 // clear the timer
                 clearTimeout(timer);
                 // notify owner of change
-                this.props.onDragMove(index);
+                onDragMove(index);
             }
         }
     }

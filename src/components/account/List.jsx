@@ -4,12 +4,14 @@ import {withStyles} from '@material-ui/core/styles';
 import {graphql} from 'react-apollo';
 import {compose} from 'recompose';
 import {withRouter} from 'react-router-dom';
-import Divider from '@material-ui/core/Divider';
-import GridList from '@material-ui/core/GridList';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import Typography from '@material-ui/core/Typography';
+import {
+    Divider,
+    GridList,
+    List,
+    ListItem,
+    ListItemText,
+    Typography
+} from '@material-ui/core';
 import {get} from 'lodash';
 
 import {getMessages} from '-/graphql/message';

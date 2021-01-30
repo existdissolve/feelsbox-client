@@ -1,11 +1,12 @@
 import {Component} from 'react';
 import {graphql} from 'react-apollo';
 import {get} from 'lodash';
-
-import InputAdornment from '@material-ui/core/InputAdornment';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import ListAltIcon from '@material-ui/icons/ListAlt';
+import {
+    InputAdornment,
+    MenuItem,
+    Select
+} from '@material-ui/core';
+import {ListAlt as ListAltIcon} from '@material-ui/icons';
 
 import {getMyCategories} from '-/graphql/category';
 

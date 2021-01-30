@@ -1,5 +1,4 @@
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
+import {IconButton, Tooltip} from '@material-ui/core';
 
 export default props => {
     const {Icon, className, color, disabled, edge, onClick, size, title} = props;

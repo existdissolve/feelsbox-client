@@ -4,25 +4,27 @@ import {graphql} from 'react-apollo';
 import {compose} from 'recompose';
 import {withRouter} from 'react-router-dom';
 import {get} from 'lodash';
-
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import GridList from '@material-ui/core/GridList';
-import Fab from '@material-ui/core/Fab';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import Subheader from '@material-ui/core/ListSubheader';
-import Typography from '@material-ui/core/Typography';
-
-import AddIcon from '@material-ui/icons/Add';
-import CloseIcon from '@material-ui/icons/Close';
-import EditIcon from '@material-ui/icons/Edit';
-import VideoLabelIcon from '@material-ui/icons/VideoLabel';
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Fab,
+    GridList,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListSubheader,
+    Typography
+} from '@material-ui/core';
+import {
+    Add as AddIcon,
+    Close as CloseIcon,
+    Edit as EditIcon,
+    VideoLabel as VideoLabelIcon
+} from '@material-ui/icons';
 
 import {AppBar, IconButton, Loading} from '-/components/shared';
 
@@ -207,7 +209,7 @@ class FeelGroupsList extends Component {
 
                                 return (
                                     <Fragment key={_id}>
-                                        <Subheader component="div" className={classes.subheader}>
+                                        <ListSubheader component="div" className={classes.subheader}>
                                             <List component="div" dense={true} style={{padding: 0, display: 'flex'}}>
                                                 <ListItem style={{flexGrow: 1}}>{name}</ListItem>
                                                 <ListItemIcon className={classes.listitemicon} onClick={this.onIconClick.bind(this, group, 'onEditClick')}>
@@ -217,7 +219,7 @@ class FeelGroupsList extends Component {
                                                     <IconButton Icon={CloseIcon} className={classes.smallicon} edge="end" title="Remove device group" />
                                                 </ListItemIcon>
                                             </List>
-                                        </Subheader>
+                                        </ListSubheader>
                                         <GridList cols={2} className={classes.grid}>
                                             {devices.map(device => {
                                                 const {_id, name} = device;

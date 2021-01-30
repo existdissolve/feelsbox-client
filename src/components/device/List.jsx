@@ -3,36 +3,39 @@ import {withStyles} from '@material-ui/core/styles';
 import {graphql} from 'react-apollo';
 import {compose} from 'recompose';
 import {withRouter} from 'react-router-dom';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Divider from '@material-ui/core/Divider';
-import FlashOffIcon from '@material-ui/icons/FlashOff';
-import Grid from '@material-ui/core/Grid';
-import HistoryIcon from '@material-ui/icons/History';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import Slider from '@material-ui/core/Slider';
-import TextField from '@material-ui/core/TextField';
-
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import BrightnessLowIcon from '@material-ui/icons/BrightnessLow';
-import BrightnessHighIcon from '@material-ui/icons/BrightnessHigh';
-import LockOpenIcon from '@material-ui/icons/LockOpen';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
-import SettingsBrightnessIcon from '@material-ui/icons/SettingsBrightness';
-import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
-import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
-import SystemUpdateIcon from '@material-ui/icons/SystemUpdate';
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Divider,
+    Grid,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListSubheader,
+    ListItemText,
+    Menu,
+    MenuItem,
+    Slider,
+    TextField
+} from '@material-ui/core';
+import {
+    AccountCircle as AccountCircleIcon,
+    BrightnessHigh as BrightnessHighIcon,
+    BrightnessLow as BrightnessLowIcon,
+    FlashOff as FlashOffIcon,
+    History as HistoryIcon,
+    LockOpen as LockOpenIcon,
+    MoreVert as MoreVertIcon,
+    PowerSettingsNew as PowerSettingsNewIcon,
+    SettingsBrightness as SettingsBrightnessIcon,
+    SettingsRemote as SettingsRemoteIcon,
+    SupervisedUserCircle as SupervisedUserCircleIcon,
+    SystemUpdate as SystemUpdateIcon
+} from '@material-ui/icons';
 import {get} from 'lodash';
 
 import {AppBar, IconButton, Loading} from '-/components/shared';

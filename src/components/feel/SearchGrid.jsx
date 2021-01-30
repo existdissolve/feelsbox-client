@@ -1,17 +1,21 @@
 import React from 'react';
-import {withStyles} from '@material-ui/core/styles';
 import {graphql} from 'react-apollo';
 import {compose} from 'recompose';
-import {withRouter} from 'react-router-dom';
-import GridList from '@material-ui/core/GridList';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import AddBoxIcon from '@material-ui/icons/AddBox';
-import FlipToBackIcon from '@material-ui/icons/FlipToBack';
-import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
-import {Typography} from '@material-ui/core';
 import {get} from 'lodash';
+import {withRouter} from 'react-router-dom';
+import {withStyles} from '@material-ui/core/styles';
+import {
+    GridList,
+    ListItemIcon,
+    Menu,
+    MenuItem,
+    Typography
+} from '@material-ui/core';
+import {
+    AddBox as AddBoxIcon,
+    FlipToBack as FlipToBackIcon,
+    IndeterminateCheckBox as IndeterminateCheckBoxIcon
+} from '@material-ui/icons';
 
 import Thumb from '-/components/feel/Thumb';
 import {Loading} from '-/components/shared';

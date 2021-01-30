@@ -1,27 +1,29 @@
 import {Component, Fragment} from 'react';
-import {withStyles} from '@material-ui/core/styles';
 import {graphql} from 'react-apollo';
 import {compose} from 'recompose';
 import {withRouter} from 'react-router-dom';
 import {get} from 'lodash';
-
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import GridList from '@material-ui/core/GridList';
-import Fab from '@material-ui/core/Fab';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import Subheader from '@material-ui/core/ListSubheader';
-
-import AddIcon from '@material-ui/icons/Add';
-import CloseIcon from '@material-ui/icons/Close';
-import EditIcon from '@material-ui/icons/Edit';
-import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
+import {withStyles} from '@material-ui/core/styles';
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Fab,
+    GridList,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListSubheader
+} from '@material-ui/core';
+import {
+    Add as AddIcon,
+    Close as CloseIcon,
+    Edit as EditIcon,
+    SettingsRemote as SettingsRemoteIcon
+} from '@material-ui/icons';
 
 import {AppBar, IconButton, Loading} from '-/components/shared';
 import SimpleThumb from '-/components/feel/SimpleThumb';
@@ -234,7 +236,7 @@ class FeelGroupsList extends Component {
 
                                 return (
                                     <Fragment key={`${_id}_${idx}`}>
-                                        <Subheader component="div" className={classes.subheader}>
+                                        <ListSubheader component="div" className={classes.subheader}>
                                             <List component="div" dense={true} style={{padding: 0, display: 'flex'}}>
                                                 <ListItem style={{flexGrow: 1}}>{name}</ListItem>
                                                 <ListItemIcon className={classes.listitemicon} onClick={this.onIconClick.bind(this, group, 'onPushClick')}>
@@ -247,7 +249,7 @@ class FeelGroupsList extends Component {
                                                     <IconButton Icon={CloseIcon} className={classes.smallicon} edge="end" title="Remove Feels Group" />
                                                 </ListItemIcon>
                                             </List>
-                                        </Subheader>
+                                        </ListSubheader>
                                         <GridList cols={3} cellHeight={64} className={classes.grid}>
                                             {feels.map((feel, xdx) => {
                                                 const {_id} = feel;
