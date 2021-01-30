@@ -5,11 +5,6 @@ import {withRouter} from 'react-router-dom';
 import {get} from 'lodash';
 import {withStyles} from '@material-ui/core/styles';
 import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
     Divider,
     GridList,
     List,
@@ -30,7 +25,7 @@ import {
     Save as SaveIcon
 } from '@material-ui/icons';
 
-import {AppBar, IconButton, Loading} from '-/components/shared';
+import {AppBar, Dialog, IconButton, Loading} from '-/components/shared';
 import Thumb from '-/components/feel/Thumb';
 import CategoriesSelect from '-/components/feel/CategoriesSelect';
 import {groupFeels} from '-/components/feel/utils';
@@ -45,7 +40,6 @@ const styles = theme => ({
         marginTop: 103,
         display: 'flex',
         flexDirection: 'column',
-        //overflowY: 'hidden',
         height: 'calc(100vh - 103px)'
     },
     selections: {
@@ -349,32 +343,31 @@ class FeelGroupsForm extends Component {
                         </Fragment>
                     }
                 </div>
-                <Dialog open={open} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
-                    <DialogTitle id="form-dialog-title">Save Feels Group</DialogTitle>
-                    <DialogContent>
-                        <TextField
-                            name="name"
-                            autoFocus
-                            margin="dense"
-                            label="Feels Group Name"
-                            fullWidth
-                            value={name}
-                            onChange={this.onDataChange} />
+                <Dialog
+                    cancelHandler={this.onDialogClose}
+                    closeHandler={this.onDialogClose}
+                    okBtnText="Save"
+                    okHandler={this.onSaveClick}
+                    open={open}
+                    title="Save Feels Group">
+                    <TextField
+                        name="name"
+                        autoFocus
+                        margin="dense"
+                        label="Feels Group Name"
+                        fullWidth
+                        value={name}
+                        onChange={this.onDataChange} />
 
-                        <TextField
-                            name="duration"
-                            margin="dense"
-                            label="Transition Length (ms)"
-                            fullWidth
-                            value={duration || 1000}
-                            onChange={this.onDataChange}
-                            type="number"
-                            inputProps={{min: 1, max: 1000000}}  />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.onDialogClose} color="primary">Cancel</Button>
-                        <Button onClick={this.onSaveClick} color="primary">Save</Button>
-                    </DialogActions>
+                    <TextField
+                        name="duration"
+                        margin="dense"
+                        label="Transition Length (ms)"
+                        fullWidth
+                        value={duration || 1000}
+                        onChange={this.onDataChange}
+                        type="number"
+                        inputProps={{min: 1, max: 1000000}}  />
                 </Dialog>
                 {Snackbar}
             </div>

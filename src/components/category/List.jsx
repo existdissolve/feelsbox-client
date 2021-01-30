@@ -1,13 +1,8 @@
-import {Component} from 'react';
+import {Component, Fragment} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import {graphql} from 'react-apollo';
 import {compose} from 'recompose';
 import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
     Divider,
     Fab,
     List,
@@ -20,7 +15,7 @@ import {
 import {Add as AddIcon, Edit as EditIcon} from '@material-ui/icons';
 import {get} from 'lodash';
 
-import {AppBar, IconButton, Loading} from '-/components/shared';
+import {AppBar, Dialog, IconButton, Loading} from '-/components/shared';
 import {addCategory, editCategory, getMyCategories} from '-/graphql/category';
 
 const styles = theme => ({
@@ -137,21 +132,19 @@ class CategoryList extends Component {
         return (
             <div className={classes.container}>
                 <AppBar title="Categories" />
-                <Dialog open={open} onClose={this.onDialogClose}>
-                    <DialogTitle>{action} Category</DialogTitle>
-                    <DialogContent>
-                        <TextField
-                            autoFocus={true}
-                            margin="dense"
-                            label="Category"
-                            fullWidth={true}
-                            onChange={this.onChange}
-                            value={category} />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.onDialogClose} color="default" variant="contained" size="small">Cancel</Button>
-                        <Button onClick={this.onSaveClick} color="secondary" variant="contained" size="small">Submit</Button>
-                    </DialogActions>
+                <Dialog
+                    cancelHandler={this.onDialogClose}
+                    closeHandler={this.onDialogClose}
+                    okHandler={this.onSaveClick}
+                    open={open}
+                    title={`${action} Category`}>
+                    <TextField
+                        autoFocus={true}
+                        margin="dense"
+                        label="Category"
+                        fullWidth={true}
+                        onChange={this.onChange}
+                        value={category} />
                 </Dialog>
                 <div className={classes.root}>
                     {loading && <Loading message="Loading Categories..." />}
@@ -162,7 +155,7 @@ class CategoryList extends Component {
                                 const {_id, name} = device;
 
                                 return (
-                                    <React.Fragment key={_id}>
+                                    <Fragment key={_id}>
                                         <ListItem>
                                             <ListItemText primary={name} />
                                             <ListItemSecondaryAction>
@@ -174,7 +167,7 @@ class CategoryList extends Component {
                                             </ListItemSecondaryAction>
                                         </ListItem>
                                         {idx !== categories.length - 1 && <Divider />}
-                                    </React.Fragment>
+                                    </Fragment>
                                 );
                             })}
                         </List>

@@ -5,12 +5,6 @@ import {withRouter} from 'react-router-dom';
 import {get} from 'lodash';
 import {withStyles} from '@material-ui/core/styles';
 import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
     Fab,
     GridList,
     List,
@@ -25,7 +19,7 @@ import {
     SettingsRemote as SettingsRemoteIcon
 } from '@material-ui/icons';
 
-import {AppBar, IconButton, Loading} from '-/components/shared';
+import {AppBar, Dialog, IconButton, Loading} from '-/components/shared';
 import Thumb from '-/components/feel/Thumb';
 import DevicesSelect from '-/components/feel/DevicesSelect';
 
@@ -194,36 +188,23 @@ class FeelGroupsList extends Component {
                 <AppBar title="My Feels Groups" />
                 {activeGroup &&
                     <Fragment>
-                        <Dialog open={Boolean(dialogEl)} onClose={this.onDialogClose} keepMounted={false}>
-                            <DialogTitle>Remove Feels Group?</DialogTitle>
-                            <DialogContent>
-                                <DialogContentText>
-                                    Are you sure you want to remove this Feels Group from your collection permanently?
-                                </DialogContentText>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={this.onDialogClose} color="default" variant="contained" size="small">
-                                    Cancel
-                                </Button>
-                                <Button onClick={this.onRemoveSubmit} color="secondary" variant="contained" size="small" autoFocus>
-                                    Agree
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
+                        <Dialog
+                            cancelHandler={this.onDialogClose}
+                            closeHandler={this.onDialogClose}
+                            open={Boolean(dialogEl)}
+                            okBtnText="Yes"
+                            okHandler={this.onRemoveSubmit}
+                            text="Are you sure you want to remove this Feels Group from your collection permanently?"
+                            title="Remove Feels Group?" />
 
-                        <Dialog open={Boolean(deviceEl)} onClose={this.onDialogClose} keepMounted={false}>
-                            <DialogTitle>Send to Devices</DialogTitle>
-                            <DialogContent>
-                                <DevicesSelect onDeviceCheck={this.onDeviceCheck} onDeviceGroupCheck={this.onDeviceGroupCheck} />
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={this.onDialogClose} color="default" variant="contained" size="small">
-                                    Cancel
-                                </Button>
-                                <Button onClick={this.onPushDevicesClick} color="secondary" variant="contained" size="small" autoFocus>
-                                    Send
-                                </Button>
-                            </DialogActions>
+                        <Dialog
+                            cancelHandler={this.onDialogClose}
+                            closeHandler={this.onDialogClose}
+                            open={Boolean(deviceEl)}
+                            okBtnText="Send"
+                            okHandler={this.onPushDevicesClick}
+                            title="Send to Devices">
+                            <DevicesSelect onDeviceCheck={this.onDeviceCheck} onDeviceGroupCheck={this.onDeviceGroupCheck} />
                         </Dialog>
                     </Fragment>
                 }

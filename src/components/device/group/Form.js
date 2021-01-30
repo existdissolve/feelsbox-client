@@ -5,11 +5,6 @@ import {withRouter} from 'react-router-dom';
 import {get} from 'lodash';
 import {withStyles} from '@material-ui/core/styles';
 import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
     GridList,
     ListItemIcon,
     ListSubheader,
@@ -27,7 +22,7 @@ import {
     VideoLabel as VideoLabelIcon
 } from '@material-ui/icons';
 
-import {AppBar, IconButton, Loading} from '-/components/shared';
+import {AppBar, Dialog, IconButton, Loading} from '-/components/shared';
 
 import {getDevices} from '-/graphql/device';
 import {addDeviceGroup, editDeviceGroup, getDeviceGroup, getDeviceGroups} from '-/graphql/deviceGroup';
@@ -326,22 +321,21 @@ class DeviceGroupForm extends Component {
                         );
                     })}
                 </Menu>
-                <Dialog open={open} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
-                    <DialogTitle id="form-dialog-title">Save Device Group</DialogTitle>
-                    <DialogContent>
-                        <TextField
-                            name="name"
-                            autoFocus
-                            margin="dense"
-                            label="Device Group Name"
-                            fullWidth
-                            value={name}
-                            onChange={this.onDataChange} />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.onDialogClose} color="primary">Cancel</Button>
-                        <Button onClick={this.onSaveClick} color="primary">Save</Button>
-                    </DialogActions>
+                <Dialog
+                    cancelHandler={this.onDialogClose}
+                    closeHandler={this.onDialogClose}
+                    okBtnText="Save"
+                    okHandler={this.onSaveClick}
+                    open={open}
+                    title="Save Device Group">
+                    <TextField
+                        name="name"
+                        autoFocus
+                        margin="dense"
+                        label="Device Group Name"
+                        fullWidth
+                        value={name}
+                        onChange={this.onDataChange} />
                 </Dialog>
                 {Snackbar}
             </div>

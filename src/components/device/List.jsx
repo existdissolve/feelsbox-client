@@ -4,12 +4,6 @@ import {graphql} from 'react-apollo';
 import {compose} from 'recompose';
 import {withRouter} from 'react-router-dom';
 import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
     Divider,
     Grid,
     List,
@@ -38,7 +32,7 @@ import {
 } from '@material-ui/icons';
 import {get} from 'lodash';
 
-import {AppBar, IconButton, Loading} from '-/components/shared';
+import {AppBar, Dialog, IconButton, Loading} from '-/components/shared';
 import {setDefaultDevice} from '-/graphql/user';
 import {getDevices, restart, setBrightness, submitAccessCode, turnOff, updateDevice} from '-/graphql/device';
 
@@ -313,44 +307,38 @@ class DeviceList extends Component {
                         Device History
                     </MenuItem>
                 </Menu>
-                <Dialog open={dialogOpen} keepMounted={false} onClose={this.onDialogClose}>
-                    <DialogTitle>Enter Device Code</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                            If you received a code from a friend or family member, enter it here to start sending feels!
-                        </DialogContentText>
-                        <TextField autoFocus margin="dense" label="Access Code" fullWidth onChange={this.onCodeChange} type="number" />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.onDialogClose} color="default" variant="contained" size="small">Cancel</Button>
-                        <Button onClick={this.onCodeSubmit} color="secondary" variant="contained" size="small">Submit</Button>
-                    </DialogActions>
+                <Dialog
+                    cancelHandler={this.onDialogClose}
+                    closeHandler={this.onDialogClose}
+                    okHandler={this.onCodeSubmit}
+                    open={dialogOpen}
+                    text="If you received a code from a friend or family member, enter it here to start sending feels!"
+                    title="Enter Device Code">
+                    <TextField autoFocus margin="dense" label="Access Code" fullWidth onChange={this.onCodeChange} type="number" />
                 </Dialog>
-                <Dialog open={brightnessOpen} keepMounted={false} onClose={this.onDialogClose}>
-                    <DialogTitle>Set Device Brightness</DialogTitle>
-                    <DialogContent>
-                        <Grid container spacing={2}>
-                            <Grid item>
-                                <BrightnessLowIcon />
-                            </Grid>
-                            <Grid item xs>
-                                <Slider
-                                    value={brightness}
-                                    onChange={this.onBrightnessChange}
-                                    step={10}
-                                    min={10}
-                                    max={100}
-                                    valueLabelFormat={this.formatSliderLabel} />
-                            </Grid>
-                            <Grid item>
-                                <BrightnessHighIcon />
-                            </Grid>
+                <Dialog
+                    cancelHandler={this.onDialogClose}
+                    closeHandler={this.onDialogClose}
+                    okHandler={this.onBrightnessSubmit}
+                    open={brightnessOpen}
+                    title="Set Device Brightness">
+                    <Grid container spacing={2}>
+                        <Grid item>
+                            <BrightnessLowIcon />
                         </Grid>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.onDialogClose} color="default" variant="contained" size="small">Cancel</Button>
-                        <Button onClick={this.onBrightnessSubmit} color="secondary" variant="contained" size="small">Submit</Button>
-                    </DialogActions>
+                        <Grid item xs>
+                            <Slider
+                                value={brightness}
+                                onChange={this.onBrightnessChange}
+                                step={10}
+                                min={10}
+                                max={100}
+                                valueLabelFormat={this.formatSliderLabel} />
+                        </Grid>
+                        <Grid item>
+                            <BrightnessHighIcon />
+                        </Grid>
+                    </Grid>
                 </Dialog>
                 <div className={classes.root}>
                     {loading && <Loading message="Loading Your Devices..." />}

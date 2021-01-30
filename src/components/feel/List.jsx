@@ -5,13 +5,7 @@ import {withRouter} from 'react-router-dom';
 import {get} from 'lodash';
 import {withStyles} from '@material-ui/core/styles';
 import {
-    Button,
     Checkbox,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
     Divider,
     Fab,
     FormControl,
@@ -47,7 +41,7 @@ import {
 } from '@material-ui/icons';
 
 import Thumb from '-/components/feel/Thumb';
-import {AppBar, IconButton, Loading} from '-/components/shared';
+import {AppBar, Dialog, IconButton, Loading} from '-/components/shared';
 import CategoriesSelect from '-/components/feel/CategoriesSelect';
 import DevicesSelect from '-/components/feel/DevicesSelect';
 import {groupFeels} from '-/components/feel/utils';
@@ -540,117 +534,97 @@ class FeelsList extends Component {
             <div className={classes.container}>
                 <AppBar title="My Feels" extraContent={extraContent} />
 
-                <Dialog open={Boolean(messageEl)} onClose={this.onDialogClose} keepMounted={false}>
-                    <DialogTitle>Send Message to Devices</DialogTitle>
-                    <DialogContent>
-                        <FormControl component="fieldset" className={classes.formControl}>
-                            <TextField
-                                autoFocus={true}
-                                label="Message"
-                                fullWidth={true}
-                                onChange={this.onMessageChange}
-                                value={message}
-                                name="message"
-                                style={{marginBottom: 10}}
-                                variant="outlined" />
-                            <TextField
-                                style={{marginBottom: 10}}
-                                name="messageDuration"
-                                value={messageDuration || 50}
-                                onChange={this.onMessageDurationChange}
-                                type="number"
-                                fullWidth={true}
-                                variant="outlined"
-                                label="Duration"
-                                InputProps={{
-                                    min: 1,
-                                    max: 100000,
-                                    size: 'small',
-                                    startAdornment: durationAdornment
-                                }} />
-                            <DevicesSelect messageCapable={true} onDeviceCheck={this.onDeviceCheck} onDeviceGroupCheck={this.onDeviceGroupCheck} />
-                        </FormControl>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.onSendMessageClick} color="secondary" variant="contained" size="small" autoFocus>
-                            Send
-                        </Button>
-                    </DialogActions>
+                <Dialog
+                    cancelHandler={this.onDialogClose}
+                    closeHandler={this.onDialogClose}
+                    okBtnText="Send"
+                    okHandler={this.onSendMessageClick}
+                    open={Boolean(messageEl)}
+                    title="Send Message to Devices">
+                    <FormControl component="fieldset" className={classes.formControl}>
+                        <TextField
+                            autoFocus={true}
+                            label="Message"
+                            fullWidth={true}
+                            onChange={this.onMessageChange}
+                            value={message}
+                            name="message"
+                            style={{marginBottom: 10}}
+                            variant="outlined" />
+                        <TextField
+                            style={{marginBottom: 10}}
+                            name="messageDuration"
+                            value={messageDuration || 50}
+                            onChange={this.onMessageDurationChange}
+                            type="number"
+                            fullWidth={true}
+                            variant="outlined"
+                            label="Duration"
+                            InputProps={{
+                                min: 1,
+                                max: 100000,
+                                size: 'small',
+                                startAdornment: durationAdornment
+                            }} />
+                        <DevicesSelect messageCapable={true} onDeviceCheck={this.onDeviceCheck} onDeviceGroupCheck={this.onDeviceGroupCheck} />
+                    </FormControl>
                 </Dialog>
                 {activeFeel &&
                     <Fragment>
                         <Menu anchorEl={anchorEl} keepMounted={false} open={Boolean(anchorEl)} onClose={this.onMenuClose}>
                             {menu}
                         </Menu>
-                        <Dialog open={Boolean(dialogEl)} onClose={this.onDialogClose} keepMounted={false}>
-                            <DialogTitle>Remove Feel?</DialogTitle>
-                            <DialogContent>
-                                <DialogContentText>
-                                    Are you sure you want to remove this Feel from your collection permanently?
-                                </DialogContentText>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={this.onDialogClose} color="default" variant="contained" size="small">
-                                    Cancel
-                                </Button>
-                                <Button onClick={this.onDialogSubmit} color="secondary" variant="contained" size="small" autoFocus>
-                                    Agree
-                                </Button>
-                            </DialogActions>
+                        <Dialog
+                            cancelHandler={this.onDialogClose}
+                            closeHandler={this.onDialogClose}
+                            okBtnText="Yes"
+                            okHandler={this.onDialogSubmit}
+                            open={Boolean(dialogEl)}
+                            text="Are you sure you want to remove this Feel from your collection permanently?"
+                            title="Remove Feel?" />
+
+                        <Dialog
+                            cancelHandler={this.onDialogClose}
+                            closeHandler={this.onDialogClose}
+                            okBtnText="Send"
+                            okHandler={this.onPushDevicesClick}
+                            open={Boolean(deviceEl)}
+                            title="Send to Devices">
+                            <DevicesSelect onDeviceCheck={this.onDeviceCheck} onDeviceGroupCheck={this.onDeviceGroupCheck} />
                         </Dialog>
 
-                        <Dialog open={Boolean(deviceEl)} onClose={this.onDialogClose} keepMounted={false}>
-                            <DialogTitle>Send to Devices</DialogTitle>
-                            <DialogContent>
-                                <DevicesSelect onDeviceCheck={this.onDeviceCheck} onDeviceGroupCheck={this.onDeviceGroupCheck} />
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={this.onDialogClose} color="default" variant="contained" size="small">
-                                    Cancel
-                                </Button>
-                                <Button onClick={this.onPushDevicesClick} color="secondary" variant="contained" size="small" autoFocus>
-                                    Send
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
+                        <Dialog
+                            cancelHandler={this.onDialogClose}
+                            closeHandler={this.onDialogClose}
+                            okBtnText="Send"
+                            okHandler={this.onNotifyFriendsClick}
+                            open={Boolean(notificationEl)}
+                            title="Send to Friends">
+                            <FormControl component="fieldset" className={classes.formControl}>
+                                <FormGroup>
+                                    {friends.map(friend => {
+                                        const {_id: userId, email, name} = friend;
+                                        const isChecked = selectedFriends.includes(userId);
 
-                        <Dialog open={Boolean(notificationEl)} onClose={this.onDialogClose} keepMounted={false}>
-                            <DialogTitle>Send to Friends</DialogTitle>
-                            <DialogContent>
-                                <FormControl component="fieldset" className={classes.formControl}>
-                                    <FormGroup>
-                                        {friends.map(friend => {
-                                            const {_id: userId, email, name} = friend;
-                                            const isChecked = selectedFriends.includes(userId);
-
-                                            return (
-                                                <FormControlLabel
-                                                    key={userId}
-                                                    control={
-                                                        <Checkbox checked={isChecked} onChange={this.onFriendCheck} name={userId} />
-                                                    }
-                                                    label={name || email} />
-                                            );
-                                        })}
-                                    </FormGroup>
-                                    <TextField
-                                        autoFocus={true}
-                                        label="Message"
-                                        fullWidth={true}
-                                        onChange={this.onNotificationChange}
-                                        value={notification}
-                                        name="notification"
-                                        variant="outlined" />
-                                </FormControl>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={this.onDialogClose} color="default" variant="contained" size="small">
-                                    Cancel
-                                </Button>
-                                <Button onClick={this.onNotifyFriendsClick} color="secondary" variant="contained" size="small" autoFocus>
-                                    Send
-                                </Button>
-                            </DialogActions>
+                                        return (
+                                            <FormControlLabel
+                                                key={userId}
+                                                control={
+                                                    <Checkbox checked={isChecked} onChange={this.onFriendCheck} name={userId} />
+                                                }
+                                                label={name || email} />
+                                        );
+                                    })}
+                                </FormGroup>
+                                <TextField
+                                    autoFocus={true}
+                                    label="Message"
+                                    fullWidth={true}
+                                    onChange={this.onNotificationChange}
+                                    value={notification}
+                                    name="notification"
+                                    variant="outlined" />
+                            </FormControl>
                         </Dialog>
                     </Fragment>
                 }

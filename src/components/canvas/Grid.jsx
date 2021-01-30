@@ -1,4 +1,4 @@
-import {Component} from 'react';
+import {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
 import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
@@ -6,11 +6,6 @@ import {graphql} from 'react-apollo';
 import {cloneDeep, get, isEmpty, pick, set, uniq} from 'lodash';
 import {withStyles} from '@material-ui/core/styles';
 import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
     GridList,
     ListItemIcon,
     ListItemText,
@@ -34,7 +29,7 @@ import {
     Undo as UndoIcon
 } from '@material-ui/icons';
 
-import {AppBar, IconButton} from '-/components/shared';
+import {AppBar, Dialog, IconButton} from '-/components/shared';
 import Pixel from '-/components/canvas/Pixel';
 import Feelsbox from '-/components/canvas/picker/Feelsbox';
 import Form from '-/components/canvas/Form';
@@ -543,13 +538,13 @@ class CanvasGrid extends Component {
         const {frames = []} = this.state;
 
         return (
-            <React.Fragment>
+            <Fragment>
                 <IconButton Icon={SettingsRemoteIcon} onClick={this.onTestClick} title="Test on default device" />
                 {frames.length > 1 &&
                     <IconButton Icon={SettingsRemoteOutlinedIcon} onClick={this.onTestFramesClick} title="Test animation on default device" />
                 }
                 <IconButton Icon={SaveIcon} onClick={this.onEditClick} title="Save Feel" />
-            </React.Fragment>
+            </Fragment>
         );
     }
 
@@ -610,25 +605,24 @@ class CanvasGrid extends Component {
                         </MenuItem>
                     }
                 </Menu>
-                <Dialog open={frameTestOpen} onClose={this.onFramesFormClose} aria-labelledby="form-frame-title">
-                    <DialogTitle id="form-frame-title">Test All Frames</DialogTitle>
-                    <DialogContent>
-                        <FrameForm onChange={this.onFramesTestChange} duration={testDuration} repeat={testRepeat} reverse={testReverse} />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.onFramesFormClose} color="primary">Close</Button>
-                        <Button onClick={this.onFramesTestClick.bind(this)} color="primary">Test</Button>
-                    </DialogActions>
+                <Dialog
+                    cancelBtnText="Close"
+                    cancelHandler={this.onFramesFormClose}
+                    closeHandler={this.onFramesFormClose}
+                    okBtnText="Test"
+                    okHandler={this.onFramesTestClick}
+                    open={frameTestOpen}
+                    title="Test All Frames">
+                    <FrameForm onChange={this.onFramesTestChange} duration={testDuration} repeat={testRepeat} reverse={testReverse} />
                 </Dialog>
-                <Dialog open={open} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
-                    <DialogTitle id="form-dialog-title">Save Feel</DialogTitle>
-                    <DialogContent>
-                        <Form onChange={this.onDataChange} formData={data} frames={frames} />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.onDialogClose} color="primary">Cancel</Button>
-                        <Button onClick={this.onSaveClick.bind(this)} color="primary">Save</Button>
-                    </DialogActions>
+                <Dialog
+                    cancelHandler={this.onDialogClose}
+                    closeHandler={this.onDialogClose}
+                    okBtnText="Save"
+                    okHandler={this.onSaveClick}
+                    open={open}
+                    title="Save Feel">
+                    <Form onChange={this.onDataChange} formData={data} frames={frames} />
                 </Dialog>
                 <div className={classes.root}>
                     <GridList className={classes.gridList} cols={8}>

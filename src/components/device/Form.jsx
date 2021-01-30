@@ -1,4 +1,5 @@
 import {Component, Fragment} from 'react';
+import {withRouter} from 'react-router-dom';
 import {withStyles} from '@material-ui/core/styles';
 import {compose} from 'recompose';
 import {graphql} from 'react-apollo';
@@ -208,17 +209,19 @@ class DeviceForm extends Component {
     }
 }
 
-export default compose(
-    graphql(generateCode, {name: 'generateCode'}),
-    graphql(editDevice, {name: 'editDevice'}),
-    graphql(getDevice, {
-        options: props => ({
-            fetchPolicy: 'network-only',
-            notifyOnNetworkStatusChange: true,
-            variables: {
-                _id: get(props, 'match.params._id')
-            }
-        })
-    }),
-    withStyles(styles)
-)(DeviceForm);
+export default withRouter(
+    compose(
+        graphql(generateCode, {name: 'generateCode'}),
+        graphql(editDevice, {name: 'editDevice'}),
+        graphql(getDevice, {
+            options: props => ({
+                fetchPolicy: 'network-only',
+                notifyOnNetworkStatusChange: true,
+                variables: {
+                    _id: get(props, 'match.params._id')
+                }
+            })
+        }),
+        withStyles(styles)
+    )(DeviceForm)
+);

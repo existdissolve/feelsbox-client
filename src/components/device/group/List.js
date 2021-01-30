@@ -5,12 +5,6 @@ import {compose} from 'recompose';
 import {withRouter} from 'react-router-dom';
 import {get} from 'lodash';
 import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
     Fab,
     GridList,
     List,
@@ -26,7 +20,7 @@ import {
     VideoLabel as VideoLabelIcon
 } from '@material-ui/icons';
 
-import {AppBar, IconButton, Loading} from '-/components/shared';
+import {AppBar, Dialog, IconButton, Loading} from '-/components/shared';
 
 import {getDeviceGroups, removeDeviceGroup} from '-/graphql/deviceGroup';
 import client from '-/graphql/client';
@@ -177,22 +171,14 @@ class FeelGroupsList extends Component {
                 <AppBar title="My Device Groups" />
                 {activeGroup &&
                     <Fragment>
-                        <Dialog open={Boolean(dialogEl)} onClose={this.onDialogClose} keepMounted={false}>
-                            <DialogTitle>Remove Device Group?</DialogTitle>
-                            <DialogContent>
-                                <DialogContentText>
-                                    Are you sure you want to remove this Device Group from your collection permanently?
-                                </DialogContentText>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={this.onDialogClose} color="default" variant="contained" size="small">
-                                    Cancel
-                                </Button>
-                                <Button onClick={this.onRemoveSubmit} color="secondary" variant="contained" size="small" autoFocus>
-                                    Agree
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
+                        <Dialog
+                            cancelHandler={this.onDialogClose}
+                            closeHandler={this.onDialogClose}
+                            okBtnText="Yes"
+                            okHandler={this.onRemoveSubmit}
+                            open={Boolean(dialogEl)}
+                            text="Are you sure you want to remove this Device Group from your collection permanently?"
+                            title="Remove Device Group?" />
                     </Fragment>
                 }
                 <div className={classes.root} style={{marginTop: 56}}>

@@ -1,4 +1,4 @@
-import {Component} from 'react';
+import {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
 
@@ -49,7 +49,7 @@ class PresetColors extends Component {
                     const key = `${c.color}${c.title || ''}`;
 
                     return (
-                        <React.Fragment key={key}>
+                        <Fragment key={key}>
                             <div className={classes.swatchWrap}>
                                 <Swatch
                                     {...c}
@@ -61,7 +61,7 @@ class PresetColors extends Component {
                                     }}
                                 />
                             </div>
-                        </React.Fragment>
+                        </Fragment>
                     );
                 })}
             </div>

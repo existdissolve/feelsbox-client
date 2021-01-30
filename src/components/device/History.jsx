@@ -1,15 +1,10 @@
 import {Component, Fragment} from 'react';
 import moment from 'moment';
+import {withRouter} from 'react-router-dom';
 import {withStyles} from '@material-ui/core/styles';
 import {graphql} from 'react-apollo';
 import {compose} from 'recompose';
 import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
     Divider,
     GridList,
     List,
@@ -20,7 +15,7 @@ import {
 import {AddCircleOutline as AddCircleOutlineIcon} from '@material-ui/icons';
 import {get} from 'lodash';
 
-import {AppBar, Loading} from '-/components/shared';
+import {AppBar, Dialog, Loading} from '-/components/shared';
 import {getHistory} from '-/graphql/history';
 import {cloneFromHistory} from '-/graphql/feel';
 import client from '-/graphql/client';
@@ -94,18 +89,15 @@ class DeviceList extends Component {
         return (
             <div>
                 <AppBar title="History" />
-                <Dialog open={open} onClose={this.onDialogClose} aria-labelledby="history-title">
-                    <DialogTitle id="history-title">Create New Feel?</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                            Are you sure you want to create a new Feel from this history item? Don&apos;t worry...it will start off uncategorized, and you can tweak it however you like when you&apos;re ready!
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.onDialogClose} color="primary">Nevermind</Button>
-                        <Button onClick={this.onConfirmClick} color="primary">Do it!</Button>
-                    </DialogActions>
-                </Dialog>
+                <Dialog
+                    cancelBtnText="Nevermind"
+                    cancelHandler={this.onDialogClose}
+                    closeHandler={this.onDialogClose}
+                    okBtnText="Do It!"
+                    okHandler={this.onConfirmClick}
+                    open={open}
+                    text="Are you sure you want to create a new Feel from this history item? Don&apos;t worry...it will start off uncategorized, and you can tweak it however you like when you&apos;re ready!"
+                    title="Create New Feel?" />
                 <div className={classes.root}>
                     {loading && <Loading message="Loading History..." />}
                     {!loading &&
@@ -149,18 +141,19 @@ class DeviceList extends Component {
     }
 }
 
-export default compose(
-    graphql(getHistory, {
-        options: props => ({
-            fetchPolicy: 'network-only',
-            notifyOnNetworkStatusChange: true,
-            variables: {
-                criteria: {
-                    device: get(props, 'match.params._id')
+export default withRouter(
+    compose(
+        graphql(getHistory, {
+            options: props => ({
+                fetchPolicy: 'network-only',
+                notifyOnNetworkStatusChange: true,
+                variables: {
+                    criteria: {
+                        device: get(props, 'match.params._id')
+                    }
                 }
-            }
-        })
-    }),
-    withStyles(styles),
-
-)(DeviceList);
+            })
+        }),
+        withStyles(styles),
+    )(DeviceList)
+);

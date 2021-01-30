@@ -1,4 +1,4 @@
-import {Component} from 'react';
+import {Component, Fragment} from 'react';
 import {IconButton, Snackbar} from '@material-ui/core';
 import {Clear as ClearIcon} from '@material-ui/icons';
 
@@ -9,11 +9,11 @@ const withSnackbar = () => WrappedComponent => {
 
             this.snackbarDefaults = {
                 action: (
-                    <React.Fragment>
+                    <Fragment>
                         <IconButton size="small" onClick={this.onSnackbarClose}>
                             <ClearIcon fontSize="small" />
                         </IconButton>
-                    </React.Fragment>
+                    </Fragment>
                 ),
                 anchorOrigin: {
                     vertical: 'bottom',
