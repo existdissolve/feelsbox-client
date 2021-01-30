@@ -3,7 +3,6 @@ import {withStyles} from '@material-ui/core/styles';
 import {compose} from 'recompose';
 import {withRouter} from 'react-router-dom';
 import MenuItem from '@material-ui/core/MenuItem';
-import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Select from '@material-ui/core/Select';
@@ -12,7 +11,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import SortIcon from '@material-ui/icons/Sort';
 import {get} from 'lodash';
 
-import AppBar from '-/components/AppBar';
+import {AppBar, IconButton} from '-/components/shared';
 import SearchGrid from '-/components/feel/SearchGrid';
 
 const styles = theme => ({
@@ -91,9 +90,7 @@ class SearchList extends React.Component {
         );
         const searchAdornment = (
             <InputAdornment position="end">
-                <IconButton onClick={this.onClearSearchClick}>
-                    <CloseIcon />
-                </IconButton>
+                <IconButton Icon={CloseIcon} onClick={this.onClearSearchClick} title="Clear Search" />
             </InputAdornment>
         );
 

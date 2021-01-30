@@ -13,21 +13,18 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import GridList from '@material-ui/core/GridList';
 import Fab from '@material-ui/core/Fab';
-import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Subheader from '@material-ui/core/ListSubheader';
-import Tooltip from '@material-ui/core/Tooltip';
 
 import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
 
-import AppBar from '-/components/AppBar';
+import {AppBar, IconButton, Loading} from '-/components/shared';
 import SimpleThumb from '-/components/feel/SimpleThumb';
-import Loading from '-/components/Loading';
 import DevicesSelect from '-/components/feel/DevicesSelect';
 
 import {getFeelGroups, removeFeelGroup, sendFeelGroup} from '-/graphql/feelGroup';
@@ -240,27 +237,15 @@ class FeelGroupsList extends Component {
                                         <Subheader component="div" className={classes.subheader}>
                                             <List component="div" dense={true} style={{padding: 0, display: 'flex'}}>
                                                 <ListItem style={{flexGrow: 1}}>{name}</ListItem>
-                                                <Tooltip title="Send to devices">
-                                                    <ListItemIcon className={classes.listitemicon} onClick={this.onIconClick.bind(this, group, 'onPushClick')}>
-                                                        <IconButton className={classes.smallicon}>
-                                                            <SettingsRemoteIcon />
-                                                        </IconButton>
-                                                    </ListItemIcon>
-                                                </Tooltip>
-                                                <Tooltip title="Edit Feels Group">
-                                                    <ListItemIcon className={classes.listitemicon} onClick={this.onIconClick.bind(this, group, 'onEditClick')}>
-                                                        <IconButton className={classes.smallicon}>
-                                                            <EditIcon />
-                                                        </IconButton>
-                                                    </ListItemIcon>
-                                                </Tooltip>
-                                                <Tooltip title="Remove Feels Group">
-                                                    <ListItemIcon className={classes.listitemicon} onClick={this.onIconClick.bind(this, group, 'onRemoveClick')}>
-                                                        <IconButton className={classes.smallicon} edge="end">
-                                                            <CloseIcon />
-                                                        </IconButton>
-                                                    </ListItemIcon>
-                                                </Tooltip>
+                                                <ListItemIcon className={classes.listitemicon} onClick={this.onIconClick.bind(this, group, 'onPushClick')}>
+                                                    <IconButton Icon={SettingsRemoteIcon} className={classes.smallicon} title="Send to devices" />
+                                                </ListItemIcon>
+                                                <ListItemIcon className={classes.listitemicon} onClick={this.onIconClick.bind(this, group, 'onEditClick')}>
+                                                    <IconButton Icon={EditIcon} className={classes.smallicon} title="Edit Feels Group" />
+                                                </ListItemIcon>
+                                                <ListItemIcon className={classes.listitemicon} onClick={this.onIconClick.bind(this, group, 'onRemoveClick')}>
+                                                    <IconButton Icon={CloseIcon} className={classes.smallicon} edge="end" title="Remove Feels Group" />
+                                                </ListItemIcon>
                                             </List>
                                         </Subheader>
                                         <GridList cols={3} cellHeight={64} className={classes.grid}>

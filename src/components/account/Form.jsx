@@ -1,7 +1,6 @@
 import {Component} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import {withRouter} from 'react-router-dom';
-import Typography from '@material-ui/core/Typography';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -9,9 +8,7 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import {get} from 'lodash';
 
-import AppBar from '-/components/AppBar';
-
-const styles = theme => ({
+const styles = () => ({
     root: {
         flex: .5,
         padding: 20

@@ -13,7 +13,6 @@ import Divider from '@material-ui/core/Divider';
 import FlashOffIcon from '@material-ui/icons/FlashOff';
 import Grid from '@material-ui/core/Grid';
 import HistoryIcon from '@material-ui/icons/History';
-import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -23,7 +22,6 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Slider from '@material-ui/core/Slider';
 import TextField from '@material-ui/core/TextField';
-import Tooltip from '@material-ui/core/Tooltip';
 
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import BrightnessLowIcon from '@material-ui/icons/BrightnessLow';
@@ -37,8 +35,7 @@ import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
 import SystemUpdateIcon from '@material-ui/icons/SystemUpdate';
 import {get} from 'lodash';
 
-import AppBar from '-/components/AppBar';
-import Loading from '-/components/Loading';
+import {AppBar, IconButton, Loading} from '-/components/shared';
 import {setDefaultDevice} from '-/graphql/user';
 import {getDevices, restart, setBrightness, submitAccessCode, turnOff, updateDevice} from '-/graphql/device';
 
@@ -276,12 +273,9 @@ class DeviceList extends Component {
             }
         });
         const menu = (
-            <IconButton onClick={this.onMenuClick}>
-                <MoreVertIcon />
-            </IconButton>
+            <IconButton Icon={MoreVertIcon} onClick={this.onMenuClick} title="More actions" />
         );
         const isUpdateable = get(activeDevice, 'capabilities.updates');
-        const _id = get(activeDevice, '_id');
 
         return (
             <div className={classes.container}>
@@ -384,34 +378,18 @@ class DeviceList extends Component {
                                                         {isMine &&
                                                             <Fragment>
                                                                 <ListItemIcon onClick={this.onTurnOffClick.bind(this, _id)} className={classes.icon}>
-                                                                    <Tooltip title="Turn off display">
-                                                                        <IconButton>
-                                                                            <FlashOffIcon />
-                                                                        </IconButton>
-                                                                    </Tooltip>
+                                                                    <IconButton Icon={FlashOffIcon} title="Turn off display" />
                                                                 </ListItemIcon>
                                                                 <ListItemIcon onClick={this.onSetBrightnessClick.bind(this, device)} className={classes.icon}>
-                                                                    <Tooltip title="Change device brightness">
-                                                                        <IconButton>
-                                                                            <SettingsBrightnessIcon />
-                                                                        </IconButton>
-                                                                    </Tooltip>
+                                                                    <IconButton Icon={SettingsBrightnessIcon} title="Change device brightness" />
                                                                 </ListItemIcon>
                                                                 <ListItemIcon onClick={this.onActionsClick.bind(this, device)} className={classes.icon}>
-                                                                    <Tooltip title="See more actions">
-                                                                        <IconButton>
-                                                                            <MoreVertIcon />
-                                                                        </IconButton>
-                                                                    </Tooltip>
+                                                                    <IconButton Icon={MoreVertIcon} title="See more actions" />
                                                                 </ListItemIcon>
                                                             </Fragment>
                                                         }
-                                                        <ListItemIcon edge="end" className={classes.icon}>
-                                                            <Tooltip title="Make default device">
-                                                                <IconButton>
-                                                                    <SettingsRemoteIcon onClick={this.onDefaultClick.bind(this, _id)} color={isDefault ? 'secondary' : 'action'} />
-                                                                </IconButton>
-                                                            </Tooltip>
+                                                        <ListItemIcon edge="end" className={classes.icon} onClick={this.onDefaultClick.bind(this, _id)}>
+                                                            <IconButton color={isDefault ? 'secondary' : 'action'} Icon={SettingsRemoteIcon} title="Make default device" />
                                                         </ListItemIcon>
                                                     </ListItem>
                                                     {idx !== devices.length - 1 && <Divider />}

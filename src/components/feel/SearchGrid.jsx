@@ -14,7 +14,7 @@ import {Typography} from '@material-ui/core';
 import {get} from 'lodash';
 
 import Thumb from '-/components/feel/Thumb';
-import Loading from '-/components/Loading';
+import {Loading} from '-/components/shared';
 import {copyFeel, getFeels, subscribe, unsubscribe} from '-/graphql/feel';
 import client from '-/graphql/client';
 

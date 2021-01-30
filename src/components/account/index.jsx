@@ -6,7 +6,7 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import Form from '-/components/account/Form';
 import Messages from '-/components/account/List';
 
-import AppBar from '-/components/AppBar';
+import {AppBar} from '-/components/shared';
 
 const styles = theme => ({
     root: {

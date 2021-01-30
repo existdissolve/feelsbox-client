@@ -9,7 +9,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
 import Fab from '@material-ui/core/Fab';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -17,14 +16,12 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import TextField from '@material-ui/core/TextField';
-import Tooltip from '@material-ui/core/Tooltip';
 
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import {get} from 'lodash';
 
-import AppBar from '-/components/AppBar';
-import Loading from '-/components/Loading';
+import {AppBar, IconButton, Loading} from '-/components/shared';
 import {addCategory, editCategory, getMyCategories} from '-/graphql/category';
 
 const styles = theme => ({
@@ -170,11 +167,11 @@ class CategoryList extends React.Component {
                                         <ListItem>
                                             <ListItemText primary={name} />
                                             <ListItemSecondaryAction>
-                                                <Tooltip title="Edit category">
-                                                    <IconButton edge="end" onClick={this.onEditClick.bind(this, _id)}>
-                                                        <EditIcon />
-                                                    </IconButton>
-                                                </Tooltip>
+                                                <IconButton
+                                                    edge="end"
+                                                    Icon={EditIcon}
+                                                    onClick={this.onEditClick.bind(this, _id)}
+                                                    title="Edit category" />
                                             </ListItemSecondaryAction>
                                         </ListItem>
                                         {idx !== categories.length - 1 && <Divider />}

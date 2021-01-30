@@ -13,7 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import {get} from 'lodash';
 
 import {getMessages} from '-/graphql/message';
-import Loading from '-/components/Loading';
+import {Loading} from '-/components/shared';
 
 const styles = theme => ({
     root: {

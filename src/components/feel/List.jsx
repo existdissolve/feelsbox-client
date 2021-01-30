@@ -18,7 +18,6 @@ import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import GridList from '@material-ui/core/GridList';
-import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Fab from '@material-ui/core/Fab';
 import List from '@material-ui/core/List';
@@ -31,7 +30,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Subheader from '@material-ui/core/ListSubheader';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
-import Tooltip from '@material-ui/core/Tooltip';
 
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import AddIcon from '@material-ui/icons/Add';
@@ -47,9 +45,8 @@ import RecordVoiceOverIcon from '@material-ui/icons/RecordVoiceOver';
 import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
 import ViewListIcon from '@material-ui/icons/ViewList';
 
-import AppBar from '-/components/AppBar';
 import Thumb from '-/components/feel/Thumb';
-import Loading from '-/components/Loading';
+import {AppBar, IconButton, Loading} from '-/components/shared';
 import CategoriesSelect from '-/components/feel/CategoriesSelect';
 import DevicesSelect from '-/components/feel/DevicesSelect';
 import {groupFeels} from '-/components/feel/utils';
@@ -435,28 +432,22 @@ class FeelsList extends Component {
         );
         const extraContent = (
             <Toolbar position="fixed" className={classes.toolbar} variant="dense" disableGutters={false}>
-                <Tooltip title="View as grid">
-                    <IconButton onClick={this.onDisplayModeClick.bind(this, 'grid')} edge="start" color={displayMode === 'grid' ? 'secondary' : 'default'}>
-                        <GridOnIcon />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="View as list">
-                    <IconButton onClick={this.onDisplayModeClick.bind(this, 'list')} edge="start" color={displayMode === 'list' ? 'secondary' : 'default'}>
-                        <ViewListIcon />
-                    </IconButton>
-                </Tooltip>
+                <IconButton
+                    Icon={GridOnIcon}
+                    onClick={this.onDisplayModeClick.bind(this, 'grid')}
+                    edge="start"
+                    color={displayMode === 'grid' ? 'secondary' : 'action'}
+                    title="View as grid" />
+                <IconButton
+                    Icon={ViewListIcon}
+                    onClick={this.onDisplayModeClick.bind(this, 'list')}
+                    edge="start"
+                    color={displayMode === 'list' ? 'secondary' : 'action'}
+                    title="View as list" />
                 <CategoriesSelect categorySelectionHandler={this.onCategoriesChange} />
                 <div className={classes.grow} />
-                <Tooltip title="Send text message">
-                    <IconButton onClick={this.onMessageClick}>
-                        <MessageIcon />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="View Feel Groups">
-                    <IconButton onClick={this.onCarouselClick} className={classes.carousel} edge="end">
-                        <RecentActorsIcon />
-                    </IconButton>
-                </Tooltip>
+                <IconButton Icon={MessageIcon} onClick={this.onMessageClick} title="Send text message" />
+                <IconButton Icon={RecentActorsIcon} onClick={this.onCarouselClick} className={classes.carousel} edge="end" title="View Feel Groups" />
             </Toolbar>
         );
         const menu = [];
@@ -680,37 +671,37 @@ class FeelsList extends Component {
                                                     const icons = [];
                                                     const editIcon = (
                                                         <ListItemIcon className={classes.listitemicon} key="editIcon" onClick={this.onIconClick.bind(this, feel, 'onEditClick')}>
-                                                            <EditIcon />
+                                                            <IconButton Icon={EditIcon} title="Edit Feel" />
                                                         </ListItemIcon>
                                                     );
                                                     const removeIcon = (
                                                         <ListItemIcon className={classes.listitemicon} key="removeIcon" onClick={this.onIconClick.bind(this, feel, 'onRemoveClick')}>
-                                                            <CloseIcon />
+                                                            <IconButton Icon={CloseIcon} title="Remove Feel" />
                                                         </ListItemIcon>
                                                     );
                                                     const pushIcon = (
                                                         <ListItemIcon className={classes.listitemicon} key="pushIcon" onClick={this.onIconClick.bind(this, feel, 'onPushClick')}>
-                                                            <SettingsRemoteIcon />
+                                                            <IconButton Icon={SettingsRemoteIcon} title="Send to Devices" />
                                                         </ListItemIcon>
                                                     );
                                                     const notifyIcon = (
                                                         <ListItemIcon className={classes.listitemicon} key="notifyIcon" onClick={this.onIconClick.bind(this, feel, 'onNotifyClick')}>
-                                                            <RecordVoiceOverIcon />
+                                                            <IconButton Icon={RecordVoiceOverIcon} title="Send to Friends" />
                                                         </ListItemIcon>
                                                     );
                                                     const saveToFavsIcon = (
                                                         <ListItemIcon className={classes.listitemicon} key="subscribeIcon" onClick={this.onIconClick.bind(this, feel, 'onSubscribeClick')}>
-                                                            <AddBoxIcon />
+                                                            <IconButton Icon={AddBoxIcon} title="Save to Favs" />
                                                         </ListItemIcon>
                                                     );
                                                     const removeFromFavsIcon = (
                                                         <ListItemIcon className={classes.listitemicon} key="unsubscribeIcon" onClick={this.onIconClick.bind(this, feel, 'onUnsubscribeClick')}>
-                                                            <IndeterminateCheckBoxIcon />
+                                                            <IconButton Icon={IndeterminateCheckBoxIcon} title="Remove from Favs" />
                                                         </ListItemIcon>
                                                     );
                                                     const copyFeelIcon = (
                                                         <ListItemIcon className={classes.listitemicon} key="copyIcon" onClick={this.onIconClick.bind(this, feel._id, 'onCopyClick')}>
-                                                            <FlipToBackIcon />
+                                                            <IconButton Icon={FlipToBackIcon} title="Copy to My Feels" />
                                                         </ListItemIcon>
                                                     );
 

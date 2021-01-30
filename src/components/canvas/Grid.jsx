@@ -10,13 +10,11 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import GridList from '@material-ui/core/GridList';
-import IconButton from '@material-ui/core/IconButton';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Toolbar from '@material-ui/core/Toolbar';
-import Tooltip from '@material-ui/core/Tooltip';
 import {Typography} from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import ClearAllIcon from '@material-ui/icons/ClearAll';
@@ -32,7 +30,7 @@ import SettingsRemoteOutlinedIcon from '@material-ui/icons/SettingsRemoteOutline
 import UndoIcon from '@material-ui/icons/Undo';
 import {cloneDeep, get, isEmpty, pick, set, uniq} from 'lodash';
 
-import AppBar from '-/components/AppBar';
+import {AppBar, IconButton} from '-/components/shared';
 import Pixel from '-/components/canvas/Pixel';
 import Feelsbox from '-/components/canvas/picker/Feelsbox';
 import Form from '-/components/canvas/Form';
@@ -542,23 +540,11 @@ class CanvasGrid extends React.Component {
 
         return (
             <React.Fragment>
-                <Tooltip title="Test on default device">
-                    <IconButton onClick={this.onTestClick}>
-                        <SettingsRemoteIcon />
-                    </IconButton>
-                </Tooltip>
+                <IconButton Icon={SettingsRemoteIcon} onClick={this.onTestClick} title="Test on default device" />
                 {frames.length > 1 &&
-                    <Tooltip title="Test animation on default device">
-                        <IconButton onClick={this.onTestFramesClick}>
-                            <SettingsRemoteOutlinedIcon />
-                        </IconButton>
-                    </Tooltip>
+                    <IconButton Icon={SettingsRemoteOutlinedIcon} onClick={this.onTestFramesClick} title="Test animation on default device" />
                 }
-                <Tooltip title="Save Feel">
-                    <IconButton onClick={this.onEditClick}>
-                        <SaveIcon />
-                    </IconButton>
-                </Tooltip>
+                <IconButton Icon={SaveIcon} onClick={this.onEditClick} title="Save Feel" />
             </React.Fragment>
         );
     }
@@ -583,37 +569,13 @@ class CanvasGrid extends React.Component {
 
         const extraContent = (
             <Toolbar className={classes.toolbar} variant="dense" disableGutters={true}>
-                <Tooltip title="Undo">
-                    <IconButton onClick={this.onUndoClick} disabled={!isUndoActive}>
-                        <UndoIcon />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="Clear pixels">
-                    <IconButton onClick={this.onClearClick} disabled={!isUndoActive}>
-                        <ClearAllIcon />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="Go to previous frame">
-                    <IconButton onClick={this.onPreviousClick} disabled={!isPrevActive}>
-                        <NavigateBeforeIcon />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="Go to next frame">
-                    <IconButton onClick={this.onNextClick} disabled={!isNextActive}>
-                        <NavigateNextIcon />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="Add/Copy/Remove frame">
-                    <IconButton onClick={this.onFrameMenuClick}>
-                        <LibraryAddIcon />
-                    </IconButton>
-                </Tooltip>
+                <IconButton Icon={UndoIcon} onClick={this.onUndoClick} disabled={!isUndoActive} title="Undo" />
+                <IconButton Icon={ClearAllIcon} onClick={this.onClearClick} disabled={!isUndoActive} title="Clear pixels" />
+                <IconButton Icon={NavigateBeforeIcon} onClick={this.onPreviousClick} disabled={!isPrevActive} title="Go to previous frame" />
+                <IconButton Icon={NavigateNextIcon} onClick={this.onNextClick} disabled={!isNextActive} title="Go to next frame" />
+                <IconButton Icon={LibraryAddIcon} onClick={this.onFrameMenuClick} title="Add/Copy/Remove frame" />
                 {frames.length > 1 &&
-                    <Tooltip title="Make thumbnail">
-                        <IconButton onClick={this.onThumbClick}>
-                            <PhotoAlbumIcon color={isThumb ? 'secondary' : 'action'} />
-                        </IconButton>
-                    </Tooltip>
+                    <IconButton Icon={PhotoAlbumIcon} color={isThumb ? 'secondary' : 'action'} onClick={this.onThumbClick} title="Make thumbnail" />
                 }
                 <Typography variant="button" className={classes.frameCount}>{currentFrame + 1} / {frameCount}</Typography>
             </Toolbar>
@@ -621,7 +583,7 @@ class CanvasGrid extends React.Component {
 
         return (
             <div className={classes.container}>
-                <AppBar title={_id ? 'Edit Emoji' : 'Create Emoji'} iconRenderer={this.renderIcons()} extraContent={extraContent} position="" />
+                <AppBar title={_id ? 'Edit Emoji' : 'Create Emoji'} iconRenderer={this.renderIcons()} extraContent={extraContent} position="relative" />
                 <Menu anchorEl={anchorEl} keepMounted={false} open={Boolean(anchorEl)} onClose={this.onMenuClose}>
                     <MenuItem onClick={this.onAddClick}>
                         <ListItemIcon>

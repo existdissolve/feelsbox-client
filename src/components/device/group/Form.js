@@ -11,14 +11,12 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import GridList from '@material-ui/core/GridList';
-import IconButton from '@material-ui/core/IconButton';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Subheader from '@material-ui/core/ListSubheader';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
-import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 
 import CloseIcon from '@material-ui/icons/Close';
@@ -27,8 +25,7 @@ import ClearAllIcon from '@material-ui/icons/ClearAll';
 import SaveIcon from '@material-ui/icons/Save';
 import VideoLabelIcon from '@material-ui/icons/VideoLabel';
 
-import AppBar from '-/components/AppBar';
-import Loading from '-/components/Loading';
+import {AppBar, IconButton, Loading} from '-/components/shared';
 
 import {getDevices} from '-/graphql/device';
 import {addDeviceGroup, editDeviceGroup, getDeviceGroup, getDeviceGroups} from '-/graphql/deviceGroup';
@@ -137,7 +134,7 @@ class DeviceGroupForm extends Component {
         this.setState({
             menuEl: e.target
         });
-    }
+    };
 
     onClearClick = () => {
         this.setState({selections: []});
@@ -263,27 +260,13 @@ class DeviceGroupForm extends Component {
         const loading = get(this.props, 'data_deviceGroup.loading');
         const isActive = activeIdx != null;
         const icons = (
-            <IconButton onClick={this.onEditClick} disabled={!selections.length}>
-                <SaveIcon />
-            </IconButton>
+            <IconButton Icon={SaveIcon} onClick={this.onEditClick} disabled={!selections.length} title="Save device group" />
         );
         const extraContent = (
             <Toolbar className={classes.toolbar} variant="dense" disableGutters={true}>
-                <Tooltip title="Remove all devices">
-                    <IconButton onClick={this.onClearClick} disabled={!selections.length}>
-                        <ClearAllIcon />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="Remove selected device">
-                    <IconButton onClick={this.onRemoveClick} disabled={!isActive}>
-                        <CloseIcon />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="Add device">
-                    <IconButton onClick={this.onAddClick} disabled={isActive}>
-                        <AddIcon />
-                    </IconButton>
-                </Tooltip>
+                <IconButton Icon={ClearAllIcon} onClick={this.onClearClick} disabled={!selections.length} title="Remove all devices" />
+                <IconButton Icon={CloseIcon} onClick={this.onRemoveClick} disabled={!isActive} title="Remove selected device" />
+                <IconButton Icon={AddIcon} onClick={this.onAddClick} disabled={isActive} title="Add device" />
             </Toolbar>
         );
         const DevicePill = props => {

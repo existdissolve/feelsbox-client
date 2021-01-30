@@ -7,7 +7,6 @@ import {withRouter} from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
 import SaveIcon from '@material-ui/icons/Save';
 import ClearIcon from '@material-ui/icons/Clear';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
@@ -21,7 +20,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Divider from '@material-ui/core/Divider';
 import {get} from 'lodash';
 
-import AppBar from '-/components/AppBar';
+import {AppBar, IconButton} from '-/components/shared';
 import {editDevice, generateCode, getDevice} from '-/graphql/device';
 
 const styles = theme => ({
@@ -136,16 +135,12 @@ class DeviceForm extends Component {
         const {access = [], code, name} = this.state;
         const {classes, Snackbar} = this.props;
         const editIcon = (
-            <IconButton onClick={this.onSaveClick}>
-                <SaveIcon />
-            </IconButton>
+            <IconButton Icon={SaveIcon} onClick={this.onSaveClick} title="Save device" />
         );
 
         const copyIcon = (
             <InputAdornment position="end">
-                <IconButton size="small" onClick={this.onCopyClick}>
-                    <FileCopyIcon edge="end" />
-                </IconButton>
+                <IconButton Icon={FileCopyIcon} edge="end" size="small" onClick={this.onCopyClick} title="Copy code" />
             </InputAdornment>
         );
 
@@ -195,9 +190,7 @@ class DeviceForm extends Component {
                                         </ListItemIcon>
                                         <ListItemText primary={email} />
                                         <ListItemSecondaryAction>
-                                            <IconButton edge="end" size="small" onClick={this.onRemoveAccessClick.bind(this, _id)}>
-                                                <ClearIcon />
-                                            </IconButton>
+                                            <IconButton Icon={ClearIcon} edge="end" size="small" onClick={this.onRemoveAccessClick.bind(this, _id)} title="Remove Access" />
                                         </ListItemSecondaryAction>
                                     </ListItem>
                                     {idx !== access.length - 1 && <Divider />}

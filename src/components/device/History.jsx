@@ -19,8 +19,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import {get} from 'lodash';
 
-import AppBar from '-/components/AppBar';
-import Loading from '-/components/Loading';
+import {AppBar, Loading} from '-/components/shared';
 import {getHistory} from '-/graphql/history';
 import {cloneFromHistory} from '-/graphql/feel';
 import client from '-/graphql/client';
@@ -98,7 +97,7 @@ class DeviceList extends Component {
                     <DialogTitle id="history-title">Create New Feel?</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
-                            Are you sure you want to create a new Feel from this history item? Don&apos;t worry...it will start off uncategorized, and you can tweak it however you like when you're ready!
+                            Are you sure you want to create a new Feel from this history item? Don&apos;t worry...it will start off uncategorized, and you can tweak it however you like when you&apos;re ready!
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>

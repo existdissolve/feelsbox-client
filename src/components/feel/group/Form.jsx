@@ -12,7 +12,6 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Divider from '@material-ui/core/Divider';
 import GridList from '@material-ui/core/GridList';
-import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -21,7 +20,6 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import Subheader from '@material-ui/core/ListSubheader';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
-import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 
 import CloseIcon from '@material-ui/icons/Close';
@@ -31,9 +29,8 @@ import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import SaveIcon from '@material-ui/icons/Save';
 
-import AppBar from '-/components/AppBar';
+import {AppBar, IconButton, Loading} from '-/components/shared';
 import SimpleThumb from '-/components/feel/SimpleThumb';
-import Loading from '-/components/Loading';
 import CategoriesSelect from '-/components/feel/CategoriesSelect';
 import {groupFeels} from '-/components/feel/utils';
 
@@ -264,32 +261,14 @@ class FeelGroupsForm extends Component {
         const groupedFeels = groupFeels(feels, {filter});
         const isActive = activeFeelIdx != null;
         const icons = (
-            <IconButton onClick={this.onEditClick} disabled={!selectedFeels.length}>
-                <SaveIcon />
-            </IconButton>
+            <IconButton Icon={SaveIcon} onClick={this.onEditClick} disabled={!selectedFeels.length} title="Save Feel Group" />
         );
         const extraContent = (
             <Toolbar className={classes.toolbar} variant="dense" disableGutters={true}>
-                <Tooltip title="Remove all Feels">
-                    <IconButton onClick={this.onClearClick}>
-                        <ClearAllIcon />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="Remove selected Feel">
-                    <IconButton onClick={this.onRemoveClick} disabled={!isActive}>
-                        <CloseIcon />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="Move selected Feel to the left">
-                    <IconButton onClick={this.onPreviousClick} disabled={!isActive}>
-                        <NavigateBeforeIcon />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="Move selected Feel to the right">
-                    <IconButton onClick={this.onNextClick} disabled={!isActive}>
-                        <NavigateNextIcon />
-                    </IconButton>
-                </Tooltip>
+                <IconButton Icon={ClearAllIcon} onClick={this.onClearClick} title="Remove all Feels" />
+                <IconButton Icon={CloseIcon} onClick={this.onRemoveClick} disabled={!isActive} title="Remove selected Feel" />
+                <IconButton Icon={NavigateBeforeIcon} onClick={this.onPreviousClick} disabled={!isActive} title="Move selected Feel to the left" />
+                <IconButton Icon={NavigateNextIcon} onClick={this.onNextClick} disabled={!isActive} title="Move selected Feel to the right" />
             </Toolbar>
         );
 
@@ -348,11 +327,7 @@ class FeelGroupsForm extends Component {
                                                             </ListItemIcon>
                                                             <ListItemText primary={feel.name} style={{flexGrow: 1}} />
                                                             <ListItemIcon className={classes.listitemicon} onClick={this.onFeelSelect.bind(this, _id)} style={{minWidth: 'auto'}}>
-                                                                <Tooltip title="Add Feel to group">
-                                                                    <IconButton edge="end">
-                                                                        <AddIcon />
-                                                                    </IconButton>
-                                                                </Tooltip>
+                                                                <IconButton Icon={AddIcon} edge="end" title="Add Feel to group" />
                                                             </ListItemIcon>
                                                         </ListItem>
                                                     );
