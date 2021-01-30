@@ -1,7 +1,5 @@
 import {Component} from 'react';
 import {graphql} from 'react-apollo';
-import {compose} from 'recompose';
-import {withRouter} from 'react-router-dom';
 import {get} from 'lodash';
 
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -63,13 +61,9 @@ class CategoriesSelect extends Component {
     }
 }
 
-export default withRouter(
-    compose(
-        graphql(getMyCategories, {
-            name: 'data_categories',
-            options: {
-                notifyOnNetworkStatusChange: true
-            }
-        })
-    )(CategoriesSelect)
-);
+export default graphql(getMyCategories, {
+    name: 'data_categories',
+    options: {
+        notifyOnNetworkStatusChange: true
+    }
+})(CategoriesSelect);

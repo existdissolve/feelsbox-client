@@ -6,15 +6,11 @@ import {withRouter} from 'react-router-dom';
 import {get} from 'lodash';
 
 import Button from '@material-ui/core/Button';
-import Checkbox from '@material-ui/core/Checkbox';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import FormControl from '@material-ui/core/FormControl';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import GridList from '@material-ui/core/GridList';
 import Fab from '@material-ui/core/Fab';
 import List from '@material-ui/core/List';
@@ -29,8 +25,8 @@ import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
 import AppBar from '-/components/AppBar';
 import SimpleThumb from '-/components/feel/SimpleThumb';
 import Loading from '-/components/Loading';
+import DevicesSelect from '-/components/feel/DevicesSelect';
 
-import {getDevices} from '-/graphql/device';
 import {getFeelGroups, removeFeelGroup, sendFeelGroup} from '-/graphql/feelGroup';
 import client from '-/graphql/client';
 
@@ -89,31 +85,21 @@ class FeelGroupsList extends Component {
             anchorEl: undefined,
             deviceEl: undefined,
             dialogEl: undefined,
-            selectedDevices: []
+            selectedDevices: [],
+            selectedDeviceGroups: []
         };
     }
 
-    onDeviceCheck = e => {
-        const {selectedDevices} = this.state;
-        const devices = selectedDevices.slice();
-        const {target} = e;
-        const {checked, name} = target;
-
-        if (checked) {
-            devices.push(name);
-        } else {
-            const index = devices.findIndex(item => item === name);
-
-            if (index !== -1) {
-                devices.splice(index, 1);
-            }
-        }
-
-        this.setState({selectedDevices: devices});
+    onDeviceCheck = selections => {
+        this.setState({selectedDevices: selections});
     };
 
     onDeviceClick = e => {
         this.setState({deviceEl: e.target});
+    };
+
+    onDeviceGroupCheck = selections => {
+        this.setState({selectedDeviceGroups: selections});
     };
 
     onDialogClose = () => {
@@ -157,14 +143,17 @@ class FeelGroupsList extends Component {
     };
 
     onPushDevicesClick = () => {
-        const {selectedDevices} = this.state;
+        const {selectedDevices, selectedDeviceGroups} = this.state;
         const _id = get(this.state, 'activeGroup._id');
 
         client.mutate({
             mutation: sendFeelGroup,
             variables: {
                 _id,
-                data: {devices: selectedDevices}
+                data: {
+                    devices: selectedDevices,
+                    deviceGroups: selectedDeviceGroups
+                }
             }
         });
 
@@ -191,11 +180,10 @@ class FeelGroupsList extends Component {
     };
 
     render() {
-        const {activeGroup, deviceEl, dialogEl, selectedDevices = []} = this.state;
+        const {activeGroup, deviceEl, dialogEl} = this.state;
         const {classes, Snackbar} = this.props;
         const feelGroups = get(this.props, 'data_feelGroups.feelGroups', []);
         const loading = get(this.props, 'data_feelGroups.loading');
-        const devices = get(this.props, 'data_devices.devices') || [];
 
         return (
             <div className={classes.container}>
@@ -222,18 +210,7 @@ class FeelGroupsList extends Component {
                         <Dialog open={Boolean(deviceEl)} onClose={this.onDialogClose} keepMounted={false}>
                             <DialogTitle>Send to Devices</DialogTitle>
                             <DialogContent>
-                                <FormControl component="fieldset" className={classes.formControl}>
-                                    <FormGroup>
-                                        {devices.map(device => {
-                                            const {_id: deviceId, name} = device;
-                                            const isChecked = selectedDevices.includes(deviceId);
-
-                                            return (
-                                                <FormControlLabel key={deviceId} control={<Checkbox checked={isChecked} onChange={this.onDeviceCheck} name={deviceId} />} label={name} />
-                                            );
-                                        })}
-                                    </FormGroup>
-                                </FormControl>
+                                <DevicesSelect onDeviceCheck={this.onDeviceCheck} onDeviceGroupCheck={this.onDeviceGroupCheck} />
                             </DialogContent>
                             <DialogActions>
                                 <Button onClick={this.onDialogClose} color="default" variant="contained" size="small">
@@ -301,12 +278,6 @@ export default withRouter(
     compose(
         graphql(getFeelGroups, {
             name: 'data_feelGroups',
-            options: {
-                notifyOnNetworkStatusChange: true
-            }
-        }),
-        graphql(getDevices, {
-            name: 'data_devices',
             options: {
                 notifyOnNetworkStatusChange: true
             }

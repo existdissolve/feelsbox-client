@@ -6,6 +6,7 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import SearchIcon from '@material-ui/icons/Search';
+import DevicesIcon from '@material-ui/icons/Devices';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import RecentActorsIcon from '@material-ui/icons/RecentActors';
@@ -123,7 +124,7 @@ class Navigation extends React.Component {
                             </ListItem>
                             <ListItem button>
                                 <ListItemIcon>
-                                    <VideoLabelIcon />
+                                    <DevicesIcon />
                                 </ListItemIcon>
                                 <Link to="/devicegroups" className={classes.link}>
                                     <ListItemText primary="Device Groups" />

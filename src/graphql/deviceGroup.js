@@ -51,6 +51,10 @@ export const getDeviceGroups = gql`
             _id
             devices {
                 _id
+                capabilities {
+                    messages
+                    updates
+                }
                 name
             }
             name

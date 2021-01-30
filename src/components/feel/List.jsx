@@ -50,9 +50,9 @@ import AppBar from '-/components/AppBar';
 import Thumb from '-/components/feel/Thumb';
 import Loading from '-/components/Loading';
 import CategoriesSelect from '-/components/feel/CategoriesSelect';
+import DevicesSelect from '-/components/feel/DevicesSelect';
 import {groupFeels} from '-/components/feel/utils';
 
-import {getDevices} from '-/graphql/device';
 import {copyFeel, getFeels, removeFeel, sendFeel, sendMessage, subscribe, unsubscribe} from '-/graphql/feel';
 import {getPushFriends} from '-/graphql/user';
 import client from '-/graphql/client';
@@ -132,6 +132,7 @@ class FeelsList extends Component {
             notificationEl: undefined,
             messageEl: undefined,
             selectedDevices: [],
+            selectedDeviceGroups: [],
             selectedFeels: [],
             selectedFriends: []
         };
@@ -172,27 +173,16 @@ class FeelsList extends Component {
         this.onMenuClose();
     };
 
-    onDeviceCheck = e => {
-        const {selectedDevices} = this.state;
-        const devices = selectedDevices.slice();
-        const {target} = e;
-        const {checked, name} = target;
-
-        if (checked) {
-            devices.push(name);
-        } else {
-            const index = devices.findIndex(item => item === name);
-
-            if (index !== -1) {
-                devices.splice(index, 1);
-            }
-        }
-
-        this.setState({selectedDevices: devices});
+    onDeviceCheck = selections => {
+        this.setState({selectedDevices: selections});
     };
 
     onDeviceClick = e => {
         this.setState({deviceEl: e.target});
+    };
+
+    onDeviceGroupCheck = selections => {
+        this.setState({selectedDeviceGroups: selections});
     };
 
     onDialogClose = () => {
@@ -277,7 +267,8 @@ class FeelsList extends Component {
     onMessageClick = e => {
         this.setState({
             messageEl: e.target,
-            selectedDevices: []
+            selectedDevices: [],
+            selectedDeviceGroups: []
         });
     };
 
@@ -337,14 +328,17 @@ class FeelsList extends Component {
     };
 
     onPushDevicesClick = () => {
-        const {selectedDevices} = this.state;
+        const {selectedDevices, selectedDeviceGroups} = this.state;
         const _id = get(this.state, 'activeFeel._id');
 
         client.mutate({
             mutation: sendFeel,
             variables: {
                 _id,
-                data: {devices: selectedDevices}
+                data: {
+                    devices: selectedDevices,
+                    deviceGroups: selectedDeviceGroups
+                }
             }
         });
 
@@ -357,20 +351,24 @@ class FeelsList extends Component {
     };
 
     onSendMessageClick = async() => {
-        const {message, messageDuration, selectedDevices} = this.state;
+        const {message, messageDuration, selectedDevices, selectedDeviceGroups} = this.state;
 
         await client.mutate({
             mutation: sendMessage,
             variables: {
                 data: {
                     devices: selectedDevices,
+                    deviceGroups: selectedDeviceGroups,
                     duration: Number(messageDuration),
                     message
                 }
             }
         });
 
-        this.setState({selectedDevices: []});
+        this.setState({
+            selectedDevices: [],
+            selectedDeviceGroups: []
+        });
         this.onDialogClose();
     };
 
@@ -422,15 +420,12 @@ class FeelsList extends Component {
             messageEl,
             notification,
             notificationEl,
-            selectedDevices = [],
             selectedFriends = []
         } = this.state;
         const {classes, Snackbar} = this.props;
         const feels = get(this.props, 'data_feels.feels', []);
         const loading = get(this.props, 'data_feels.loading');
-        const devices = get(this.props, 'data_devices.devices') || [];
         const friends = get(this.props, 'data_friends.pushFriends') || [];
-        const messageCapableDevices = devices.slice().filter(device => get(device, 'capabilities.messages'));
         const groupedFeels = groupFeels(feels, {filter});
         const durationAdornment = (
             <InputAdornment position="start">
@@ -447,11 +442,9 @@ class FeelsList extends Component {
                 </IconButton>
                 <CategoriesSelect categorySelectionHandler={this.onCategoriesChange} />
                 <div className={classes.grow} />
-                {messageCapableDevices.length > 0 &&
-                    <IconButton onClick={this.onMessageClick}>
-                        <MessageIcon />
-                    </IconButton>
-                }
+                <IconButton onClick={this.onMessageClick}>
+                    <MessageIcon />
+                </IconButton>
                 <IconButton onClick={this.onCarouselClick} className={classes.carousel} edge="end">
                     <RecentActorsIcon />
                 </IconButton>
@@ -546,54 +539,43 @@ class FeelsList extends Component {
             <div className={classes.container}>
                 <AppBar title="My Feels" extraContent={extraContent} />
 
-                {messageCapableDevices.length > 0 &&
-                    <Dialog open={Boolean(messageEl)} onClose={this.onDialogClose} keepMounted={false}>
-                        <DialogTitle>Send Message to Devices</DialogTitle>
-                        <DialogContent>
-                            <FormControl component="fieldset" className={classes.formControl}>
-                                <TextField
-                                    autoFocus={true}
-                                    label="Message"
-                                    fullWidth={true}
-                                    onChange={this.onMessageChange}
-                                    value={message}
-                                    name="message"
-                                    style={{marginBottom: 10}}
-                                    variant="outlined" />
-                                <TextField
-                                    style={{marginBottom: 10}}
-                                    name="messageDuration"
-                                    value={messageDuration || 50}
-                                    onChange={this.onMessageDurationChange}
-                                    type="number"
-                                    fullWidth={true}
-                                    variant="outlined"
-                                    label="Duration"
-                                    InputProps={{
-                                        min: 1,
-                                        max: 100000,
-                                        size: 'small',
-                                        startAdornment: durationAdornment
-                                    }} />
-                                <FormGroup>
-                                    {messageCapableDevices.map(device => {
-                                        const {_id: deviceId, name} = device;
-                                        const isChecked = selectedDevices.includes(deviceId);
-
-                                        return (
-                                            <FormControlLabel key={deviceId} control={<Checkbox checked={isChecked} onChange={this.onDeviceCheck} name={deviceId} />} label={name} />
-                                        );
-                                    })}
-                                </FormGroup>
-                            </FormControl>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={this.onSendMessageClick} color="secondary" variant="contained" size="small" autoFocus>
-                                Send
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
-                }
+                <Dialog open={Boolean(messageEl)} onClose={this.onDialogClose} keepMounted={false}>
+                    <DialogTitle>Send Message to Devices</DialogTitle>
+                    <DialogContent>
+                        <FormControl component="fieldset" className={classes.formControl}>
+                            <TextField
+                                autoFocus={true}
+                                label="Message"
+                                fullWidth={true}
+                                onChange={this.onMessageChange}
+                                value={message}
+                                name="message"
+                                style={{marginBottom: 10}}
+                                variant="outlined" />
+                            <TextField
+                                style={{marginBottom: 10}}
+                                name="messageDuration"
+                                value={messageDuration || 50}
+                                onChange={this.onMessageDurationChange}
+                                type="number"
+                                fullWidth={true}
+                                variant="outlined"
+                                label="Duration"
+                                InputProps={{
+                                    min: 1,
+                                    max: 100000,
+                                    size: 'small',
+                                    startAdornment: durationAdornment
+                                }} />
+                            <DevicesSelect messageCapable={true} onDeviceCheck={this.onDeviceCheck} onDeviceGroupCheck={this.onDeviceGroupCheck} />
+                        </FormControl>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.onSendMessageClick} color="secondary" variant="contained" size="small" autoFocus>
+                            Send
+                        </Button>
+                    </DialogActions>
+                </Dialog>
                 {activeFeel &&
                     <Fragment>
                         <Menu anchorEl={anchorEl} keepMounted={false} open={Boolean(anchorEl)} onClose={this.onMenuClose}>
@@ -619,18 +601,7 @@ class FeelsList extends Component {
                         <Dialog open={Boolean(deviceEl)} onClose={this.onDialogClose} keepMounted={false}>
                             <DialogTitle>Send to Devices</DialogTitle>
                             <DialogContent>
-                                <FormControl component="fieldset" className={classes.formControl}>
-                                    <FormGroup>
-                                        {devices.map(device => {
-                                            const {_id: deviceId, name} = device;
-                                            const isChecked = selectedDevices.includes(deviceId);
-
-                                            return (
-                                                <FormControlLabel key={deviceId} control={<Checkbox checked={isChecked} onChange={this.onDeviceCheck} name={deviceId} />} label={name} />
-                                            );
-                                        })}
-                                    </FormGroup>
-                                </FormControl>
+                                <DevicesSelect onDeviceCheck={this.onDeviceCheck} onDeviceGroupCheck={this.onDeviceGroupCheck} />
                             </DialogContent>
                             <DialogActions>
                                 <Button onClick={this.onDialogClose} color="default" variant="contained" size="small">
@@ -815,12 +786,6 @@ export default withRouter(
 
         graphql(getFeels, {
             name: 'data_feels',
-            options: {
-                notifyOnNetworkStatusChange: true
-            }
-        }),
-        graphql(getDevices, {
-            name: 'data_devices',
             options: {
                 notifyOnNetworkStatusChange: true
             }
