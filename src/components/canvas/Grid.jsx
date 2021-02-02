@@ -149,11 +149,11 @@ class CanvasGrid extends Component {
         }
     }
 
-    handleChangeComplete(color) {
+    handleChangeComplete = color => {
         this.setState({
             selectedColor: color
         });
-    }
+    };
 
     onDataChange = e => {
         const target = get(e, 'target', {});
@@ -646,7 +646,7 @@ class CanvasGrid extends Component {
                         color={selectedColor}
                         disableAlpha={true}
                         presetColors={presetColors}
-                        onChangeComplete={this.handleChangeComplete.bind(this)} />
+                        onChange={this.handleChangeComplete} />
                 </div>
             </div>
         );

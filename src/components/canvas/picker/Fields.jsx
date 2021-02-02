@@ -1,4 +1,3 @@
-import {Component} from 'react';
 import reactCSS from 'reactcss';
 import color from 'react-color/lib/helpers/color';
 
@@ -29,10 +28,10 @@ export const Fields = ({onChange, hex}) => {
         }
     });
 
-    const handleChange = (data, e) => {
-        if (data.hex) {
-            color.isValidHex(data.hex) && onChange({
-                hex: data.hex,
+    const handleChange = (val, e) => {
+        if (val) {
+            color.isValidHex(val) && onChange({
+                hex: val,
                 source: 'hex'
             }, e);
         }
