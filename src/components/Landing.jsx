@@ -11,7 +11,7 @@ import FeelGroup from '-/components/feel/group/Form';
 import FeelGroups from '-/components/feel/group/List';
 import Search from '-/components/feel/Search';
 import Splash from '-/components/Splash';
-import CanvasGrid from '-/components/canvas/Grid';
+import Canvas from '-/components/canvas';
 import Categories from '-/components/category/List';
 import Devices from '-/components/device/List';
 import DeviceForm from '-/components/device/Form';
@@ -171,7 +171,7 @@ class Landing extends Component {
                         <Login {...this.props} showSnackbar={showSnackbar} />
                     </Route>
                     <Route exact path="/canvas">
-                        <CanvasGrid {...this.props} showSnackbar={showSnackbar} />
+                        <Canvas {...this.props} showSnackbar={showSnackbar} />
                     </Route>
                     <Route exact path="/categories">
                         <Categories {...this.props} showSnackbar={showSnackbar} />
@@ -195,7 +195,7 @@ class Landing extends Component {
                         <Account {...this.props} showSnackbar={showSnackbar} />
                     </Route>
                     <Route exact path="/canvas/:_id">
-                        <CanvasGrid {...this.props} showSnackbar={showSnackbar} />
+                        <Canvas {...this.props} showSnackbar={showSnackbar} />
                     </Route>
                     <Route exact path="/feels">
                         <Feels {...this.props} showSnackbar={showSnackbar} />

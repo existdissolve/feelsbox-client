@@ -46,7 +46,19 @@ export const getFeel = gql`
                     position
                 }
             }
+            isPanorama
             name
+            panorama {
+                height
+                pixels {
+                    color
+                    position
+                }
+                steps {
+                    terminal
+                }
+                width
+            }
             private
             repeat
             reverse
@@ -73,9 +85,21 @@ export const getFeels = gql`
                 }
             }
             isOwner
+            isPanorama
             isSubscribed
             isSubscriptionOwner
             name
+            panorama {
+                height
+                pixels {
+                    color
+                    position
+                }
+                steps {
+                    terminal
+                }
+                width
+            }
         }
     }
 `;

@@ -107,46 +107,28 @@ class CanvasGrid extends Component {
     constructor(props) {
         super(props);
 
+        const feel = get(props, 'data.feel');
+        const currentId = get(feel, '_id');
+        const pixels = get(feel, 'frames[0].pixels', []);
+        const frames = get(feel, 'frames', []);
+        const thumbIndex = frames.findIndex(frame => frame.isThumb);
+
         this.state = {
-            activeFeelId: null,
+            activeFeelId: currentId || 'new',
             anchorEl: null,
             currentFrame: 0,
-            data: {},
-            frames: [],
+            data: scrubData(feel),
+            frames: frames.slice(),
             frameTestOpen: false,
             history: [],
-            livePixels: [],
+            livePixels: pixels.slice(),
             open: false,
             selectedColor: '#ffffff',
             testDuration: 1000,
             testRepeat: false,
             testReverse: false,
-            thumbIndex: 0
+            thumbIndex: thumbIndex === -1 ? 0 : thumbIndex
         };
-    }
-
-    componentDidUpdate(prevProps) {
-        const {activeFeelId} = this.state;
-        const feel = get(this.props, 'data.feel');
-        const incomingId = get(prevProps, 'data.feel._id');
-        const currentId = get(feel, '_id');
-
-        if (!activeFeelId || (currentId && currentId !== incomingId)) {
-            const pixels = get(feel, 'frames[0].pixels', []);
-            const frames = get(feel, 'frames', []);
-            const thumbIndex = frames.findIndex(frame => frame.isThumb);
-
-            this.setState({
-                activeFeelId: currentId || 'new',
-                currentFrame: 0,
-                data: scrubData(feel),
-                frames: frames.slice(),
-                history: [],
-                livePixels: pixels.slice(),
-                open: false,
-                thumbIndex: thumbIndex === -1 ? 0 : thumbIndex
-            });
-        }
     }
 
     handleChangeComplete = color => {
@@ -659,14 +641,6 @@ CanvasGrid.propTypes = {
 
 export default withRouter(
     compose(
-        graphql(getFeel, {
-            options: props => ({
-                notifyOnNetworkStatusChange: true,
-                variables: {
-                    _id: get(props, 'match.params._id')
-                }
-            })
-        }),
         graphql(addFeel, {name: 'addFeel'}),
         graphql(editFeel, {name: 'editFeel'}),
         graphql(testFeel, {name: 'testFeel'}),
