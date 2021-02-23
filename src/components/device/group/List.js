@@ -17,12 +17,13 @@ import {
     Add as AddIcon,
     Close as CloseIcon,
     Edit as EditIcon,
+    FlashOff as FlashOffIcon,
     VideoLabel as VideoLabelIcon
 } from '@material-ui/icons';
 
 import {AppBar, Dialog, IconButton, Loading} from '-/components/shared';
 
-import {getDeviceGroups, removeDeviceGroup} from '-/graphql/deviceGroup';
+import {getDeviceGroups, removeDeviceGroup, turnOffDeviceGroup} from '-/graphql/deviceGroup';
 import client from '-/graphql/client';
 
 const styles = theme => ({
@@ -150,6 +151,18 @@ class FeelGroupsList extends Component {
         this.onDialogClose();
     };
 
+    onTurnOffClick = async() => {
+        const {showSnackbar} = this.props;
+        const _id = get(this.state, 'activeGroup._id');
+
+        client.mutate({
+            mutation: turnOffDeviceGroup,
+            variables: {_id}
+        }).then(() => {
+            showSnackbar('Device displays were turned off successfully!');
+        });
+    };
+
     render() {
         const {activeGroup, dialogEl} = this.state;
         const {classes, Snackbar} = this.props;
@@ -198,6 +211,9 @@ class FeelGroupsList extends Component {
                                         <ListSubheader component="div" className={classes.subheader}>
                                             <List component="div" dense={true} style={{padding: 0, display: 'flex'}}>
                                                 <ListItem style={{flexGrow: 1}}>{name}</ListItem>
+                                                <ListItemIcon className={classes.listitemicon} onClick={this.onIconClick.bind(this, group, 'onTurnOffClick')}>
+                                                    <IconButton Icon={FlashOffIcon} className={classes.smallicon} title="Turn off display" />
+                                                </ListItemIcon>
                                                 <ListItemIcon className={classes.listitemicon} onClick={this.onIconClick.bind(this, group, 'onEditClick')}>
                                                     <IconButton Icon={EditIcon} className={classes.smallicon} title="Edit device group" />
                                                 </ListItemIcon>

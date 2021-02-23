@@ -32,6 +32,12 @@ export const removeDeviceGroup = gql`
     }
 `;
 
+export const turnOffDeviceGroup = gql`
+    mutation turnOffDeviceGroup($_id: ID!) {
+        turnOffDeviceGroup(_id: $_id)
+    }
+`;
+
 export const getDeviceGroup = gql`
     query getDeviceGroup($_id: ID!) {
         deviceGroup(_id: $_id) {
